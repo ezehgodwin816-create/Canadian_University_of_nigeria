@@ -69,6 +69,12 @@ const Auth = {
       email: String(email || "").trim().toLowerCase(), password
     });
     if (error) return {success:false,message:error.message};
+    if (data?.session) {
+      try {
+        localStorage.setItem(this.SESSION_KEY, JSON.stringify(data.session));
+        localStorage.setItem("cun_supabase_session", JSON.stringify(data.session));
+      } catch {}
+    }
     const context = await this.getUserContext();
     const roleCodes = (context?.roles || []).map(r => r.code);
     let role = "student";

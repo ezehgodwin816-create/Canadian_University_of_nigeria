@@ -58,15 +58,34 @@ window.CUNSupabaseReady = new Promise((resolve, reject) => {
   }
 
   const existing = document.querySelector('script[data-cun-supabase]');
-  const finish = () => {
+  const finish = async () => {
     if (!window.supabase?.createClient) {
       reject(new Error("Supabase library could not be loaded. Check your internet connection and refresh the page."));
       return;
     }
     try {
       window.SupabaseClient = window.supabase.createClient(cfg.supabaseUrl, cfg.supabaseAnonKey, {
-        auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true }
+        auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true, storageKey: "cun_supabase_auth" }
       });
+
+      // Restore sessions created by the standalone REST login page. The login
+      // page intentionally stores the raw Supabase session so protected pages
+      // can recover it even when supabase-js has not persisted it yet.
+      try {
+        const raw = localStorage.getItem("cun_supabase_session") || localStorage.getItem("cun_session");
+        if (raw) {
+          const saved = JSON.parse(raw);
+          if (saved?.access_token && saved?.refresh_token) {
+            await window.SupabaseClient.auth.setSession({
+              access_token: saved.access_token,
+              refresh_token: saved.refresh_token
+            });
+          }
+        }
+      } catch (restoreError) {
+        console.warn("CUN session bootstrap restore failed", restoreError);
+      }
+
       resolve(window.SupabaseClient);
     } catch (err) { reject(err); }
   };
