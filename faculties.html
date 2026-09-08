@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Faculties | Canadian University of Nigeria (Demo)</title>
+  <meta name="description" content="Faculties and schools — demo list.">
+  <meta property="og:title" content="Faculties | CUN Demo">
+  <meta property="og:description" content="Faculties and schools — demo list.">
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/responsive.css">
+  <link rel="stylesheet" href="css/print.css" media="print">
+</head>
+<body>
+  <a href="#main" class="skip-link">Skip to content</a>
+  <div class="demo-banner">DEMO / PROPOSAL WEBSITE — Not the official CUN site. Content is sample and must be verified.</div>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="index.html" class="logo-link"><img src="assets/logo.svg" alt="CUN logo (proposed)"></a>
+      <nav class="main-nav" aria-label="Main">
+        <div class="nav-item"><a href="about.html" class="nav-link">About</a></div>
+        <div class="nav-item"><a href="academics.html" class="nav-link">Academics</a></div>
+        <div class="nav-item"><a href="admissions.html" class="nav-link">Admissions</a></div>
+        <div class="nav-item"><a href="research.html" class="nav-link">Research</a></div>
+        <div class="nav-item"><a href="student-life.html" class="nav-link">Campus Life</a></div>
+        <div class="nav-item"><a href="news.html" class="nav-link">News & Events</a></div>
+        <div class="nav-item"><a href="contact.html" class="nav-link">Contact</a></div>
+      </nav>
+      <div class="header-actions">
+        <button class="search-toggle" aria-label="Search"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg></button>
+        <a href="login.html" class="btn btn-ghost btn-sm">Portals</a>
+        <a href="apply.html" class="btn btn-accent btn-sm">Apply Now</a>
+        <button class="menu-toggle" aria-label="Menu"><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
+      </div>
+    </div>
+  </header>
+  <div class="mobile-menu"><div class="mobile-menu-panel">
+    <div class="mobile-menu-header"><strong>Menu</strong><button class="mobile-menu-close btn btn-ghost">&times;</button></div>
+    <nav class="mobile-nav">
+      <a href="about.html">About</a><a href="academics.html">Academics</a><a href="admissions.html">Admissions</a>
+      <a href="student-life.html">Campus Life</a><a href="news.html">News</a><a href="contact.html">Contact</a>
+      <a href="login.html">Portals</a><a href="apply.html" class="btn btn-accent" style="margin-top:1rem;text-align:center">Apply Now</a>
+    </nav>
+  </div></div>
+  <main id="main">
+    <div class="page-header"><div class="container">
+      <div class="breadcrumb"><a href="index.html">Home</a> <span>/</span> <span>Faculties</span></div>
+      <h1>Faculties</h1>
+      <p>Faculties and schools — demo list.</p>
+    </div></div>
+    <section class="section"><div class="container">
+      
+<div class="grid grid-2" id="faculties-full"></div>
+<script>
+document.addEventListener("DOMContentLoaded",()=>{
+  document.getElementById("faculties-full").innerHTML=(window.CUN_DATA?.faculties||[]).map(f=>`
+    <div class="card"><div class="card-body"><h3>${f.name}</h3><p>${f.description}</p>
+    <a href="programmes.html?faculty=${f.id}" class="btn btn-sm btn-outline">Programmes</a></div></div>`).join("");
+});
+</script>
+    </div></section>
+  </main>
+  <footer class="site-footer"><div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand"><img src="assets/logo.svg" alt="CUN" style="height:40px"><p class="mt-2">Canadian University of Nigeria — Demo/Proposal Website.</p></div>
+      <div class="footer-col"><h4>University</h4><a href="about.html">About</a><a href="contact.html">Contact</a></div>
+      <div class="footer-col"><h4>Academics</h4><a href="programmes.html">Programmes</a><a href="research.html">Research</a></div>
+      <div class="footer-col"><h4>Admissions</h4><a href="admissions.html">Overview</a><a href="apply.html">Apply</a></div>
+      <div class="footer-col"><h4>Legal</h4><a href="privacy.html">Privacy</a><a href="terms.html">Terms</a><a href="accessibility.html">Accessibility</a></div>
+    </div>
+    <div class="footer-bottom"><p>© 2026 Canadian University of Nigeria — Demo/Proposal Website.</p></div>
+  </div></footer>
+  <script src="js/data.js"></script>
+  <script src="js/config.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/components.js"></script>
+</body>
+</html>

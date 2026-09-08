@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Apply | Canadian University of Nigeria (Demo)</title>
+  <meta name="description" content="Multi-step online application demo for Canadian University of Nigeria.">
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body>
+  <div class="demo-banner">DEMO APPLICATION — Data saved only in your browser (localStorage). Not a real admissions system.</div>
+  <header class="site-header"><div class="container header-inner">
+    <a href="index.html" class="logo-link"><img src="assets/logo.svg" alt="CUN"></a>
+    <div class="header-actions"><a href="index.html" class="btn btn-ghost btn-sm">Home</a><a href="application-status.html" class="btn btn-outline btn-sm">Check Status</a></div>
+  </div></header>
+  <main class="section">
+    <div class="container" style="max-width:800px">
+      <h1 class="text-center">Online Application</h1>
+      <p class="text-center text-muted mb-4">Demo multi-step form. All data is stored locally in your browser.</p>
+      <div class="wizard-steps" id="wizard-steps">
+        <div class="wizard-step active" data-step="1"><div class="wizard-step-num">1</div><div class="wizard-step-label">Personal</div></div>
+        <div class="wizard-step" data-step="2"><div class="wizard-step-num">2</div><div class="wizard-step-label">Academic</div></div>
+        <div class="wizard-step" data-step="3"><div class="wizard-step-num">3</div><div class="wizard-step-label">Programme</div></div>
+        <div class="wizard-step" data-step="4"><div class="wizard-step-num">4</div><div class="wizard-step-label">Documents</div></div>
+        <div class="wizard-step" data-step="5"><div class="wizard-step-num">5</div><div class="wizard-step-label">Review</div></div>
+        <div class="wizard-step" data-step="6"><div class="wizard-step-num">6</div><div class="wizard-step-label">Submit</div></div>
+      </div>
+      <form id="app-form" class="card" style="padding:2rem">
+        <!-- Step 1 -->
+        <div class="form-step" data-step="1">
+          <h3>Personal Information</h3>
+          <div class="form-row">
+            <div class="form-group"><label class="form-label">First Name <span class="required">*</span></label><input class="form-control" name="firstName" required><div class="form-error"></div></div>
+            <div class="form-group"><label class="form-label">Last Name <span class="required">*</span></label><input class="form-control" name="lastName" required><div class="form-error"></div></div>
+          </div>
+          <div class="form-row">
+            <div class="form-group"><label class="form-label">Date of Birth</label><input type="date" class="form-control" name="dob"></div>
+            <div class="form-group"><label class="form-label">Gender</label><select class="form-control" name="gender"><option value="">Select</option><option>Female</option><option>Male</option><option>Other</option><option>Prefer not to say</option></select></div>
+          </div>
+          <div class="form-row">
+            <div class="form-group"><label class="form-label">Nationality</label><input class="form-control" name="nationality" value="Nigerian"></div>
+            <div class="form-group"><label class="form-label">State</label><input class="form-control" name="state"></div>
+          </div>
+          <div class="form-group"><label class="form-label">Email <span class="required">*</span></label><input type="email" class="form-control" name="email" required><div class="form-error"></div></div>
+          <div class="form-group"><label class="form-label">Phone <span class="required">*</span></label><input class="form-control" name="phone" required><div class="form-error"></div></div>
+          <div class="form-group"><label class="form-label">Address</label><textarea class="form-control" name="address" rows="2"></textarea></div>
+        </div>
+        <!-- Step 2 -->
+        <div class="form-step" data-step="2" style="display:none">
+          <h3>Academic Background</h3>
+          <div class="form-group"><label class="form-label">Previous School</label><input class="form-control" name="school"></div>
+          <div class="form-group"><label class="form-label">Qualification</label><input class="form-control" name="qualification" placeholder="e.g. SSCE, ND"></div>
+          <div class="form-row">
+            <div class="form-group"><label class="form-label">Exam Type</label><input class="form-control" name="examType" placeholder="WAEC/NECO"></div>
+            <div class="form-group"><label class="form-label">Exam Number</label><input class="form-control" name="examNumber"></div>
+          </div>
+          <div class="form-group"><label class="form-label">Year</label><input class="form-control" name="examYear"></div>
+          <div class="form-group"><label class="form-label">Results Summary</label><textarea class="form-control" name="results" rows="2"></textarea></div>
+        </div>
+        <!-- Step 3 -->
+        <div class="form-step" data-step="3" style="display:none">
+          <h3>Programme Choice</h3>
+          <div class="form-group"><label class="form-label">Programme <span class="required">*</span></label>
+            <select class="form-control" name="programme" id="prog-select" required></select><div class="form-error"></div>
+          </div>
+          <div class="form-group"><label class="form-label">Entry Type</label><select class="form-control" name="entryType"><option>UTME</option><option>Direct Entry</option><option>Transfer</option></select></div>
+          <div class="form-group"><label class="form-label">Study Mode</label><select class="form-control" name="studyMode"><option>Full-time</option><option>Part-time</option></select></div>
+        </div>
+        <!-- Step 4 -->
+        <div class="form-step" data-step="4" style="display:none">
+          <h3>Documents</h3>
+          <p class="text-muted">Demo upload UI only — files are not uploaded to a server.</p>
+          <div class="form-group"><label class="form-label">Passport Photo</label><input type="file" class="form-control" accept="image/*"></div>
+          <div class="form-group"><label class="form-label">O'Level Result</label><input type="file" class="form-control" accept=".pdf,image/*"></div>
+          <div class="form-group"><label class="form-label">Birth Certificate / ID</label><input type="file" class="form-control" accept=".pdf,image/*"></div>
+          <div class="form-group"><label class="form-label">Other Documents</label><input type="file" class="form-control" multiple></div>
+        </div>
+        <!-- Step 5 -->
+        <div class="form-step" data-step="5" style="display:none">
+          <h3>Review</h3>
+          <div id="review-summary" class="card" style="padding:1rem;background:var(--gray-50)"></div>
+        </div>
+        <!-- Step 6 -->
+        <div class="form-step" data-step="6" style="display:none">
+          <h3>Payment & Submit</h3>
+          <p class="text-muted">Payment integration is a placeholder. In production this would connect to a payment gateway.</p>
+          <div class="card mb-3" style="padding:1rem;border:2px dashed var(--gray-300)"><p class="mb-0">Application fee: <strong>Demo — ₦0.00</strong></p></div>
+          <div class="form-group"><label><input type="checkbox" name="declare" required> I declare that the information provided is accurate. (Demo declaration)</label></div>
+        </div>
+        <div class="flex gap-2 mt-4" style="justify-content:space-between">
+          <button type="button" class="btn btn-outline" id="btn-prev" style="display:none">Previous</button>
+          <button type="button" class="btn btn-primary" id="btn-next">Next</button>
+          <button type="submit" class="btn btn-accent" id="btn-submit" style="display:none">Submit Application</button>
+        </div>
+      </form>
+      <div id="success-panel" style="display:none" class="card text-center" style="padding:2rem">
+        <h2>Application Submitted</h2>
+        <p>Your demo application number is:</p>
+        <p style="font-size:1.5rem;font-weight:700;color:var(--primary)" id="app-number"></p>
+        <p class="text-muted">Save this number to check status. Data is stored in this browser only.</p>
+        <a href="application-status.html" class="btn btn-primary mt-3">Check Status</a>
+        <button onclick="window.print()" class="btn btn-outline mt-2">Print Acknowledgement</button>
+      </div>
+    </div>
+  </main>
+  <script src="js/data.js"></script>
+  <script src="js/config.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/forms.js"></script>
+  <script src="js/application.js"></script>
+  <script src="js/components.js"></script>
+  <script>
+    let step = 1;
+    const total = 6;
+    const form = document.getElementById("app-form");
+    const progSelect = document.getElementById("prog-select");
+    (window.CUN_DATA?.programmes||[]).forEach(p=>{
+      const o=document.createElement("option"); o.value=p.name; o.textContent=p.name; progSelect.appendChild(o);
+    });
+    function showStep(n){
+      document.querySelectorAll(".form-step").forEach(s=>s.style.display="none");
+      document.querySelector(`.form-step[data-step="${n}"]`).style.display="block";
+      document.querySelectorAll(".wizard-step").forEach(w=>{
+        const s=+w.dataset.step;
+        w.classList.toggle("active", s===n);
+        w.classList.toggle("done", s<n);
+      });
+      document.getElementById("btn-prev").style.display = n>1 ? "inline-flex":"none";
+      document.getElementById("btn-next").style.display = n<total ? "inline-flex":"none";
+      document.getElementById("btn-submit").style.display = n===total ? "inline-flex":"none";
+      if(n===5){
+        const fd=new FormData(form);
+        let html="<dl>";
+        for(const [k,v] of fd.entries()){ if(v) html+=`<dt style="font-weight:600;margin-top:0.5rem">${k}</dt><dd>${sanitize(String(v))}</dd>`; }
+        html+="</dl>";
+        document.getElementById("review-summary").innerHTML=html;
+      }
+    }
+    document.getElementById("btn-next").onclick=()=>{
+      const current=document.querySelector(`.form-step[data-step="${step}"]`);
+      if(!validateRequired(current)) return;
+      if(step<total){ step++; showStep(step); }
+    };
+    document.getElementById("btn-prev").onclick=()=>{ if(step>1){ step--; showStep(step); } };
+    form.onsubmit=(e)=>{
+      e.preventDefault();
+      if(!validateRequired(form)) return;
+      const fd=new FormData(form);
+      const data=Object.fromEntries(fd.entries());
+      const record=Application.submit(data);
+      form.style.display="none";
+      document.getElementById("wizard-steps").style.display="none";
+      document.getElementById("success-panel").style.display="block";
+      document.getElementById("app-number").textContent=record.applicationNumber;
+      Toast.success("Application submitted successfully (demo)");
+    };
+  </script>
+</body>
+</html>

@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /admin.html
+Disallow: /student-portal.html
+Disallow: /staff-portal.html
+Sitemap: /sitemap.xml
