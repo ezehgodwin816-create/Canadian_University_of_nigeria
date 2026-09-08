@@ -1,205 +1,97 @@
 /**
- * Canadian University of Nigeria - Demo Data
- * All content is DEMO / PROPOSED and not official university information.
- * Replace with verified institutional data before production use.
+ * Canadian University of Nigeria — verified-first public data layer.
+ * 
+ * IMPORTANT:
+ * - Facts below are limited to information that can be corroborated from
+ *   CUN's current official website and public regulatory/news records.
+ * - Do not add fees, staff names, phone numbers, social handles, rankings,
+ *   programme accreditation or dates unless the institution publishes them.
  */
-
 window.CUN_DATA = {
   university: {
     name: "Canadian University of Nigeria",
     shortName: "CUN",
     tagline: "Where Knowledge Meets Global Excellence",
-    location: "Abuja, Nigeria",
-    established: "Proposed / Demo",
-    email: "info@cun.demo",
-    phone: "+234 (0) XXX XXX XXXX (Demo)",
-    address: "Abuja, Federal Capital Territory, Nigeria (Demo Address)",
+    location: "Abuja, Federal Capital Territory, Nigeria",
+    established: "2023",
+    status: "Private university",
+    regulatory: "National Universities Commission (NUC)",
+    regulatoryStatus: "NUC provisional operating licence issued in 2023",
+    proprietor: "Adamu Abubakar Gwarzo Foundation",
+    supervisingInstitutionAtLicence: "Nile University, Abuja",
+    address: "3C7G+2MR, Utako, Abuja 900108, Federal Capital Territory, Nigeria",
+    email: "",
+    phone: "",
+    website: "https://www.cun.edu.ng/",
     social: {
-      facebook: "#",
-      instagram: "#",
-      twitter: "#",
-      linkedin: "#",
-      youtube: "#",
-      tiktok: "#"
+      facebook: "",
+      instagram: "",
+      twitter: "",
+      linkedin: "",
+      youtube: "",
+      tiktok: ""
     }
   },
 
   stats: [
-    { label: "Faculties", value: "6+", demo: true },
-    { label: "Programmes", value: "40+", demo: true },
-    { label: "Students", value: "5,000+", demo: true },
-    { label: "International Reach", value: "20+", demo: true },
-    { label: "Research Centres", value: "8", demo: true },
-    { label: "Employability Focus", value: "High", demo: true }
+    { label: "Founded", value: "2023" },
+    { label: "Institution type", value: "Private University" },
+    { label: "Location", value: "Abuja, FCT" },
+    { label: "Regulator", value: "NUC" }
   ],
 
   faculties: [
-    { id: "fas", name: "Faculty of Arts & Social Sciences", code: "FASS", description: "Demo faculty focusing on humanities, social sciences and communication." },
-    { id: "fms", name: "Faculty of Management Sciences", code: "FMS", description: "Demo faculty for business, accounting, finance and entrepreneurship." },
-    { id: "fos", name: "Faculty of Science", code: "FOS", description: "Demo faculty for pure and applied sciences." },
-    { id: "foe", name: "Faculty of Engineering", code: "FOE", description: "Demo faculty for engineering and technology programmes." },
-    { id: "fol", name: "Faculty of Law", code: "FOL", description: "Demo faculty of law and legal studies." },
-    { id: "fhs", name: "Faculty of Health Sciences", code: "FHS", description: "Demo faculty for health and medical-related programmes." }
+    {
+      id: "health",
+      name: "Health Sciences",
+      code: "HS",
+      type: "School / academic area",
+      description: "Publicly reported as one of CUN's initial academic areas.",
+      programmes: ["Physiotherapy", "Public Health", "Medical Laboratory Science", "Nursing"]
+    },
+    {
+      id: "computing",
+      name: "School of Computing",
+      code: "SC",
+      type: "School",
+      description: "Publicly reported as CUN's initial computing academic area.",
+      programmes: ["Cyber Security", "Information Technology", "Data Science", "Computer Science"]
+    },
+    {
+      id: "management-social",
+      name: "Management & Social Sciences",
+      code: "MSS",
+      type: "Academic area",
+      description: "Publicly reported as an initial management and social sciences academic area.",
+      programmes: ["Banking & Finance", "Business Administration", "Human Resource Management", "Mass Communication"]
+    }
   ],
 
   programmes: [
-    {
-      id: "bsc-cs",
-      name: "B.Sc. Computer Science",
-      faculty: "fos",
-      department: "Computer Science",
-      degree: "Bachelor of Science",
-      duration: "4 years",
-      mode: "Full-time",
-      overview: "Demo programme. A comprehensive computer science degree covering algorithms, software engineering, AI foundations and systems. (Proposed / Sample Content)",
-      requirements: "Five O'Level credits including Mathematics and English. UTME subjects: English, Mathematics, Physics and one science subject. (Demo requirements)",
-      careers: "Software Developer, Data Analyst, Systems Engineer, IT Consultant (Demo career paths)",
-      curriculum: ["Year 1: Foundations of Computing", "Year 2: Data Structures & Algorithms", "Year 3: Software Engineering & Databases", "Year 4: Capstone Project & Electives"]
-    },
-    {
-      id: "bsc-ba",
-      name: "B.Sc. Business Administration",
-      faculty: "fms",
-      department: "Business Administration",
-      degree: "Bachelor of Science",
-      duration: "4 years",
-      mode: "Full-time",
-      overview: "Demo programme. Develops leadership, strategy and operational skills for modern organisations. (Proposed / Sample Content)",
-      requirements: "Five O'Level credits including English and Mathematics. (Demo requirements)",
-      careers: "Business Analyst, Operations Manager, Entrepreneur, Management Consultant (Demo)",
-      curriculum: ["Year 1: Introduction to Business", "Year 2: Marketing & Finance", "Year 3: Strategy & HR", "Year 4: Capstone & Internship"]
-    },
-    {
-      id: "llb",
-      name: "LL.B. Law",
-      faculty: "fol",
-      department: "Law",
-      degree: "Bachelor of Laws",
-      duration: "5 years",
-      mode: "Full-time",
-      overview: "Demo programme. Foundational legal education with Nigerian and comparative perspectives. (Proposed / Sample Content)",
-      requirements: "Five O'Level credits including English and Literature. (Demo requirements)",
-      careers: "Legal Practitioner, Corporate Counsel, Public Service, Academia (Demo)",
-      curriculum: ["Year 1: Legal Methods", "Year 2: Constitutional & Criminal Law", "Year 3: Property & Commercial Law", "Year 4-5: Electives & Clinical Practice"]
-    },
-    {
-      id: "bsc-acc",
-      name: "B.Sc. Accounting",
-      faculty: "fms",
-      department: "Accounting",
-      degree: "Bachelor of Science",
-      duration: "4 years",
-      mode: "Full-time",
-      overview: "Demo programme preparing students for professional accounting careers. (Proposed / Sample Content)",
-      requirements: "Five O'Level credits including English and Mathematics. (Demo)",
-      careers: "Accountant, Auditor, Financial Analyst (Demo)",
-      curriculum: ["Foundations of Accounting", "Financial Reporting", "Taxation & Audit", "Advanced Topics"]
-    },
-    {
-      id: "bsc-eco",
-      name: "B.Sc. Economics",
-      faculty: "fas",
-      department: "Economics",
-      degree: "Bachelor of Science",
-      duration: "4 years",
-      mode: "Full-time",
-      overview: "Demo programme in economic theory, policy and development. (Proposed / Sample Content)",
-      requirements: "Five O'Level credits including English and Mathematics. (Demo)",
-      careers: "Economist, Policy Analyst, Banking (Demo)",
-      curriculum: ["Microeconomics", "Macroeconomics", "Econometrics", "Development Economics"]
-    },
-    {
-      id: "bsc-nursing",
-      name: "B.NSc. Nursing Science",
-      faculty: "fhs",
-      department: "Nursing",
-      degree: "Bachelor of Nursing Science",
-      duration: "5 years",
-      mode: "Full-time",
-      overview: "Demo programme in professional nursing practice. (Proposed / Sample Content — accreditation to be confirmed)",
-      requirements: "Five O'Level credits including English, Biology, Chemistry, Physics/Mathematics. (Demo)",
-      careers: "Registered Nurse, Clinical Specialist, Public Health Nurse (Demo)",
-      curriculum: ["Foundations of Nursing", "Medical-Surgical Nursing", "Community Health", "Clinical Practice"]
-    }
+    {id:"physiotherapy",name:"Doctor of Physiotherapy",faculty:"health",department:"Health Sciences",degree:"Professional degree",duration:"",mode:"Full-time",overview:"Publicly reported among CUN's initial Health Sciences programmes.",requirements:"See the university's current admissions office for the official programme-specific requirements.",careers:"Physiotherapy and rehabilitation practice",curriculum:[]},
+    {id:"public-health",name:"Public Health",faculty:"health",department:"Health Sciences",degree:"Undergraduate programme",duration:"",mode:"Full-time",overview:"Publicly reported among CUN's initial Health Sciences programmes.",requirements:"See the university's current admissions office for the official programme-specific requirements.",careers:"Public health, community health and health programmes",curriculum:[]},
+    {id:"medical-laboratory",name:"Medical Laboratory Science",faculty:"health",department:"Health Sciences",degree:"Professional programme",duration:"",mode:"Full-time",overview:"Publicly reported among CUN's initial Health Sciences programmes.",requirements:"See the university's current admissions office for the official programme-specific requirements.",careers:"Medical laboratory practice and diagnostics",curriculum:[]},
+    {id:"nursing",name:"Nursing",faculty:"health",department:"Health Sciences",degree:"Professional programme",duration:"",mode:"Full-time",overview:"Publicly reported among CUN's initial Health Sciences programmes.",requirements:"See the university's current admissions office for the official programme-specific requirements.",careers:"Nursing and clinical care",curriculum:[]},
+    {id:"cyber-security",name:"Cyber Security",faculty:"computing",department:"School of Computing",degree:"Undergraduate programme",duration:"",mode:"Full-time",overview:"Publicly reported among CUN's initial computing programmes.",requirements:"See the university's current admissions office for the official programme-specific requirements.",careers:"Cybersecurity, security operations and information assurance",curriculum:[]},
+    {id:"information-technology",name:"Information Technology",faculty:"computing",department:"School of Computing",degree:"Undergraduate programme",duration:"",mode:"Full-time",overview:"Publicly reported among CUN's initial computing programmes.",requirements:"See the university's current admissions office for the official programme-specific requirements.",careers:"IT operations, systems and technology services",curriculum:[]},
+    {id:"data-science",name:"Data Science",faculty:"computing",department:"School of Computing",degree:"Undergraduate programme",duration:"",mode:"Full-time",overview:"Publicly reported among CUN's initial computing programmes.",requirements:"See the university's current admissions office for the official programme-specific requirements.",careers:"Data analysis, analytics and technology",curriculum:[]},
+    {id:"computer-science",name:"Computer Science",faculty:"computing",department:"School of Computing",degree:"Undergraduate programme",duration:"",mode:"Full-time",overview:"Publicly reported among CUN's initial computing programmes.",requirements:"See the university's current admissions office for the official programme-specific requirements.",careers:"Software, computing and technology",curriculum:[]},
+    {id:"banking-finance",name:"Banking & Finance",faculty:"management-social",department:"Management & Social Sciences",degree:"Undergraduate programme",duration:"",mode:"Full-time",overview:"Publicly reported among CUN's initial management and social sciences programmes.",requirements:"See the university's current admissions office for the official programme-specific requirements.",careers:"Banking, finance and financial services",curriculum:[]},
+    {id:"business-admin",name:"Business Administration",faculty:"management-social",department:"Management & Social Sciences",degree:"Undergraduate programme",duration:"",mode:"Full-time",overview:"Publicly reported among CUN's initial management and social sciences programmes.",requirements:"See the university's current admissions office for the official programme-specific requirements.",careers:"Business, management and entrepreneurship",curriculum:[]},
+    {id:"human-resource",name:"Human Resource Management",faculty:"management-social",department:"Management & Social Sciences",degree:"Undergraduate programme",duration:"",mode:"Full-time",overview:"Publicly reported among CUN's initial management and social sciences programmes.",requirements:"See the university's current admissions office for the official programme-specific requirements.",careers:"Human resources and organisational management",curriculum:[]},
+    {id:"mass-communication",name:"Mass Communication",faculty:"management-social",department:"Management & Social Sciences",degree:"Undergraduate programme",duration:"",mode:"Full-time",overview:"Publicly reported among CUN's initial management and social sciences programmes.",requirements:"See the university's current admissions office for the official programme-specific requirements.",careers:"Media, communications and public relations",curriculum:[]}
   ],
 
-  news: [
-    {
-      id: "n1",
-      title: "Welcome to the Proposed CUN Digital Campus Platform",
-      excerpt: "This demo website showcases a modern university digital presence for Canadian University of Nigeria.",
-      category: "Announcement",
-      date: "2026-09-01",
-      image: "assets/images/news-placeholder.jpg",
-      content: "<p>This is <strong>demo content</strong> for the Canadian University of Nigeria website proposal. All news items are sample content and do not represent official university announcements.</p><p>The platform demonstrates news listing, detail pages, categories and related articles.</p>"
-    },
-    {
-      id: "n2",
-      title: "Sample: Orientation Week for New Students",
-      excerpt: "A proposed orientation programme designed to welcome new students to campus life.",
-      category: "Student Life",
-      date: "2026-08-15",
-      image: "assets/images/campus-life.jpg",
-      content: "<p>Demo article describing a sample orientation week. Replace with verified institutional content.</p>"
-    },
-    {
-      id: "n3",
-      title: "Sample: Research Symposium Call for Papers",
-      excerpt: "An illustrative call for papers for a proposed research symposium.",
-      category: "Research",
-      date: "2026-07-20",
-      image: "assets/images/research.jpg",
-      content: "<p>Demo research news. All details are placeholders pending official confirmation.</p>"
-    }
-  ],
-
-  events: [
-    {
-      id: "e1",
-      title: "Open Day (Demo)",
-      date: "2026-10-15",
-      time: "10:00 AM",
-      location: "Main Campus, Abuja (Demo)",
-      category: "Admissions",
-      description: "Sample open day event. Prospective students and parents are invited to explore programmes and facilities. (Demo content)"
-    },
-    {
-      id: "e2",
-      title: "Career Fair 2026 (Sample)",
-      date: "2026-11-05",
-      time: "9:00 AM",
-      location: "University Auditorium (Demo)",
-      category: "Careers",
-      description: "Demo career fair connecting students with employers. Details to be confirmed."
-    },
-    {
-      id: "e3",
-      title: "Founders' Lecture Series (Proposed)",
-      date: "2026-09-28",
-      time: "2:00 PM",
-      location: "Lecture Theatre A (Demo)",
-      category: "Academic",
-      description: "Sample academic lecture series. Speakers and topics are placeholders."
-    }
-  ],
+  news: [],
+  events: [],
 
   faqs: [
-    { q: "Is this the official Canadian University of Nigeria website?", a: "No. This is a demo/proposal website created to showcase a modern digital platform. Official information must be verified with the university." },
-    { q: "How do I apply?", a: "Use the Apply page to experience the multi-step demo application form. In production this would connect to a real admissions system." },
-    { q: "What are the demo login credentials?", a: "Student: student@cun.demo / student123 · Staff: staff@cun.demo / staff123 · Admin: admin@cun.demo / admin123" },
-    { q: "Are the fees and programmes real?", a: "No. All programmes, fees, statistics and contact details are sample/demo content pending verification." },
-    { q: "Does the portal save my data?", a: "In demo mode, data is stored in your browser's localStorage only. No server is used unless Supabase is configured." }
+    {q:"Is Canadian University of Nigeria a recognised university?",a:"The National Universities Commission lists Canadian University of Nigeria, Abuja among Nigeria's private universities. The NUC announced the issuance of a provisional licence in 2023."},
+    {q:"Where is the university located?",a:"Public institutional listings place the university in Utako, Abuja, Federal Capital Territory, Nigeria. The public Plus Code is 3C7G+2MR."},
+    {q:"Where can I find official fees?",a:"Only fee schedules published or supplied by the university should be treated as official. This build intentionally does not invent fee figures where an official public schedule could not be verified."},
+    {q:"Where can I find current admissions requirements?",a:"Use the admissions workflow on this site as the presentation layer, but verify programme-specific requirements against the university's current admissions office and official publications before publishing them as final."},
+    {q:"Are rankings displayed?",a:"No unsupported ranking is presented as an institutional achievement. External ranking databases may show research-index or directory positions, but those should not be represented as official university rankings."}
   ],
 
-  testimonials: [
-    { name: "Amina O.", role: "Sample Student", text: "Demo testimonial: The proposed digital campus experience is modern and easy to navigate." },
-    { name: "Dr. Chukwuma E.", role: "Sample Faculty", text: "Demo testimonial: A strong foundation for academic and administrative workflows." },
-    { name: "Ibrahim K.", role: "Sample Parent", text: "Demo testimonial: Clear admissions journey and transparent information architecture." }
-  ],
-
-  demoUsers: {
-    "student@cun.demo": { password: "student123", role: "student", name: "Demo Student", id: "CUN/2024/0001", programme: "B.Sc. Computer Science", level: "200" },
-    "staff@cun.demo": { password: "staff123", role: "staff", name: "Demo Staff", id: "STF-001", department: "Computer Science" },
-    "admin@cun.demo": { password: "admin123", role: "admin", name: "Demo Admin", id: "ADM-001" }
-  }
+  testimonials: []
 };

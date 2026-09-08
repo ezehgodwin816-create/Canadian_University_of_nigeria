@@ -1,20 +1,18 @@
 /**
- * CUN Website Configuration
- * Demo mode works without Supabase. Do NOT put service-role keys here.
+ * Canadian University of Nigeria — production configuration.
+ * Never place a Supabase service-role key or payment secret in this file.
  */
-
 window.CUN_CONFIG = {
-  // Set to true and fill keys when Supabase project is ready
-  useSupabase: false,
-  supabaseUrl: "YOUR_SUPABASE_URL",
-  supabaseAnonKey: "YOUR_SUPABASE_ANON_KEY",
-
-  // Site
+  useSupabase: true,
+  supabaseUrl: "",
+  supabaseAnonKey: "",
   siteName: "Canadian University of Nigeria",
-  siteUrl: "", // set for production canonicals
-  demoMode: true,
-
-  // Paths
+  siteUrl: "https://www.cun.edu.ng/",
+  demoMode: false,
+  allowDemoAccounts: false,
+  paymentProvider: "paystack",
+  paymentPublicKey: "",
+  storageBucket: "application-documents",
   loginRedirect: {
     student: "student-portal.html",
     staff: "staff-portal.html",

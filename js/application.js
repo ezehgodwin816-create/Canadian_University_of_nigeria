@@ -1,52 +1,32 @@
 /**
- * Multi-step application workflow (demo / localStorage)
+ * Admissions workflow.
+ * Public form state may be kept locally while the final submission is sent to Supabase.
+ * Payment and document verification must be server-verified.
  */
-
 const Application = {
-  STORAGE_KEY: "cun_applications",
-  CURRENT_KEY: "cun_current_application",
+  STORAGE_KEY:"cun_application_draft",
+  getCurrent(){ return Store.get(this.STORAGE_KEY,{}); },
+  setCurrent(data){ Store.set(this.STORAGE_KEY,data); },
+  clearCurrent(){ Store.remove(this.STORAGE_KEY); },
 
-  getAll() {
-    return Store.get(this.STORAGE_KEY, []);
-  },
-
-  saveAll(list) {
-    Store.set(this.STORAGE_KEY, list);
-  },
-
-  getCurrent() {
-    return Store.get(this.CURRENT_KEY, {});
-  },
-
-  setCurrent(data) {
-    Store.set(this.CURRENT_KEY, data);
-  },
-
-  clearCurrent() {
-    Store.remove(this.CURRENT_KEY);
-  },
-
-  submit(data) {
-    const appNumber = generateAppNumber();
-    const record = {
-      ...data,
-      applicationNumber: appNumber,
-      status: "received",
-      submittedAt: new Date().toISOString(),
-      history: [{ status: "received", date: new Date().toISOString(), note: "Application submitted (demo)" }]
-    };
-    const all = this.getAll();
-    all.push(record);
-    this.saveAll(all);
+  async submit(data){
+    if(!window.SupabaseClient) {
+      return {success:false,message:"Admissions backend is not connected. Configure Supabase before accepting applications."};
+    }
+    const record={...data,submittedAt:new Date().toISOString()};
+    const {data:row,error}=await window.SupabaseClient
+      .from("applications").insert(record).select("id,application_number,status,submitted_at").single();
+    if(error) return {success:false,message:error.message};
     this.clearCurrent();
-    return record;
+    return {success:true,record:row};
   },
 
-  findByNumberAndEmail(number, email) {
-    return this.getAll().find(
-      (a) => a.applicationNumber === number && (a.email || "").toLowerCase() === email.toLowerCase()
-    );
+  async findByNumberAndEmail(number,email){
+    if(!window.SupabaseClient) return null;
+    const {data,error}=await window.SupabaseClient
+      .from("applications").select("id,application_number,status,submitted_at,programme_name")
+      .eq("application_number",number).eq("email",email.toLowerCase()).maybeSingle();
+    return error?null:data;
   }
 };
-
-window.Application = Application;
+window.Application=Application;
