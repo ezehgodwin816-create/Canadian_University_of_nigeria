@@ -49,21 +49,42 @@ window.getQueryParam = getQueryParam;
 window.generateAppNumber = generateAppNumber;
 window.Store = Store;
 
-/* Supabase bootstrap — uses only the public anon key. */
-(function(){
-  const cfg=window.CUN_CONFIG||{};
-  if(!cfg.useSupabase || !cfg.supabaseUrl || !cfg.supabaseAnonKey) return;
-  const tag=document.createElement("script");
-  tag.src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2";
-  tag.onload=()=>{
-    if(window.supabase?.createClient){
-      window.SupabaseClient=window.supabase.createClient(cfg.supabaseUrl,cfg.supabaseAnonKey,{
-        auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}
-      });
+/* Supabase bootstrap — uses only the public publishable/anon key. */
+window.CUNSupabaseReady = new Promise((resolve, reject) => {
+  const cfg = window.CUN_CONFIG || {};
+  if (!cfg.useSupabase || !cfg.supabaseUrl || !cfg.supabaseAnonKey) {
+    reject(new Error("Supabase is not configured."));
+    return;
+  }
+
+  const existing = document.querySelector('script[data-cun-supabase]');
+  const finish = () => {
+    if (!window.supabase?.createClient) {
+      reject(new Error("Supabase library could not be loaded. Check your internet connection and refresh the page."));
+      return;
     }
+    try {
+      window.SupabaseClient = window.supabase.createClient(cfg.supabaseUrl, cfg.supabaseAnonKey, {
+        auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true }
+      });
+      resolve(window.SupabaseClient);
+    } catch (err) { reject(err); }
   };
+
+  if (existing) {
+    if (window.supabase?.createClient) finish();
+    else existing.addEventListener('load', finish, {once:true});
+    existing.addEventListener('error', () => reject(new Error("Supabase library could not be loaded.")), {once:true});
+    return;
+  }
+
+  const tag = document.createElement("script");
+  tag.dataset.cunSupabase = "true";
+  tag.src = "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2";
+  tag.onload = finish;
+  tag.onerror = () => reject(new Error("Supabase library could not be loaded. Check your internet connection and refresh the page."));
   document.head.appendChild(tag);
-})();
+});
 
 /* Payment + document services. Keep provider secrets on the server. */
 window.CUNPayments = {

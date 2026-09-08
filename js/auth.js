@@ -6,6 +6,7 @@ const Auth = {
   SESSION_KEY: "cun_session",
 
   async getSession() {
+    if (window.CUNSupabaseReady) await window.CUNSupabaseReady;
     if (!window.SupabaseClient?.auth) return null;
     const { data, error } = await window.SupabaseClient.auth.getSession();
     if (error || !data?.session) return null;
@@ -13,6 +14,7 @@ const Auth = {
   },
 
   async getUserContext() {
+    if (window.CUNSupabaseReady) await window.CUNSupabaseReady;
     if (!window.SupabaseClient?.auth) return null;
     const { data: authData, error: authError } = await window.SupabaseClient.auth.getUser();
     if (authError || !authData?.user) return null;
@@ -33,7 +35,12 @@ const Auth = {
   },
 
   async login(email, password) {
-    if (!window.SupabaseClient?.auth) return {success:false,message:"Authentication is not configured. Add the Supabase project URL and publishable key to js/config.js."};
+    try {
+      if (window.CUNSupabaseReady) await window.CUNSupabaseReady;
+    } catch (e) {
+      return {success:false,message:e.message || "Supabase could not be loaded. Please refresh and try again."};
+    }
+    if (!window.SupabaseClient?.auth) return {success:false,message:"Authentication is not configured. Check js/config.js."};
     const {data, error} = await window.SupabaseClient.auth.signInWithPassword({
       email: String(email || "").trim().toLowerCase(), password
     });
