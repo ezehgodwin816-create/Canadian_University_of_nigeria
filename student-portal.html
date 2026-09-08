@@ -8,10 +8,22 @@
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/responsive.css">
 <link rel="manifest" href="app-config/platform-manifest.json">
+<style>
+  /* Student portal mobile navigation: real backdrop + touch-safe navigation */
+  .portal-sidebar-backdrop{display:none;position:fixed;inset:0;background:rgba(4,10,18,.48);backdrop-filter:blur(2px);-webkit-backdrop-filter:blur(2px);z-index:90;touch-action:manipulation}
+  .portal-sidebar-backdrop.open{display:block}
+  @media(max-width:900px){
+    .portal-sidebar{z-index:100;box-shadow:0 18px 60px rgba(0,0,0,.28)}
+    .portal-sidebar.open{left:0}
+    .portal-sidebar-backdrop{display:none}
+    .portal-sidebar-backdrop.open{display:block}
+  }
+</style>
 </head>
 <body data-portal="student">
 <div class="portal-layout">
-    <aside class="portal-sidebar" id="sidebar">
+    <div class="portal-sidebar-backdrop" id="sidebar-backdrop" aria-hidden="true"></div>
+    <aside class="portal-sidebar" id="sidebar" aria-label="Student portal navigation">
       <div class="portal-sidebar-header"><img src="https://www.cun.edu.ng/images/cun-logo.png" alt="CUN" style="height:36px"></div>
       <nav class="portal-nav">
         <a href="#dash" class="active">Dashboard</a>
@@ -25,11 +37,12 @@
     </aside>
     <div class="portal-main">
       <div class="portal-topbar">
-        <button class="portal-mobile-toggle btn btn-ghost" onclick="document.getElementById('sidebar').classList.toggle('open')">☰</button>
+        <button type="button" class="portal-mobile-toggle btn btn-ghost" id="portal-menu-toggle" aria-label="Open navigation" aria-expanded="false">☰</button>
         <strong>Student Portal</strong>
         <span id="student-name">—</span>
       </div>
       <div class="portal-content">
+        <section id="dash" class="portal-section">
         <div class="dash-cards">
           <div class="dash-card"><div class="dash-card-label">Student ID</div><div class="dash-card-value" style="font-size:1.2rem" id="student-id">—</div></div>
           <div class="dash-card"><div class="dash-card-label">Programme</div><div class="dash-card-value" style="font-size:1rem" id="student-programme">—</div></div>
@@ -37,22 +50,23 @@
           <div class="dash-card"><div class="dash-card-label">CGPA</div><div class="dash-card-value" id="student-cgpa">—</div></div>
         </div>
         <div class="grid grid-2 mt-4"><div class="card"><div class="card-body"><h4>Registered Courses</h4><div class="dash-card-value" id="stat-courses">0</div></div></div><div class="card"><div class="card-body"><h4>Recent Invoices</h4><div class="dash-card-value" id="stat-invoices">0</div></div></div></div>
-        <h2 class="mt-4">Applications</h2>
+        <h2 id="applications" class="mt-4">Applications</h2>
         <div class="table-wrap mt-2"><table><thead><tr><th>Application</th><th>Programme</th><th>Status</th><th>Submitted</th></tr></thead><tbody id="student-applications"></tbody></table></div>
-        <h2 class="mt-4">Courses</h2>
+        <h2 id="courses" class="mt-4">Courses</h2>
         <div class="table-wrap mt-2"><table><thead><tr><th>Code</th><th>Course</th><th>Status</th><th>Registered</th></tr></thead><tbody id="courses-list"></tbody></table></div>
-        <h2 class="mt-4">Invoices</h2>
+        <h2 id="fees" class="mt-4">Invoices</h2>
         <div class="table-wrap mt-2"><table><thead><tr><th>Invoice</th><th>Amount</th><th>Status</th><th>Due</th></tr></thead><tbody id="invoices-list"></tbody></table></div>
-        <h2 class="mt-4">Documents</h2>
+        <h2 id="documents" class="mt-4">Documents</h2>
         <div class="table-wrap mt-2"><table><thead><tr><th>Document</th><th>Uploaded</th><th>Access</th></tr></thead><tbody id="documents-list"></tbody></table></div>
-        <h2 class="mt-4">Notifications</h2>
+        <h2 id="support" class="mt-4">Notifications</h2>
         <div id="notif-list"></div>
-        <h2 class="mt-4">Quick Links</h2>
+        <h2 id="results" class="mt-4">Quick Links</h2>
         <div class="grid grid-3 mt-2">
           <div class="card"><div class="card-body"><h4>Course Registration</h4><p class="text-muted">Available when your account is provisioned</p></div></div>
           <div class="card"><div class="card-body"><h4>Timetable</h4><p class="text-muted">Available when your account is provisioned</p></div></div>
           <div class="card"><div class="card-body"><h4>Fee Statement</h4><p class="text-muted">Available when your account is provisioned</p></div></div>
         </div>
+        </section>
       </div>
     </div>
   </div>
@@ -61,7 +75,40 @@
   <script src="js/app.js"></script><script src="js/services/platform.js"></script><script src="js/services/runtime.js"></script>
   <script src="js/auth.js"></script>
   <script src="js/components.js"></script>
-  <script src="js/student.js"></script>
-<script>if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));}</script>
+  <script src="js/student.js?v=20260908-nav2"></script>
+  <script>
+  (() => {
+    const sidebar = document.getElementById("sidebar");
+    const backdrop = document.getElementById("sidebar-backdrop");
+    const toggle = document.getElementById("portal-menu-toggle");
+    const nav = sidebar?.querySelector(".portal-nav");
+    if (!sidebar || !backdrop || !toggle) return;
+
+    const setMenu = (open) => {
+      sidebar.classList.toggle("open", open);
+      backdrop.classList.toggle("open", open);
+      toggle.setAttribute("aria-expanded", String(open));
+      toggle.setAttribute("aria-label", open ? "Close navigation" : "Open navigation");
+      document.body.classList.toggle("portal-menu-open", open);
+    };
+
+    toggle.addEventListener("click", (e) => { e.preventDefault(); e.stopPropagation(); setMenu(!sidebar.classList.contains("open")); });
+    backdrop.addEventListener("click", () => setMenu(false));
+    nav?.addEventListener("click", (e) => {
+      const link = e.target.closest("a");
+      if (!link) return;
+      if (link.getAttribute("href") === "#") return;
+      nav.querySelectorAll("a").forEach(a => a.classList.remove("active"));
+      link.classList.add("active");
+      setMenu(false);
+    });
+    document.addEventListener("keydown", (e) => { if (e.key === "Escape") setMenu(false); });
+    window.addEventListener("hashchange", () => setMenu(false));
+
+    // The portal should not register the old service worker: it could serve stale
+    // navigation JavaScript/CSS and make touch fixes appear not to work.
+    if ("serviceWorker" in navigator) navigator.serviceWorker.getRegistrations().then(rs => rs.forEach(r => r.unregister())).catch(() => {});
+  })();
+  </script>
 </body>
 </html>
