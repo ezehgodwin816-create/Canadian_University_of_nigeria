@@ -740,3 +740,4 @@ body{background:var(--paper);color:#26323d;letter-spacing:.005em}
 input,select,textarea{border-radius:2px!important;border-color:var(--line)!important;background:#fff}
 input:focus,select:focus,textarea:focus{outline:2px solid rgba(199,162,90,.45);outline-offset:1px}
 ::selection{background:var(--gold-soft);color:var(--ink)}
+.status-select{border:1px solid var(--gray-200);border-radius:var(--radius-sm);padding:.45rem .65rem;background:#fff;font:inherit;min-width:130px}.status-select:focus{outline:2px solid rgba(176,142,74,.25);border-color:var(--gold)}
