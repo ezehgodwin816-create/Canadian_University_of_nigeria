@@ -1,90 +1,12 @@
-/* Responsive overrides and mobile refinements */
 
-@media (max-width: 991px) {
-  :root { --header-height: 64px; }
-  .hero { min-height: 55vh; }
-  .hero-content { padding: var(--space-2xl) 0; }
-  .quick-actions { margin-top: calc(-1 * var(--space-xl)); grid-template-columns: repeat(2, 1fr); }
-  .section { padding: var(--space-2xl) 0; }
-  .stats-grid { grid-template-columns: repeat(2, 1fr); }
-  .wizard-steps { flex-wrap: wrap; gap: 1rem; }
-  .wizard-steps::before { display: none; }
-  .wizard-step { flex: 0 0 30%; }
-}
 
-@media (max-width: 600px) {
-  .container { padding: 0 var(--space-md); }
-  .quick-actions { grid-template-columns: 1fr 1fr; gap: var(--space-sm); }
-  .quick-action { padding: var(--space-md); }
-  .quick-action h4 { font-size: 0.85rem; }
-  .stats-grid { grid-template-columns: 1fr 1fr; }
-  .stat-number { font-size: 1.75rem; }
-  .hero-actions { flex-direction: column; }
-  .hero-actions .btn { width: 100%; }
-  .footer-grid { grid-template-columns: 1fr 1fr; gap: var(--space-xl); }
-  .dash-cards { grid-template-columns: 1fr 1fr; }
-  .filter-bar { flex-direction: column; align-items: stretch; }
-  .filter-bar select, .filter-bar input { min-width: 100%; }
-  .form-row { grid-template-columns: 1fr; }
-}
-
-@media (max-width: 400px) {
-  .quick-actions { grid-template-columns: 1fr; }
-  .stats-grid { grid-template-columns: 1fr; }
-  .footer-grid { grid-template-columns: 1fr; }
-}
-
-/* Large screens */
-@media (min-width: 1400px) {
-  .container { max-width: 1280px; }
-}
-
-/* =====================================================
-   Mobile viewport stability
-   Prevent the off-canvas hamburger menu and transformed
-   elements from creating horizontal page overflow.
-   ===================================================== */
-html, body {
-  width: 100%;
-  max-width: 100%;
-  overflow-x: clip;
-}
-
-@supports not (overflow: clip) {
-  html, body { overflow-x: hidden; }
-}
-
-@media (max-width: 991px) {
-  .site-header,
-  .header-inner,
-  .container,
-  .container-wide {
-    max-width: 100%;
-  }
-
-  .header-inner {
-    min-width: 0;
-  }
-
-  .header-actions {
-    min-width: 0;
-    flex-shrink: 0;
-  }
-
-  .menu-toggle {
-    flex: 0 0 auto;
-  }
-
-  .mobile-menu {
-    width: 100vw;
-    max-width: 100vw;
-    overflow: hidden;
-  }
-
-  .mobile-menu-panel {
-    width: min(360px, 100vw);
-    max-width: 100vw;
-    box-sizing: border-box;
-    right: 0;
-  }
+/* CUN mobile viewport fix — keep navigation and interactive controls visible */
+html { width:100%; max-width:100%; overflow-x:hidden; }
+body { width:100%; max-width:100%; margin:0; }
+@media (max-width:991px) {
+  .header-inner, .container, .container-wide { max-width:100%; min-width:0; }
+  .header-actions { min-width:0; flex-shrink:0; }
+  .menu-toggle { flex:0 0 auto; }
+  .mobile-menu { position:fixed; inset:0; width:100%; max-width:100%; overflow:visible; }
+  .mobile-menu-panel { right:0; width:min(360px,100%); max-width:100%; box-sizing:border-box; }
 }
