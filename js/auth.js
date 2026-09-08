@@ -5,9 +5,32 @@
 const Auth = {
   SESSION_KEY: "cun_session",
 
+  async _hydrateSession() {
+    // login.html uses the Supabase Auth REST API directly. Restore that
+    // returned session into supabase-js before any protected page checks it.
+    if (!window.SupabaseClient?.auth) return null;
+    try {
+      const raw = localStorage.getItem(this.SESSION_KEY) || localStorage.getItem("cun_supabase_session");
+      if (!raw) return null;
+      const saved = JSON.parse(raw);
+      if (!saved?.access_token || !saved?.refresh_token) return null;
+      const current = await window.SupabaseClient.auth.getSession();
+      if (current?.data?.session?.access_token) return current.data.session;
+      const restored = await window.SupabaseClient.auth.setSession({
+        access_token: saved.access_token,
+        refresh_token: saved.refresh_token
+      });
+      return restored?.data?.session || null;
+    } catch (e) {
+      console.warn("CUN session restore failed", e);
+      return null;
+    }
+  },
+
   async getSession() {
     if (window.CUNSupabaseReady) await window.CUNSupabaseReady;
     if (!window.SupabaseClient?.auth) return null;
+    await this._hydrateSession();
     const { data, error } = await window.SupabaseClient.auth.getSession();
     if (error || !data?.session) return null;
     return data.session;
@@ -16,6 +39,7 @@ const Auth = {
   async getUserContext() {
     if (window.CUNSupabaseReady) await window.CUNSupabaseReady;
     if (!window.SupabaseClient?.auth) return null;
+    await this._hydrateSession();
     const { data: authData, error: authError } = await window.SupabaseClient.auth.getUser();
     if (authError || !authData?.user) return null;
     const user = authData.user;
