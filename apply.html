@@ -63,7 +63,7 @@
         <div class="form-step" data-step="3" style="display:none">
           <h3>Programme Choice</h3>
           <div class="form-group"><label class="form-label">Programme <span class="required">*</span></label>
-            <select class="form-control" name="programme" id="prog-select" required></select><div class="form-error"></div>
+            <select class="form-control" name="programme" id="prog-select" required></select><input type="hidden" name="programmeId" id="programme-id"><div class="form-error"></div>
           </div>
           <div class="form-group"><label class="form-label">Entry Type</label><select class="form-control" name="entryType"><option>UTME</option><option>Direct Entry</option><option>Transfer</option></select></div>
           <div class="form-group"><label class="form-label">Study Mode</label><select class="form-control" name="studyMode"><option>Full-time</option><option>Part-time</option></select></div>
@@ -122,10 +122,21 @@
     const total = 6;
     const form = document.getElementById("app-form");
     const progSelect = document.getElementById("prog-select");
-    (async()=>{ if(window.SupabaseClient){ const {data}=await window.SupabaseClient.from("programmes").select("name").eq("is_active",true).order("name"); if(data?.length){ progSelect.innerHTML=""; data.forEach(p=>{const o=document.createElement("option");o.value=p.name;o.textContent=p.name;progSelect.appendChild(o);}); } } })();
-    (window.CUN_DATA?.programmes||[]).forEach(p=>{
-      const o=document.createElement("option"); o.value=p.name; o.textContent=p.name; progSelect.appendChild(o);
-    });
+    (async()=>{
+      try {
+        if(window.CUNSupabaseReady) await window.CUNSupabaseReady;
+        const {data,error}=await window.SupabaseClient.from("programmes").select("id,name").eq("is_active",true).order("name");
+        if(error) throw error;
+        if(data?.length){
+          progSelect.innerHTML='<option value="">Select a programme</option>';
+          data.forEach(p=>{const o=document.createElement("option");o.value=p.name;o.dataset.programmeId=p.id;o.textContent=p.name;progSelect.appendChild(o);});
+        } else throw new Error("No active programmes found");
+      } catch(e) {
+        progSelect.innerHTML='<option value="">Select a programme</option>';
+        (window.CUN_DATA?.programmes||[]).forEach(p=>{ const o=document.createElement("option"); o.value=p.name; o.textContent=p.name; progSelect.appendChild(o); });
+      }
+    })();
+    progSelect.addEventListener("change",()=>{ document.getElementById("programme-id").value=progSelect.selectedOptions[0]?.dataset.programmeId || ""; });
     function showStep(n){
       document.querySelectorAll(".form-step").forEach(s=>s.style.display="none");
       document.querySelector(`.form-step[data-step="${n}"]`).style.display="block";
@@ -156,6 +167,8 @@
       if(!validateRequired(form)) return;
       const fd=new FormData(form);
       const data=Object.fromEntries(fd.entries());
+      data.programmeId = document.getElementById("programme-id")?.value || "";
+      data.programmeName = data.programme || "";
       const result=await Application.submit(data);
       if(!result.success){ Toast.error(result.message); return; }
       const record=result.record;
@@ -166,6 +179,6 @@
       Toast.success("Application submitted successfully");
     };
   </script>
-<script>if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));}</script>
+<script>if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.serviceWorker.getRegistrations().then(rs=>rs.forEach(r=>r.unregister())).catch(()=>{}));}</script>
 </body>
 </html>
