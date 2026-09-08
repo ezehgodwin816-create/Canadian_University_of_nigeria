@@ -1,0 +1,11 @@
+# Security Baseline
+- Never commit secrets or service-role keys.
+- MFA for privileged users and least-privilege roles.
+- Private application document storage with signed URLs.
+- Server-side file validation and upload limits.
+- Cryptographic payment webhook verification and idempotency.
+- Never trust a browser payment callback as proof of payment.
+- Rate limiting/CAPTCHA on public forms and authentication endpoints.
+- Security headers: HSTS, CSP, frame-ancestors, referrer-policy, permissions-policy, nosniff.
+- Audit privileged actions without storing passwords, tokens or document contents.
+- Backups, restore tests and incident-response procedures before launch.
