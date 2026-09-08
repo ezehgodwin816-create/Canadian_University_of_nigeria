@@ -9,24 +9,26 @@ const Application = {
     if(!window.SupabaseClient) return {success:false,message:"Admissions backend is not connected."};
     const session = await Auth.getSession();
     if(!session?.user) return {success:false,message:"Please sign in or create an applicant account before submitting an application."};
-    const applicationNumber = generateAppNumber();
-    const record = {
-      application_number: applicationNumber,
-      user_id: session.user.id,
+
+    const payload = {
       email: String(data.email || session.user.email || "").trim().toLowerCase(),
       first_name: data.firstName || "",
       last_name: data.lastName || "",
+      programme_id: data.programmeId || null,
       programme_name: data.programme || "",
-      status: "received",
       entry_type: data.entryType || "UTME",
       study_mode: data.studyMode || "Full-time",
-      data: data
+      data
     };
-    const {data:row,error}=await window.SupabaseClient.from("applications")
-      .insert(record).select("id,application_number,status,submitted_at,programme_name").single();
+
+    // The database RPC generates the authoritative application number and records
+    // the authenticated owner. This prevents client-side number collisions.
+    const {data: row, error} = await window.SupabaseClient.rpc("submit_application", {p_payload: payload});
     if(error) return {success:false,message:error.message};
+    const record = Array.isArray(row) ? row[0] : row;
+    if(!record) return {success:false,message:"Application was not returned by the admissions service."};
     this.clearCurrent();
-    return {success:true,record:row};
+    return {success:true,record};
   },
 
   async findByNumberAndEmail(number,email){

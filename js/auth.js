@@ -42,7 +42,7 @@ const Auth = {
     const roleCodes = (context?.roles || []).map(r => r.code);
     let role = "student";
     if (roleCodes.includes("super_admin") || roleCodes.includes("admin")) role = "admin";
-    else if (roleCodes.some(r => ["admissions","finance","registrar","academic","staff"].includes(r))) role = "staff";
+    else if (roleCodes.some(r => ["admissions","finance","registry","registrar","academic","staff"].includes(r))) role = "staff";
     else if (context?.profile?.role === "admin") role = "admin";
     else if (context?.profile?.role === "staff") role = "staff";
     return {success:true, session:data.session, user:data.user, context, role};
@@ -71,7 +71,7 @@ const Auth = {
     const roleCodes = (context.roles || []).map(r => r.code);
     const profileRole = context.profile?.role;
     const effective = roleCodes.includes("super_admin") || roleCodes.includes("admin") || profileRole === "admin" ? "admin" :
-      roleCodes.some(r => ["admissions","finance","registrar","academic","staff"].includes(r)) || profileRole === "staff" ? "staff" : "student";
+      roleCodes.some(r => ["admissions","finance","registry","registrar","academic","staff"].includes(r)) || profileRole === "staff" ? "staff" : "student";
     if(!allowed.includes(effective)) { window.location.href="login.html"; return null; }
     return {...context, role:effective};
   },
