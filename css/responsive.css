@@ -1,12 +1,131 @@
+/* Responsive overrides and mobile refinements */
 
-
-/* CUN mobile viewport fix — keep navigation and interactive controls visible */
-html { width:100%; max-width:100%; overflow-x:hidden; }
-body { width:100%; max-width:100%; margin:0; }
-@media (max-width:991px) {
-  .header-inner, .container, .container-wide { max-width:100%; min-width:0; }
-  .header-actions { min-width:0; flex-shrink:0; }
-  .menu-toggle { flex:0 0 auto; }
-  .mobile-menu { position:fixed; inset:0; width:100%; max-width:100%; overflow:visible; }
-  .mobile-menu-panel { right:0; width:min(360px,100%); max-width:100%; box-sizing:border-box; }
+@media (max-width: 991px) {
+  :root { --header-height: 64px; }
+  .hero { min-height: 55vh; }
+  .hero-content { padding: var(--space-2xl) 0; }
+  .quick-actions { margin-top: calc(-1 * var(--space-xl)); grid-template-columns: repeat(2, 1fr); }
+  .section { padding: var(--space-2xl) 0; }
+  .stats-grid { grid-template-columns: repeat(2, 1fr); }
+  .wizard-steps { flex-wrap: wrap; gap: 1rem; }
+  .wizard-steps::before { display: none; }
+  .wizard-step { flex: 0 0 30%; }
 }
+
+/* Mobile header: keep the logo, search, Portals, Apply Now and hamburger visible together. */
+@media (max-width: 991px) {
+  .header-inner {
+    width: 100%;
+    min-width: 0;
+    gap: 4px;
+  }
+
+  .logo-link {
+    min-width: 0 !important;
+    max-width: 48%;
+    gap: 5px;
+    flex: 1 1 auto;
+    overflow: hidden;
+  }
+
+  .logo-link img {
+    width: 38px;
+    height: 38px !important;
+    flex: 0 0 38px;
+  }
+
+  .logo-link::after {
+    font-size: 9px !important;
+    line-height: 1.05;
+    letter-spacing: -.02em;
+  }
+
+  .header-actions {
+    min-width: 0;
+    flex: 0 0 auto;
+    gap: 2px;
+    white-space: nowrap;
+  }
+
+  .header-actions .search-toggle,
+  .header-actions .menu-toggle {
+    width: 32px;
+    height: 32px;
+    flex: 0 0 32px;
+  }
+
+  .header-actions .btn-sm {
+    padding: .3rem .42rem;
+    font-size: .58rem;
+    line-height: 1;
+    letter-spacing: .01em;
+  }
+
+  /* Keep both top action buttons visible on phones. */
+  .header-actions .btn-ghost {
+    display: inline-flex !important;
+  }
+
+  .menu-toggle {
+    display: flex !important;
+  }
+
+  .mobile-menu {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    max-width: 100%;
+    overflow: hidden;
+  }
+
+  .mobile-menu-panel {
+    right: 0;
+    width: min(360px, 100%);
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+}
+
+@media (max-width: 600px) {
+  .container { padding: 0 var(--space-md); }
+  .header-inner { padding-left: 10px; padding-right: 10px; }
+
+  .quick-actions { grid-template-columns: 1fr 1fr; gap: var(--space-sm); }
+  .quick-action { padding: var(--space-md); }
+  .quick-action h4 { font-size: 0.85rem; }
+  .stats-grid { grid-template-columns: 1fr 1fr; }
+  .stat-number { font-size: 1.75rem; }
+  .hero-actions { flex-direction: column; }
+  .hero-actions .btn { width: 100%; }
+  .footer-grid { grid-template-columns: 1fr 1fr; gap: var(--space-xl); }
+  .dash-cards { grid-template-columns: 1fr 1fr; }
+  .filter-bar { flex-direction: column; align-items: stretch; }
+  .filter-bar select, .filter-bar input { min-width: 100%; }
+  .form-row { grid-template-columns: 1fr; }
+
+  /* Extra-tight phones: preserve every header control instead of hiding any of them. */
+  .logo-link { max-width: 43%; }
+  .logo-link img { width: 34px; height: 34px !important; flex-basis: 34px; }
+  .logo-link::after { font-size: 8px !important; }
+  .header-actions { gap: 1px; }
+  .header-actions .search-toggle,
+  .header-actions .menu-toggle { width: 29px; height: 29px; flex-basis: 29px; }
+  .header-actions .search-toggle svg { width: 17px; height: 17px; }
+  .header-actions .menu-toggle svg { width: 20px; height: 20px; }
+  .header-actions .btn-sm { padding: .28rem .34rem; font-size: .54rem; }
+}
+
+@media (max-width: 400px) {
+  .quick-actions { grid-template-columns: 1fr; }
+  .stats-grid { grid-template-columns: 1fr; }
+  .footer-grid { grid-template-columns: 1fr; }
+}
+
+/* Large screens */
+@media (min-width: 1400px) {
+  .container { max-width: 1280px; }
+}
+
+/* Final viewport safety: prevent accidental horizontal scrolling without clipping the mobile menu panel. */
+html { width: 100%; max-width: 100%; overflow-x: hidden; }
+body { width: 100%; max-width: 100%; margin: 0; }
