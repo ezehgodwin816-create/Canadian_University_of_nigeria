@@ -1,0 +1,50 @@
+@media print {
+  .demo-banner,
+  .site-header,
+  .site-footer,
+  .mobile-menu,
+  .btn,
+  .no-print,
+  .portal-sidebar,
+  .portal-topbar,
+  .toast-container,
+  .modal-overlay {
+    display: none !important;
+  }
+
+  body {
+    font-size: 11pt;
+    color: #000;
+    background: #fff;
+  }
+
+  a {
+    color: #000;
+    text-decoration: none;
+  }
+
+  .container {
+    max-width: 100%;
+    padding: 0;
+  }
+
+  .card {
+    box-shadow: none;
+    border: 1px solid #ccc;
+    break-inside: avoid;
+  }
+
+  h1, h2, h3 {
+    color: #000;
+  }
+
+  .page-header {
+    background: none !important;
+    color: #000;
+    padding: 1rem 0;
+  }
+
+  .page-header h1 {
+    color: #000;
+  }
+}
