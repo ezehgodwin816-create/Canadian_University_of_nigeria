@@ -4,8 +4,8 @@
  */
 window.CUN_CONFIG = {
   useSupabase: true,
-  supabaseUrl: "",
-  supabaseAnonKey: "",
+  supabaseUrl: "https://zrsbzymipbixnutfjbkq.supabase.co",
+  supabaseAnonKey: "sb_publishable_iz03xBmfWKid323pollPxg_nCBbD5Ex",
   siteName: "Canadian University of Nigeria",
   siteUrl: "https://www.cun.edu.ng/",
   demoMode: false,
