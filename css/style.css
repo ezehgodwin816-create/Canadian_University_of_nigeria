@@ -590,3 +590,114 @@ tr:last-child td { border-bottom: none; }
   body { font-size: 12pt; color: black; }
   a { text-decoration: none; color: black; }
 }
+
+/* =========================================================
+   CUN V2 — Executive / Institutional Design Layer
+   No demo chrome. Editorial, restrained, premium.
+   ========================================================= */
+:root{
+  --primary:#101828;
+  --primary-dark:#080d17;
+  --primary-light:#1d2939;
+  --accent:#c79a45;
+  --accent-hover:#b8862f;
+  --accent-light:#f2e4c7;
+  --teal:#0b6670;
+  --white:#fff;
+  --off-white:#f7f7f5;
+  --gray-50:#fafafa;
+  --gray-100:#f2f4f7;
+  --gray-200:#eaecf0;
+  --gray-300:#d0d5dd;
+  --gray-400:#98a2b3;
+  --gray-500:#667085;
+  --gray-600:#475467;
+  --gray-700:#344054;
+  --gray-800:#1d2939;
+  --gray-900:#101828;
+  --font-serif:Georgia,"Times New Roman",serif;
+  --font-sans:Inter,"Avenir Next","Segoe UI",system-ui,-apple-system,sans-serif;
+  --container:1280px;
+  --container-wide:1480px;
+  --header-height:88px;
+  --radius-sm:6px;
+  --radius-md:10px;
+  --radius-lg:18px;
+  --radius-xl:28px;
+  --shadow-sm:0 1px 2px rgba(16,24,40,.05);
+  --shadow-md:0 12px 32px rgba(16,24,40,.08);
+  --shadow-lg:0 24px 70px rgba(16,24,40,.14);
+  --transition:.25s cubic-bezier(.2,.8,.2,1);
+}
+body{background:#fff;color:var(--gray-800);font-family:var(--font-sans);letter-spacing:-.01em}
+h1,h2,h3,h4,h5,h6{font-family:var(--font-serif);letter-spacing:-.025em}
+h1{font-size:clamp(2.8rem,6vw,5.5rem);line-height:1.02}
+h2{font-size:clamp(2.1rem,4vw,3.5rem);line-height:1.05}
+p{color:var(--gray-600)}
+.container{max-width:var(--container)}
+.site-header{
+  height:var(--header-height);background:rgba(8,13,23,.94);
+  backdrop-filter:blur(18px);border-bottom:1px solid rgba(255,255,255,.09);
+  position:sticky;top:0;z-index:1000
+}
+.header-inner{height:100%;max-width:var(--container-wide)}
+.logo-link{display:flex;align-items:center;gap:12px;min-width:230px}
+.logo-link img{width:42px;height:42px;object-fit:contain;background:#fff;border-radius:8px;padding:4px}
+.logo-link::after{
+  content:"Canadian University\\A of Nigeria";white-space:pre;
+  color:#fff;font-family:var(--font-serif);font-size:14px;font-weight:700;line-height:1.05
+}
+.main-nav{gap:4px}
+.nav-link,.main-nav>a{color:rgba(255,255,255,.82);font-weight:600;font-size:.88rem;padding:.65rem .7rem}
+.nav-link:hover,.main-nav>a:hover{color:#fff}
+.dropdown{background:#101828;border:1px solid rgba(255,255,255,.1);box-shadow:var(--shadow-lg);border-radius:12px;padding:8px}
+.dropdown a{color:#fff;border-radius:8px;padding:10px 12px}
+.dropdown a:hover{background:rgba(255,255,255,.08);color:#fff}
+.header-actions .btn-ghost{border-color:rgba(255,255,255,.18);color:#fff}
+.btn{border-radius:999px;font-weight:700;letter-spacing:.01em}
+.btn-accent{background:var(--accent);color:#101828;box-shadow:0 8px 20px rgba(199,154,69,.2)}
+.btn-accent:hover{background:#e0b867;color:#101828;transform:translateY(-1px)}
+.hero{min-height:720px;display:flex;align-items:center;position:relative;overflow:hidden}
+.hero-bg{transform:scale(1.03);filter:saturate(.7) contrast(1.05)}
+.hero-overlay{background:linear-gradient(90deg,rgba(5,10,18,.92) 0%,rgba(5,10,18,.72) 42%,rgba(5,10,18,.2) 100%)}
+.hero-content{max-width:var(--container-wide);padding-top:90px;padding-bottom:90px}
+.hero-badge{display:inline-flex;border:1px solid rgba(255,255,255,.24);background:rgba(255,255,255,.07);backdrop-filter:blur(10px);border-radius:999px;padding:8px 14px;color:#fff;font-size:.75rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;margin-bottom:22px}
+.hero h1{max-width:850px;color:#fff}
+.hero p{max-width:700px;color:rgba(255,255,255,.82);font-size:1.1rem;line-height:1.8}
+.hero-actions{gap:12px}
+.quick-actions{margin-top:-55px;position:relative;z-index:3;background:#fff;border:1px solid var(--gray-200);border-radius:20px;box-shadow:var(--shadow-lg);padding:10px;display:grid;grid-template-columns:repeat(4,1fr)}
+.quick-action{border-radius:14px;padding:25px 22px;transition:var(--transition)}
+.quick-action:hover{background:var(--off-white);transform:translateY(-2px)}
+.quick-action h4{margin-top:14px}
+.quick-action p{font-size:.9rem;margin:0}
+.quick-action-icon{width:44px;height:44px;border-radius:12px;background:var(--accent-light);color:var(--primary);display:grid;place-items:center}
+.section{padding:100px 0}
+.section-header{max-width:800px;margin-bottom:48px}
+.eyebrow,.section-eyebrow{font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;font-weight:800;color:var(--accent);margin-bottom:12px}
+.card{border:1px solid var(--gray-200);border-radius:18px;box-shadow:var(--shadow-sm);background:#fff}
+.card:hover{box-shadow:var(--shadow-md)}
+.badge{border-radius:999px;padding:.35rem .65rem;font-weight:700}
+.footer{background:#080d17;border-top:1px solid rgba(255,255,255,.08)}
+.footer a{color:rgba(255,255,255,.7)}
+.footer a:hover{color:#fff}
+.demo-banner{display:none!important}
+.mobile-menu-panel{background:#0b1220}
+.search-overlay{background:rgba(8,13,23,.96)}
+input,select,textarea{border-radius:10px;border:1px solid var(--gray-300);padding:.8rem 1rem}
+input:focus,select:focus,textarea:focus{outline:2px solid rgba(199,154,69,.28);border-color:var(--accent)}
+table{border-radius:12px;overflow:hidden}
+@media(max-width:1000px){
+ .main-nav{display:none}
+ .quick-actions{grid-template-columns:repeat(2,1fr);margin:0 1rem;transform:translateY(-35px)}
+ .hero{min-height:650px}
+}
+@media(max-width:600px){
+ .logo-link{min-width:auto}.logo-link::after{font-size:12px}
+ .header-actions .btn-ghost{display:none}
+ .quick-actions{grid-template-columns:1fr;margin:0 0 1rem;transform:none}
+ .hero-content{padding-top:70px;padding-bottom:80px}
+ .hero h1{font-size:clamp(2.5rem,13vw,4rem)}
+ .section{padding:70px 0}
+}
+
+@media(max-width:800px){.card[style*="grid-template-columns:repeat(3,1fr)"]{grid-template-columns:1fr!important}.card[style*="grid-template-columns:repeat(3,1fr)"]>div{border-right:0!important;border-bottom:1px solid var(--gray-200)}.card[style*="grid-template-columns:repeat(3,1fr)"]>div:last-child{border-bottom:0}}
