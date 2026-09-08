@@ -16,30 +16,35 @@
   </div></header>
   <main class="section"><div class="container" style="max-width:560px">
     <h1>Check Application Status</h1>
-    <form id="status-form" class="card" style="padding:1.5rem">
+    <p class="text-muted">Sign in to your applicant account before checking an application. This prevents public enumeration of application records.</p><form id="status-form" class="card" style="padding:1.5rem">
       <div class="form-group"><label class="form-label">Application Number</label><input class="form-control" name="number" required placeholder="CUN/2026/......"></div>
       <div class="form-group"><label class="form-label">Email</label><input type="email" class="form-control" name="email" required></div>
       <button type="submit" class="btn btn-primary btn-block">Check Status</button>
     </form>
     <div id="status-result" class="mt-4" style="display:none"></div>
   </div></main>
-  <script src="js/app.js"></script><script src="js/services/platform.js"></script><script src="js/services/runtime.js"></script>
+  <script src="js/config.js"></script>
+  <script src="js/config.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/auth.js"></script><script src="js/services/platform.js"></script><script src="js/services/runtime.js"></script>
   <script src="js/application.js"></script>
   <script src="js/components.js"></script>
   <script>
-    document.getElementById("status-form").onsubmit=(e)=>{
+    document.getElementById("status-form").onsubmit=async (e)=>{
       e.preventDefault();
       const fd=new FormData(e.target);
-      const rec=Application.findByNumberAndEmail(fd.get("number"), fd.get("email"));
+      const session=await Auth.getSession();
+      if(!session){ Toast.error("Please sign in first."); window.location.href="login.html?next=application-status.html"; return; }
+      const rec=await Application.findByNumberAndEmail(fd.get("number"), fd.get("email"));
       const box=document.getElementById("status-result");
       box.style.display="block";
       if(!rec){ box.innerHTML='<div class="card" style="padding:1.5rem"><p>No application found. Ensure you used the same browser where you applied, or that the number and email match.</p></div>'; return; }
       box.innerHTML=`<div class="card" style="padding:1.5rem">
-        <h3>${sanitize(rec.applicationNumber)}</h3>
+        <h3>${sanitize(rec.application_number)}</h3>
         <p><strong>Status:</strong> <span class="badge badge-info">${sanitize(rec.status)}</span></p>
-        <p><strong>Name:</strong> ${sanitize(rec.firstName||"")} ${sanitize(rec.lastName||"")}</p>
-        <p><strong>Programme:</strong> ${sanitize(rec.programme||"—")}</p>
-        <p><strong>Submitted:</strong> ${formatDate(rec.submittedAt)}</p>
+        <p><strong>Name:</strong> ${sanitize(rec.first_name||"")} ${sanitize(rec.last_name||"")}</p>
+        <p><strong>Programme:</strong> ${sanitize(rec.programme_name||"—")}</p>
+        <p><strong>Submitted:</strong> ${formatDate(rec.submitted_at)}</p>
         <p class="text-muted mt-2">official statuses: received → under review → decision. Admin can change status in full production system.</p>
       </div>`;
     };
