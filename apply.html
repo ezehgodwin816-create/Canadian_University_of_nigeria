@@ -3,22 +3,21 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Apply | Canadian University of Nigeria (Demo)</title>
-  <meta name="description" content="Multi-step online application demo for Canadian University of Nigeria.">
+  <title>Apply | Canadian University of Nigeria</title>
+  <meta name="description" content="Multi-step online application institutional for Canadian University of Nigeria.">
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/responsive.css">
 </head>
 <body>
-  <div class="demo-banner">DEMO APPLICATION — Data saved only in your browser (localStorage). Not a real admissions system.</div>
-  <header class="site-header"><div class="container header-inner">
-    <a href="index.html" class="logo-link"><img src="assets/logo.svg" alt="CUN"></a>
+<header class="site-header"><div class="container header-inner">
+    <a href="index.html" class="logo-link"><img src="https://www.cun.edu.ng/images/cun-logo.png" alt="CUN"></a>
     <div class="header-actions"><a href="index.html" class="btn btn-ghost btn-sm">Home</a><a href="application-status.html" class="btn btn-outline btn-sm">Check Status</a></div>
   </div></header>
   <main class="section">
     <div class="container" style="max-width:800px">
       <h1 class="text-center">Online Application</h1>
-      <p class="text-center text-muted mb-4">Demo multi-step form. All data is stored locally in your browser.</p>
+      <p class="text-center text-muted mb-4">institutional multi-step form. All data is stored locally in your browser.</p>
       <div class="wizard-steps" id="wizard-steps">
         <div class="wizard-step active" data-step="1"><div class="wizard-step-num">1</div><div class="wizard-step-label">Personal</div></div>
         <div class="wizard-step" data-step="2"><div class="wizard-step-num">2</div><div class="wizard-step-label">Academic</div></div>
@@ -71,7 +70,7 @@
         <!-- Step 4 -->
         <div class="form-step" data-step="4" style="display:none">
           <h3>Documents</h3>
-          <p class="text-muted">Demo upload UI only — files are not uploaded to a server.</p>
+          <p class="text-muted">institutional upload UI only — files are not uploaded to a server.</p>
           <div class="form-group"><label class="form-label">Passport Photo</label><input type="file" class="form-control" accept="image/*"></div>
           <div class="form-group"><label class="form-label">O'Level Result</label><input type="file" class="form-control" accept=".pdf,image/*"></div>
           <div class="form-group"><label class="form-label">Birth Certificate / ID</label><input type="file" class="form-control" accept=".pdf,image/*"></div>
@@ -86,8 +85,8 @@
         <div class="form-step" data-step="6" style="display:none">
           <h3>Payment & Submit</h3>
           <p class="text-muted">Payment integration is a placeholder. In production this would connect to a payment gateway.</p>
-          <div class="card mb-3" style="padding:1rem;border:2px dashed var(--gray-300)"><p class="mb-0">Application fee: <strong>Demo — ₦0.00</strong></p></div>
-          <div class="form-group"><label><input type="checkbox" name="declare" required> I declare that the information provided is accurate. (Demo declaration)</label></div>
+          <div class="card mb-3" style="padding:1rem;border:2px dashed var(--gray-300)"><p class="mb-0">Application fee: <strong>institutional — ₦0.00</strong></p></div>
+          <div class="form-group"><label><input type="checkbox" name="declare" required> I declare that the information provided is accurate. (institutional declaration)</label></div>
         </div>
         <div class="flex gap-2 mt-4" style="justify-content:space-between">
           <button type="button" class="btn btn-outline" id="btn-prev" style="display:none">Previous</button>
@@ -97,7 +96,7 @@
       </form>
       <div id="success-panel" style="display:none" class="card text-center" style="padding:2rem">
         <h2>Application Submitted</h2>
-        <p>Your demo application number is:</p>
+        <p>Your institutional application number is:</p>
         <p style="font-size:1.5rem;font-weight:700;color:var(--primary)" id="app-number"></p>
         <p class="text-muted">Save this number to check status. Data is stored in this browser only.</p>
         <a href="application-status.html" class="btn btn-primary mt-3">Check Status</a>
@@ -154,7 +153,7 @@
       document.getElementById("wizard-steps").style.display="none";
       document.getElementById("success-panel").style.display="block";
       document.getElementById("app-number").textContent=record.applicationNumber;
-      Toast.success("Application submitted successfully (demo)");
+      Toast.success("Application submitted successfully (institutional)");
     };
   </script>
 </body>

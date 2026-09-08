@@ -3,15 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Application Status | CUN Demo</title>
+  <title>Application Status | CUN institutional</title>
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/responsive.css">
 </head>
 <body>
-  <div class="demo-banner">DEMO — Status lookup uses localStorage applications only.</div>
-  <header class="site-header"><div class="container header-inner">
-    <a href="index.html" class="logo-link"><img src="assets/logo.svg" alt="CUN"></a>
+<header class="site-header"><div class="container header-inner">
+    <a href="index.html" class="logo-link"><img src="https://www.cun.edu.ng/images/cun-logo.png" alt="CUN"></a>
     <a href="apply.html" class="btn btn-accent btn-sm">Apply</a>
   </div></header>
   <main class="section"><div class="container" style="max-width:560px">
@@ -40,7 +39,7 @@
         <p><strong>Name:</strong> ${sanitize(rec.firstName||"")} ${sanitize(rec.lastName||"")}</p>
         <p><strong>Programme:</strong> ${sanitize(rec.programme||"—")}</p>
         <p><strong>Submitted:</strong> ${formatDate(rec.submittedAt)}</p>
-        <p class="text-muted mt-2">Demo statuses: received → under review → decision. Admin can change status in full production system.</p>
+        <p class="text-muted mt-2">institutional statuses: received → under review → decision. Admin can change status in full production system.</p>
       </div>`;
     };
   </script>
