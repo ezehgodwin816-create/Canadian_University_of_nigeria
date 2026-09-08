@@ -3,10 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Application Status | CUN institutional</title>
+  <title>Application Status | CUN official</title>
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/responsive.css">
+<link rel="manifest" href="app-config/platform-manifest.json">
 </head>
 <body>
 <header class="site-header"><div class="container header-inner">
@@ -22,7 +23,7 @@
     </form>
     <div id="status-result" class="mt-4" style="display:none"></div>
   </div></main>
-  <script src="js/app.js"></script>
+  <script src="js/app.js"></script><script src="js/services/platform.js"></script><script src="js/services/runtime.js"></script>
   <script src="js/application.js"></script>
   <script src="js/components.js"></script>
   <script>
@@ -39,9 +40,10 @@
         <p><strong>Name:</strong> ${sanitize(rec.firstName||"")} ${sanitize(rec.lastName||"")}</p>
         <p><strong>Programme:</strong> ${sanitize(rec.programme||"—")}</p>
         <p><strong>Submitted:</strong> ${formatDate(rec.submittedAt)}</p>
-        <p class="text-muted mt-2">institutional statuses: received → under review → decision. Admin can change status in full production system.</p>
+        <p class="text-muted mt-2">official statuses: received → under review → decision. Admin can change status in full production system.</p>
       </div>`;
     };
   </script>
+<script>if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));}</script>
 </body>
 </html>

@@ -4,10 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>FAQ | Canadian University of Nigeria</title>
-  <meta name="description" content="Frequently asked questions — institutional.">
+  <meta name="description" content="Frequently asked questions — official.">
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/responsive.css">
+<link rel="manifest" href="app-config/platform-manifest.json">
 </head>
 <body>
   <a href="#main" class="skip-link">Skip to content</a>
@@ -19,7 +20,7 @@
   </div></header>
   <div class="mobile-menu"><div class="mobile-menu-panel"><div class="mobile-menu-header"><strong>Menu</strong><button class="mobile-menu-close btn btn-ghost">&times;</button></div>
   <nav class="mobile-nav"><a href="about.html">About</a><a href="academics.html">Academics</a><a href="admissions.html">Admissions</a><a href="student-life.html">Campus Life</a><a href="news.html">News</a><a href="contact.html">Contact</a><a href="login.html">Portals</a></nav></div></div>
-  <main id="main"><div class="page-header"><div class="container"><div class="breadcrumb"><a href="index.html">Home</a> <span>/</span> <span>FAQ</span></div><h1>FAQ</h1><p>Frequently asked questions — institutional.</p></div></div>
+  <main id="main"><div class="page-header"><div class="container"><div class="breadcrumb"><a href="index.html">Home</a> <span>/</span> <span>FAQ</span></div><h1>FAQ</h1><p>Frequently asked questions — official.</p></div></div>
   <section class="section"><div class="container">
 <div id="faq-list"></div>
 <script>
@@ -30,5 +31,6 @@ document.addEventListener("DOMContentLoaded",()=>{
 </script></div></section></main>
   <footer class="site-footer"><div class="container"><div class="footer-bottom"><p>© 2026 Canadian University of Nigeria.</p>
   <div><a href="privacy.html">Privacy</a> · <a href="terms.html">Terms</a> · <a href="accessibility.html">Accessibility</a></div></div></div></footer>
-  <script src="js/data.js"></script><script src="js/app.js"></script><script src="js/components.js"></script>
+  <script src="js/data.js"></script><script src="js/app.js"></script><script src="js/services/platform.js"></script><script src="js/services/runtime.js"></script><script src="js/components.js"></script>
+<script>if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));}</script>
 </body></html>

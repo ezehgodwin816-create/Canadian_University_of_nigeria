@@ -4,13 +4,14 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>International Admissions | Canadian University of Nigeria</title>
-  <meta name="description" content="International applicants — institutional.">
-  <meta property="og:title" content="International Admissions | CUN institutional">
-  <meta property="og:description" content="International applicants — institutional.">
+  <meta name="description" content="International applicants — official.">
+  <meta property="og:title" content="International Admissions | CUN official">
+  <meta property="og:description" content="International applicants — official.">
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/responsive.css">
   <link rel="stylesheet" href="css/print.css" media="print">
+<link rel="manifest" href="app-config/platform-manifest.json">
 </head>
 <body>
   <a href="#main" class="skip-link">Skip to content</a>
@@ -46,7 +47,7 @@
     <div class="page-header"><div class="container">
       <div class="breadcrumb"><a href="index.html">Home</a> <span>/</span> <span>International Admissions</span></div>
       <h1>International Admissions</h1>
-      <p>International applicants — institutional.</p>
+      <p>International applicants — official.</p>
     </div></div>
     <section class="section"><div class="container">
       
@@ -66,7 +67,8 @@
   </div></footer>
   <script src="js/data.js"></script>
   <script src="js/config.js"></script>
-  <script src="js/app.js"></script>
+  <script src="js/app.js"></script><script src="js/services/platform.js"></script><script src="js/services/runtime.js"></script>
   <script src="js/components.js"></script>
+<script>if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));}</script>
 </body>
 </html>

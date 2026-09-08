@@ -4,13 +4,14 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Scholarships | Canadian University of Nigeria</title>
-  <meta name="description" content="Scholarships and financial aid — institutional.">
-  <meta property="og:title" content="Scholarships | CUN institutional">
-  <meta property="og:description" content="Scholarships and financial aid — institutional.">
+  <meta name="description" content="Scholarships and financial aid — official.">
+  <meta property="og:title" content="Scholarships | CUN official">
+  <meta property="og:description" content="Scholarships and financial aid — official.">
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/responsive.css">
   <link rel="stylesheet" href="css/print.css" media="print">
+<link rel="manifest" href="app-config/platform-manifest.json">
 </head>
 <body>
   <a href="#main" class="skip-link">Skip to content</a>
@@ -46,14 +47,14 @@
     <div class="page-header"><div class="container">
       <div class="breadcrumb"><a href="index.html">Home</a> <span>/</span> <span>Scholarships</span></div>
       <h1>Scholarships</h1>
-      <p>Scholarships and financial aid — institutional.</p>
+      <p>Scholarships and financial aid — official.</p>
     </div></div>
     <section class="section"><div class="container">
       
 <p>Scholarship categories. Eligibility and application processes to be confirmed.</p>
 <div class="grid grid-2 mt-3">
-  <div class="card"><div class="card-body"><h3>Merit Awards</h3><p>institutional description of academic merit scholarships.</p></div></div>
-  <div class="card"><div class="card-body"><h3>Need-Based Support</h3><p>institutional description of financial assistance pathways.</p></div></div>
+  <div class="card"><div class="card-body"><h3>Merit Awards</h3><p>official description of academic merit scholarships.</p></div></div>
+  <div class="card"><div class="card-body"><h3>Need-Based Support</h3><p>official description of financial assistance pathways.</p></div></div>
 </div>
     </div></section>
   </main>
@@ -69,7 +70,8 @@
   </div></footer>
   <script src="js/data.js"></script>
   <script src="js/config.js"></script>
-  <script src="js/app.js"></script>
+  <script src="js/app.js"></script><script src="js/services/platform.js"></script><script src="js/services/runtime.js"></script>
   <script src="js/components.js"></script>
+<script>if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));}</script>
 </body>
 </html>

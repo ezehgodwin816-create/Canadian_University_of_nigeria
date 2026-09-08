@@ -4,10 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Apply | Canadian University of Nigeria</title>
-  <meta name="description" content="Multi-step online application institutional for Canadian University of Nigeria.">
+  <meta name="description" content="Multi-step online application official for Canadian University of Nigeria.">
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/responsive.css">
+<link rel="manifest" href="app-config/platform-manifest.json">
 </head>
 <body>
 <header class="site-header"><div class="container header-inner">
@@ -17,7 +18,7 @@
   <main class="section">
     <div class="container" style="max-width:800px">
       <h1 class="text-center">Online Application</h1>
-      <p class="text-center text-muted mb-4">institutional multi-step form. All data is stored locally in your browser.</p>
+      <p class="text-center text-muted mb-4">Secure multi-step application. Sign in to save your application and submit documents securely.</p>
       <div class="wizard-steps" id="wizard-steps">
         <div class="wizard-step active" data-step="1"><div class="wizard-step-num">1</div><div class="wizard-step-label">Personal</div></div>
         <div class="wizard-step" data-step="2"><div class="wizard-step-num">2</div><div class="wizard-step-label">Academic</div></div>
@@ -70,7 +71,7 @@
         <!-- Step 4 -->
         <div class="form-step" data-step="4" style="display:none">
           <h3>Documents</h3>
-          <p class="text-muted">institutional upload UI only — files are not uploaded to a server.</p>
+          <p class="text-muted">Documents are uploaded to private university storage after authentication. File access is restricted to your application and authorised staff.</p>
           <div class="form-group"><label class="form-label">Passport Photo</label><input type="file" class="form-control" accept="image/*"></div>
           <div class="form-group"><label class="form-label">O'Level Result</label><input type="file" class="form-control" accept=".pdf,image/*"></div>
           <div class="form-group"><label class="form-label">Birth Certificate / ID</label><input type="file" class="form-control" accept=".pdf,image/*"></div>
@@ -84,9 +85,9 @@
         <!-- Step 6 -->
         <div class="form-step" data-step="6" style="display:none">
           <h3>Payment & Submit</h3>
-          <p class="text-muted">Payment integration is a placeholder. In production this would connect to a payment gateway.</p>
-          <div class="card mb-3" style="padding:1rem;border:2px dashed var(--gray-300)"><p class="mb-0">Application fee: <strong>institutional — ₦0.00</strong></p></div>
-          <div class="form-group"><label><input type="checkbox" name="declare" required> I declare that the information provided is accurate. (institutional declaration)</label></div>
+          <p class="text-muted">Payment is processed only through the configured university payment gateway and verified server-side. No payment is marked successful from the browser alone.</p>
+          <div class="card mb-3" style="padding:1rem;border:2px dashed var(--gray-300)"><p class="mb-0">Application fee: <strong>See the published official fee schedule</strong></p></div>
+          <div class="form-group"><label><input type="checkbox" name="declare" required> I declare that the information provided is accurate. (official declaration)</label></div>
         </div>
         <div class="flex gap-2 mt-4" style="justify-content:space-between">
           <button type="button" class="btn btn-outline" id="btn-prev" style="display:none">Previous</button>
@@ -96,9 +97,9 @@
       </form>
       <div id="success-panel" style="display:none" class="card text-center" style="padding:2rem">
         <h2>Application Submitted</h2>
-        <p>Your institutional application number is:</p>
+        <p>Your official application number is:</p>
         <p style="font-size:1.5rem;font-weight:700;color:var(--primary)" id="app-number"></p>
-        <p class="text-muted">Save this number to check status. Data is stored in this browser only.</p>
+        <p class="text-muted">Save this number to check status. Your authoritative application record is stored securely in the university platform.</p>
         <a href="application-status.html" class="btn btn-primary mt-3">Check Status</a>
         <button onclick="window.print()" class="btn btn-outline mt-2">Print Acknowledgement</button>
       </div>
@@ -106,7 +107,7 @@
   </main>
   <script src="js/data.js"></script>
   <script src="js/config.js"></script>
-  <script src="js/app.js"></script>
+  <script src="js/app.js"></script><script src="js/services/platform.js"></script><script src="js/services/runtime.js"></script>
   <script src="js/forms.js"></script>
   <script src="js/application.js"></script>
   <script src="js/components.js"></script>
@@ -153,8 +154,9 @@
       document.getElementById("wizard-steps").style.display="none";
       document.getElementById("success-panel").style.display="block";
       document.getElementById("app-number").textContent=record.applicationNumber;
-      Toast.success("Application submitted successfully (institutional)");
+      Toast.success("Application submitted successfully");
     };
   </script>
+<script>if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));}</script>
 </body>
 </html>

@@ -4,13 +4,14 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Undergraduate Admissions | Canadian University of Nigeria</title>
-  <meta name="description" content="Undergraduate entry pathways — institutional.">
-  <meta property="og:title" content="Undergraduate Admissions | CUN institutional">
-  <meta property="og:description" content="Undergraduate entry pathways — institutional.">
+  <meta name="description" content="Undergraduate entry pathways — official.">
+  <meta property="og:title" content="Undergraduate Admissions | CUN official">
+  <meta property="og:description" content="Undergraduate entry pathways — official.">
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/responsive.css">
   <link rel="stylesheet" href="css/print.css" media="print">
+<link rel="manifest" href="app-config/platform-manifest.json">
 </head>
 <body>
   <a href="#main" class="skip-link">Skip to content</a>
@@ -46,7 +47,7 @@
     <div class="page-header"><div class="container">
       <div class="breadcrumb"><a href="index.html">Home</a> <span>/</span> <span>Undergraduate Admissions</span></div>
       <h1>Undergraduate Admissions</h1>
-      <p>Undergraduate entry pathways — institutional.</p>
+      <p>Undergraduate entry pathways — official.</p>
     </div></div>
     <section class="section"><div class="container">
       <p>Undergraduate admissions information. Requirements and deadlines to be confirmed by the university.</p><a href="apply.html" class="btn btn-primary mt-3">Apply</a>
@@ -64,7 +65,8 @@
   </div></footer>
   <script src="js/data.js"></script>
   <script src="js/config.js"></script>
-  <script src="js/app.js"></script>
+  <script src="js/app.js"></script><script src="js/services/platform.js"></script><script src="js/services/runtime.js"></script>
   <script src="js/components.js"></script>
+<script>if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));}</script>
 </body>
 </html>

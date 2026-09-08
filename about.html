@@ -4,13 +4,14 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>About CUN | Canadian University of Nigeria</title>
-  <meta name="description" content="Overview of the Canadian University of Nigeria — institutional information.">
-  <meta property="og:title" content="About CUN | CUN institutional">
-  <meta property="og:description" content="Overview of the Canadian University of Nigeria — institutional information.">
+  <meta name="description" content="Overview of the Canadian University of Nigeria — official information.">
+  <meta property="og:title" content="About CUN | CUN official">
+  <meta property="og:description" content="Overview of the Canadian University of Nigeria — official information.">
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/responsive.css">
   <link rel="stylesheet" href="css/print.css" media="print">
+<link rel="manifest" href="app-config/platform-manifest.json">
 </head>
 <body>
   <a href="#main" class="skip-link">Skip to content</a>
@@ -46,15 +47,15 @@
     <div class="page-header"><div class="container">
       <div class="breadcrumb"><a href="index.html">Home</a> <span>/</span> <span>About CUN</span></div>
       <h1>About CUN</h1>
-      <p>Overview of the Canadian University of Nigeria — institutional information.</p>
+      <p>Overview of the Canadian University of Nigeria — official information.</p>
     </div></div>
     <section class="section"><div class="container">
       
-<p class="mb-4"><strong>Institutional information:</strong> This page outlines a institutional overview. Official mission, history and leadership details must be supplied by the university.</p>
+<p class="mb-4"><strong>Institutional information:</strong> This page outlines a official overview. Official mission, history and leadership details must be supplied by the university.</p>
 <div class="grid grid-2">
-  <div><h2>Our Story</h2><p>Canadian University of Nigeria is presented here as a modern higher education institution in Abuja with a global outlook and strong African identity. This website institutionalnstrates how a premium university digital presence can look and function.</p>
-  <p>Replace this section with verified institutional narrative, founding principles and milestones.</p></div>
-  <div><img src="assets/images/campus-life.jpg" alt="Campus life institutional" style="border-radius:12px;width:100%"></div>
+  <div><h2>Our Story</h2><p>Canadian University of Nigeria is presented here as a modern higher education institution in Abuja with a global outlook and strong African identity. This website officialnstrates how a premium university digital presence can look and function.</p>
+  <p>Replace this section with verified official narrative, founding principles and milestones.</p></div>
+  <div><img src="assets/images/campus-life.jpg" alt="Campus life official" style="border-radius:12px;width:100%"></div>
 </div>
 <div class="mt-4 grid grid-3">
   <div class="card"><div class="card-body"><h3>Mission</h3><p>To educate ethical leaders and innovators.</p></div></div>
@@ -75,7 +76,8 @@
   </div></footer>
   <script src="js/data.js"></script>
   <script src="js/config.js"></script>
-  <script src="js/app.js"></script>
+  <script src="js/app.js"></script><script src="js/services/platform.js"></script><script src="js/services/runtime.js"></script>
   <script src="js/components.js"></script>
+<script>if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));}</script>
 </body>
 </html>

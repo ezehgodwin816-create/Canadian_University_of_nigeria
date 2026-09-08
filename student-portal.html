@@ -3,10 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Student Portal | CUN institutional</title>
+  <title>Student Portal | CUN official</title>
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/responsive.css">
+<link rel="manifest" href="app-config/platform-manifest.json">
 </head>
 <body data-portal="student">
 <div class="portal-layout">
@@ -33,24 +34,25 @@
           <div class="dash-card"><div class="dash-card-label">Student ID</div><div class="dash-card-value" style="font-size:1.2rem" id="student-id">—</div></div>
           <div class="dash-card"><div class="dash-card-label">Programme</div><div class="dash-card-value" style="font-size:1rem" id="student-programme">—</div></div>
           <div class="dash-card"><div class="dash-card-label">Level</div><div class="dash-card-value" id="student-level">—</div></div>
-          <div class="dash-card"><div class="dash-card-label">CGPA</div><div class="dash-card-value">3.45</div></div>
+          <div class="dash-card"><div class="dash-card-label">CGPA</div><div class="dash-card-value" id="student-cgpa">—</div></div>
         </div>
         <h2>Notifications</h2>
         <div id="notif-list"></div>
         <h2 class="mt-4">Quick Links</h2>
         <div class="grid grid-3 mt-2">
-          <div class="card"><div class="card-body"><h4>Course Registration</h4><p class="text-muted">institutional module</p></div></div>
-          <div class="card"><div class="card-body"><h4>Timetable</h4><p class="text-muted">institutional module</p></div></div>
-          <div class="card"><div class="card-body"><h4>Fee Statement</h4><p class="text-muted">institutional module</p></div></div>
+          <div class="card"><div class="card-body"><h4>Course Registration</h4><p class="text-muted">Available when your account is provisioned</p></div></div>
+          <div class="card"><div class="card-body"><h4>Timetable</h4><p class="text-muted">Available when your account is provisioned</p></div></div>
+          <div class="card"><div class="card-body"><h4>Fee Statement</h4><p class="text-muted">Available when your account is provisioned</p></div></div>
         </div>
       </div>
     </div>
   </div>
   <script src="js/data.js"></script>
   <script src="js/config.js"></script>
-  <script src="js/app.js"></script>
+  <script src="js/app.js"></script><script src="js/services/platform.js"></script><script src="js/services/runtime.js"></script>
   <script src="js/auth.js"></script>
   <script src="js/components.js"></script>
   <script src="js/student.js"></script>
+<script>if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));}</script>
 </body>
 </html>

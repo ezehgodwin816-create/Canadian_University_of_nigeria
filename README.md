@@ -1,49 +1,108 @@
-# Canadian University of Nigeria — Premium Web Platform
+# Canadian University of Nigeria — Digital Platform
 
-This repository is the presentation and application layer for a high-end CUN web experience.
+This repository is a single, production-oriented university web platform. It is intentionally **not** a demo site and does not ship fake portal credentials, fake rankings, fake testimonials, invented executives, invented fees or public document links.
 
-## Design direction
-- Executive / institutional visual system
-- Deep ink, warm metallic accent, editorial typography
-- No demo banner, fake counters, fake testimonials or fake portal credentials
-- Responsive navigation, accessible focus states, reduced-motion support
-- Official CUN logo is referenced from the university's current public website
+## What is included
 
-## Verified public facts used
-1. CUN's official website identifies the institution as Canadian University of Nigeria, gives the Abuja location and says it is registered/authorised by the National Universities Commission.
-2. NUC's 2023 announcement lists Canadian University of Nigeria, Abuja, FCT among the new private universities receiving provisional licences; the announcement names Adamu Abubakar Gwarzo Foundation as proprietor and Nile University, Abuja as the supervising institution at licensing.
-3. Public reporting in November 2023 quoted the founder describing the initial academic offer as Health Sciences (Physiotherapy, Public Health, Medical Laboratory, Nursing), Computing (Cyber Security, Information Technology, Data Science, Computer Science), and Management/Social Sciences (Banking & Finance, Business Administration, Human Resource Management, Mass Communication).
-4. A public institutional directory lists the address/Plus Code as 3C7G+2MR, Utako, Abuja 900108, FCT.
+### Public experience
+- Premium institutional homepage and responsive navigation
+- About, history, governance and leadership
+- Faculties, departments and programme catalogue
+- Admissions, requirements, application guidance and international admissions
+- Fees and scholarships framework
+- Academic calendar
+- Campus, accommodation, library, health, student life, clubs and careers
+- Research and research centres
+- News, events, media, gallery and downloads
+- Partnerships and institutional statistics framework
+- Directory and contact experience
+- Accessibility, privacy, cookies, terms and security disclosure
+- Search, sitemap, robots, PWA shell and offline fallback
 
-## Verification rule
-Do not publish:
-- tuition figures unless supplied by CUN in an official fee schedule;
-- named Vice-Chancellor/Registrar/Bursar/Deans unless confirmed by an official CUN source;
-- phone numbers or email addresses from third-party classifieds;
-- social-media handles unless linked from the official university site;
-- rankings as achievements unless the ranking publisher and methodology are clearly identified;
-- programme accreditation claims unless supported by a current NUC programme record.
+### Applicant platform
+- Authenticated application lifecycle
+- Draft/save/submit model
+- Application status history
+- Document checklist and private document storage
+- Offer workflow and offer-letter storage
+- Payment records and server-verified gateway architecture
+- Notifications and support tickets
 
-## Supabase
-1. Create a Supabase project.
-2. Run `supabase/schema.sql`.
-3. Put only the project URL and anon key in `js/config.js`.
-4. Never put a service-role key in the browser.
-5. Configure Auth email templates, SMTP, MFA for privileged staff, backups and domain restrictions.
-6. Add a server-side payment verification endpoint for Paystack/Flutterwave before marking payments as successful.
-7. Use signed URLs for private application documents.
+### Student platform
+- Profile and programme identity
+- Course catalogue and offerings
+- Course registration/enrolment
+- Assessments and grades
+- Attendance
+- Fee statements, invoices and receipts
+- Transcript requests
+- Accommodation requests/allocation
+- Scholarships
+- Notifications and support
 
-## Payments
-The data model supports provider references and server-verified payment states. The browser must never decide that a payment succeeded. Recommended production flow:
-- create a payment intent server-side;
-- initialise Paystack/Flutterwave using a public key;
-- receive the provider webhook on a trusted server/Edge Function;
-- verify the transaction with the provider API;
-- write `payments.status='success'` only after verification;
-- write an immutable audit event.
+### Staff / administration
+- Role-based access model
+- Admissions operations
+- Finance operations
+- Registry operations
+- Faculty administration
+- Communications/CMS
+- Super-admin governance
+- Audit logging
+- Webhook event log
+- Content workflow: Draft → Review → Scheduled → Published → Archived
+
+### Backend
+- Supabase/Postgres
+- Row Level Security policies
+- Private Storage
+- Supabase Edge Functions
+- Paystack webhook verification scaffold
+- Payment intent scaffold
+- Signed private document URL scaffold
+- Notification log
+- Support system
+- Data-subject request workflow
+
+## Important production rule
+The browser is never authoritative for permission, payment success, admission status or private document access.
+
+## Configuration
+Copy `.env.example` into the deployment environment. Only the Supabase URL and anon key belong in browser configuration. Payment secrets, service-role keys, SMTP keys and provider tokens belong only in Supabase Edge Functions/server infrastructure.
+
+## Database
+Run, in order:
+1. `supabase/schema.sql`
+2. `supabase/migrations/001_platform_core.sql`
+3. `supabase/migrations/002_student_lifecycle.sql`
+
+Review every RLS policy against the final institutional roles before launch.
+
+## Payment
+The platform is structured for server-verified Paystack transactions. A browser callback must never mark a payment successful. Configure the Paystack webhook to `paystack-webhook` and set `PAYSTACK_SECRET_KEY` + `SUPABASE_SERVICE_ROLE_KEY` only as Edge Function secrets.
+
+## Content verification
+Populate sensitive facts only from authoritative CUN/NUC documents and approved institutional records. Every fee, leadership title, programme/accreditation status, contact channel, social account, partnership and statistic should have a source and review date.
 
 ## Legal
-`privacy.html`, `terms.html` and `cookies.html` are product templates, not legal advice. Before launch, obtain Nigerian legal/privacy counsel review, especially for NDPA compliance, retention, minors, admissions records, payment data, cookies/analytics, data-subject requests and cross-border processors.
+The privacy/terms/cookie material is a product framework, not legal advice. Obtain Nigerian privacy/legal counsel review before production, including NDPA, retention, minors, admissions records, payment processors, analytics consent, cross-border processing and data-subject rights.
 
-## No additional project file is required for normal content updates
-Keep future functionality inside this repository's existing structure. Extend the current JS/data/schema layers rather than creating disconnected mini-sites or demo implementations.
+## Testing
+Run:
+
+```bash
+npm run check
+```
+
+The static check blocks known demo credentials/content from returning to the repository.
+
+## Future development
+Do **not** start a separate file/project for every new function. Add new capabilities to the same platform using:
+- `js/services/` for browser service modules
+- `supabase/migrations/` for schema changes
+- `supabase/functions/` for trusted server operations
+- existing portal/CMS surfaces for UI
+- `docs/` for security, operations and feature specifications
+- tests for every new workflow
+
+The target is one coherent CUN digital platform, not a collection of disconnected pages.

@@ -1,0 +1,13 @@
+/*
+  Configure equivalent headers at your production host/CDN.
+  This file is intentionally conservative because third-party analytics,
+  maps and payment providers require an allowlist reviewed for the final stack.
+*/
+/*
+/* /public/*
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=()
+  X-Frame-Options: DENY
+  Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
+*/

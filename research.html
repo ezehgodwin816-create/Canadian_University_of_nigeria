@@ -4,13 +4,14 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Research | Canadian University of Nigeria</title>
-  <meta name="description" content="Research overview and themes — institutional.">
-  <meta property="og:title" content="Research | CUN institutional">
-  <meta property="og:description" content="Research overview and themes — institutional.">
+  <meta name="description" content="Research overview and themes — official.">
+  <meta property="og:title" content="Research | CUN official">
+  <meta property="og:description" content="Research overview and themes — official.">
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/responsive.css">
   <link rel="stylesheet" href="css/print.css" media="print">
+<link rel="manifest" href="app-config/platform-manifest.json">
 </head>
 <body>
   <a href="#main" class="skip-link">Skip to content</a>
@@ -46,11 +47,11 @@
     <div class="page-header"><div class="container">
       <div class="breadcrumb"><a href="index.html">Home</a> <span>/</span> <span>Research</span></div>
       <h1>Research</h1>
-      <p>Research overview and themes — institutional.</p>
+      <p>Research overview and themes — official.</p>
     </div></div>
     <section class="section"><div class="container">
       
-<p>Research themes and centres will be listed from verified institutional sources. Official research strategy and outputs to be provided by the university.</p>
+<p>Research themes and centres will be listed from verified official sources. Official research strategy and outputs to be provided by the university.</p>
 <div class="grid grid-3 mt-4">
   <div class="card"><div class="card-body"><h3>Innovation</h3><p>Technology and applied research pathways.</p></div></div>
   <div class="card"><div class="card-body"><h3>Society</h3><p>Social science and policy research.</p></div></div>
@@ -71,7 +72,8 @@
   </div></footer>
   <script src="js/data.js"></script>
   <script src="js/config.js"></script>
-  <script src="js/app.js"></script>
+  <script src="js/app.js"></script><script src="js/services/platform.js"></script><script src="js/services/runtime.js"></script>
   <script src="js/components.js"></script>
+<script>if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));}</script>
 </body>
 </html>

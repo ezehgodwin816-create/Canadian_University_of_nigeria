@@ -4,10 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>News Article | Canadian University of Nigeria</title>
-  <meta name="description" content="Article detail — institutional.">
+  <meta name="description" content="Article detail — official.">
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/responsive.css">
+<link rel="manifest" href="app-config/platform-manifest.json">
 </head>
 <body>
   <a href="#main" class="skip-link">Skip to content</a>
@@ -19,7 +20,7 @@
   </div></header>
   <div class="mobile-menu"><div class="mobile-menu-panel"><div class="mobile-menu-header"><strong>Menu</strong><button class="mobile-menu-close btn btn-ghost">&times;</button></div>
   <nav class="mobile-nav"><a href="about.html">About</a><a href="academics.html">Academics</a><a href="admissions.html">Admissions</a><a href="student-life.html">Campus Life</a><a href="news.html">News</a><a href="contact.html">Contact</a><a href="login.html">Portals</a></nav></div></div>
-  <main id="main"><div class="page-header"><div class="container"><div class="breadcrumb"><a href="index.html">Home</a> <span>/</span> <span>News Article</span></div><h1>News Article</h1><p>Article detail — institutional.</p></div></div>
+  <main id="main"><div class="page-header"><div class="container"><div class="breadcrumb"><a href="index.html">Home</a> <span>/</span> <span>News Article</span></div><h1>News Article</h1><p>Article detail — official.</p></div></div>
   <section class="section"><div class="container">
 <div id="article"><p>Loading...</p></div>
 <script>
@@ -28,7 +29,7 @@ document.addEventListener("DOMContentLoaded",()=>{
   const n=(window.CUN_DATA?.news||[]).find(x=>x.id===id);
   const el=document.getElementById("article");
   if(!n){el.innerHTML="<p>Article not found. <a href=\"news.html\">Back to news</a></p>";return;}
-  document.title=n.title+" | CUN institutional";
+  document.title=n.title+" | CUN official";
   el.innerHTML=`<div class="news-meta">${n.category} · ${formatDate(n.date)}</div><h2>${n.title}</h2>
   <img src="${n.image}" alt="" style="border-radius:12px;max-height:360px;object-fit:cover;width:100%;margin:1rem 0">
   <div>${n.content}</div><p class="mt-4"><a href="news.html" class="btn btn-outline">All News</a></p>`;
@@ -36,5 +37,6 @@ document.addEventListener("DOMContentLoaded",()=>{
 </script></div></section></main>
   <footer class="site-footer"><div class="container"><div class="footer-bottom"><p>© 2026 Canadian University of Nigeria.</p>
   <div><a href="privacy.html">Privacy</a> · <a href="terms.html">Terms</a> · <a href="accessibility.html">Accessibility</a></div></div></div></footer>
-  <script src="js/data.js"></script><script src="js/app.js"></script><script src="js/components.js"></script>
+  <script src="js/data.js"></script><script src="js/app.js"></script><script src="js/services/platform.js"></script><script src="js/services/runtime.js"></script><script src="js/components.js"></script>
+<script>if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));}</script>
 </body></html>

@@ -1,0 +1,12 @@
+{
+  "name": "cun-digital-platform",
+  "private": true,
+  "version": "2.0.0",
+  "description": "Canadian University of Nigeria digital platform",
+  "scripts": {
+    "check": "node tests/static-check.mjs",
+    "serve": "python3 -m http.server 8080",
+    "validate": "npm run check"
+  },
+  "engines": {"node": ">=20"}
+}

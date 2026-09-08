@@ -4,13 +4,14 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>History | Canadian University of Nigeria</title>
-  <meta name="description" content="Institutional history — institutional details.">
-  <meta property="og:title" content="History | CUN institutional">
-  <meta property="og:description" content="Institutional history — institutional details.">
+  <meta name="description" content="Institutional history — official details.">
+  <meta property="og:title" content="History | CUN official">
+  <meta property="og:description" content="Institutional history — official details.">
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/responsive.css">
   <link rel="stylesheet" href="css/print.css" media="print">
+<link rel="manifest" href="app-config/platform-manifest.json">
 </head>
 <body>
   <a href="#main" class="skip-link">Skip to content</a>
@@ -46,13 +47,13 @@
     <div class="page-header"><div class="container">
       <div class="breadcrumb"><a href="index.html">Home</a> <span>/</span> <span>History</span></div>
       <h1>History</h1>
-      <p>Institutional history — institutional details.</p>
+      <p>Institutional history — official details.</p>
     </div></div>
     <section class="section"><div class="container">
       
-<p><strong>institutional information:</strong> Historical narrative to be confirmed by the university. This page provides structure for founding story, key milestones and growth.</p>
+<p><strong>official information:</strong> Historical narrative to be confirmed by the university. This page provides structure for founding story, key milestones and growth.</p>
 <div class="timeline mt-4">
-  <div class="timeline-item"><h4>Founding Vision</h4><p>institutional founding principles and early planning. </p></div>
+  <div class="timeline-item"><h4>Founding Vision</h4><p>official founding principles and early planning. </p></div>
   <div class="timeline-item"><h4>Campus Development</h4><p>Campus and facilities information.</p></div>
   <div class="timeline-item"><h4>Academic Expansion</h4><p>The university has publicly reported initial academic areas in Health Sciences, Computing, and Management & Social Sciences.</p></div>
 </div>
@@ -70,7 +71,8 @@
   </div></footer>
   <script src="js/data.js"></script>
   <script src="js/config.js"></script>
-  <script src="js/app.js"></script>
+  <script src="js/app.js"></script><script src="js/services/platform.js"></script><script src="js/services/runtime.js"></script>
   <script src="js/components.js"></script>
+<script>if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));}</script>
 </body>
 </html>

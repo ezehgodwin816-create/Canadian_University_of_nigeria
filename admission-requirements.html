@@ -4,13 +4,14 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Admission Requirements | Canadian University of Nigeria</title>
-  <meta name="description" content="Entry requirements — institutional.">
-  <meta property="og:title" content="Admission Requirements | CUN institutional">
-  <meta property="og:description" content="Entry requirements — institutional.">
+  <meta name="description" content="Entry requirements — official.">
+  <meta property="og:title" content="Admission Requirements | CUN official">
+  <meta property="og:description" content="Entry requirements — official.">
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/responsive.css">
   <link rel="stylesheet" href="css/print.css" media="print">
+<link rel="manifest" href="app-config/platform-manifest.json">
 </head>
 <body>
   <a href="#main" class="skip-link">Skip to content</a>
@@ -46,11 +47,11 @@
     <div class="page-header"><div class="container">
       <div class="breadcrumb"><a href="index.html">Home</a> <span>/</span> <span>Admission Requirements</span></div>
       <h1>Admission Requirements</h1>
-      <p>Entry requirements — institutional.</p>
+      <p>Entry requirements — official.</p>
     </div></div>
     <section class="section"><div class="container">
       
-<p><strong>institutional requirements only.</strong> Always verify with the official admissions office.</p>
+<p><strong>official requirements only.</strong> Always verify with the official admissions office.</p>
 <div class="card mt-3"><div class="card-body">
 <h3>General Undergraduate</h3>
 <ul style="list-style:disc;padding-left:1.5rem">
@@ -73,7 +74,8 @@
   </div></footer>
   <script src="js/data.js"></script>
   <script src="js/config.js"></script>
-  <script src="js/app.js"></script>
+  <script src="js/app.js"></script><script src="js/services/platform.js"></script><script src="js/services/runtime.js"></script>
   <script src="js/components.js"></script>
+<script>if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));}</script>
 </body>
 </html>

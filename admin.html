@@ -3,10 +3,11 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Admin Dashboard | CUN institutional</title>
+  <title>Admin Dashboard | CUN official</title>
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/responsive.css">
+<link rel="manifest" href="app-config/platform-manifest.json">
 </head>
 <body data-portal="admin">
 <div class="portal-layout">
@@ -33,7 +34,7 @@
         <div class="dash-cards">
           <div class="dash-card"><div class="dash-card-label">Applications</div><div class="dash-card-value" id="stat-applications">0</div></div>
           <div class="dash-card"><div class="dash-card-label">Students</div><div class="dash-card-value">—</div></div>
-          <div class="dash-card"><div class="dash-card-label">Programmes</div><div class="dash-card-value">6+</div></div>
+          <div class="dash-card"><div class="dash-card-label">Programmes</div><div class="dash-card-value" id="stat-programmes">—</div></div>
           <div class="dash-card"><div class="dash-card-label">Pending</div><div class="dash-card-value">—</div></div>
         </div>
         <h2>Recent Applications</h2>
@@ -46,10 +47,11 @@
   </div>
   <script src="js/data.js"></script>
   <script src="js/config.js"></script>
-  <script src="js/app.js"></script>
+  <script src="js/app.js"></script><script src="js/services/platform.js"></script><script src="js/services/runtime.js"></script>
   <script src="js/auth.js"></script>
   <script src="js/application.js"></script>
   <script src="js/components.js"></script>
   <script src="js/admin.js"></script>
+<script>if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));}</script>
 </body>
 </html>
