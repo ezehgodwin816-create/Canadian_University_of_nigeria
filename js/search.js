@@ -1,5 +1,5 @@
 /**
- * Site-wide search (demo, client-side)
+ * Site-wide search fallback; production search should use indexed CMS content
  */
 
 function performSearch(query) {

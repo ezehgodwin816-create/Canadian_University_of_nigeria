@@ -87,10 +87,10 @@ window.CUN_DATA = {
 
   faqs: [
     {q:"Is Canadian University of Nigeria a recognised university?",a:"The National Universities Commission lists Canadian University of Nigeria, Abuja among Nigeria's private universities. The NUC announced the issuance of a provisional licence in 2023."},
-    {q:"Where is the university located?",a:"Public institutional listings place the university in Utako, Abuja, Federal Capital Territory, Nigeria. The public Plus Code is 3C7G+2MR."},
+    {q:"Where is the university located?",a:"Public official listings place the university in Utako, Abuja, Federal Capital Territory, Nigeria. The public Plus Code is 3C7G+2MR."},
     {q:"Where can I find official fees?",a:"Only fee schedules published or supplied by the university should be treated as official. This build intentionally does not invent fee figures where an official public schedule could not be verified."},
     {q:"Where can I find current admissions requirements?",a:"Use the admissions workflow on this site as the presentation layer, but verify programme-specific requirements against the university's current admissions office and official publications before publishing them as final."},
-    {q:"Are rankings displayed?",a:"No unsupported ranking is presented as an institutional achievement. External ranking databases may show research-index or directory positions, but those should not be represented as official university rankings."}
+    {q:"Are rankings displayed?",a:"No unsupported ranking is presented as an official achievement. External ranking databases may show research-index or directory positions, but those should not be represented as official university rankings."}
   ],
 
   testimonials: []

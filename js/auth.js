@@ -1,6 +1,6 @@
 /**
  * Authentication boundary.
- * Supabase Auth is the production authority; local demo credentials are disabled.
+ * Supabase Auth is the production authority; local credentials are disabled.
  */
 const Auth = {
   SESSION_KEY: "cun_session",

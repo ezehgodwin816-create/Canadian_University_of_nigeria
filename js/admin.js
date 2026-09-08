@@ -1,5 +1,5 @@
 /**
- * Admin dashboard helpers (demo)
+ * Administration dashboard helpers
  */
 
 function initAdminPortal() {
@@ -18,7 +18,7 @@ function initAdminPortal() {
   const tbody = document.getElementById("apps-tbody");
   if (tbody) {
     if (apps.length === 0) {
-      tbody.innerHTML = `<tr><td colspan="5" class="text-center text-muted">No applications yet (demo)</td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="5" class="text-center text-muted">No applications yet</td></tr>`;
     } else {
       tbody.innerHTML = apps.slice().reverse().slice(0, 10).map(a => `
         <tr>

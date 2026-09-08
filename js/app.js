@@ -25,7 +25,7 @@ function generateAppNumber() {
   return `CUN/${year}/${rand}`;
 }
 
-// LocalStorage helpers for demo persistence
+// Local UI persistence only; authentication and authoritative data live in Supabase
 const Store = {
   get(key, fallback = null) {
     try {
