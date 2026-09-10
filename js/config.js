@@ -11,7 +11,7 @@ window.CUN_CONFIG = {
   demoMode: false,
   allowDemoAccounts: false,
   paymentProvider: "paystack",
-  paymentPublicKey: "",
+  paymentPublicKey: "pk_test_b480176a27a72d14478858469d25067a2784e094",
   storageBucket: "application-documents",
   loginRedirect: { student:"student-portal.html", staff:"staff-portal.html", admin:"admin.html" }
 };

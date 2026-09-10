@@ -94,8 +94,14 @@ const StudentPortal = {
 
     const invoices = document.getElementById("invoices-list");
     if (invoices) invoices.innerHTML = this.state.invoices.length
-      ? this.state.invoices.map(i => `<tr><td>${sanitize(i.invoice_number || i.id || "—")}</td><td>${sanitize(i.currency || "NGN")} ${Number(i.total ?? i.total_amount ?? 0).toLocaleString("en-NG",{minimumFractionDigits:2})}</td><td>${sanitize(i.status || "open")}</td><td>${i.due_date ? formatDate(i.due_date) : "—"}</td></tr>`).join("")
-      : '<tr><td colspan="4" class="text-muted">No invoices are available yet.</td></tr>';
+      ? this.state.invoices.map(i => {
+          const amount = Number(i.total ?? i.total_amount ?? i.amount ?? 0);
+          const status = String(i.status || "open").toLowerCase();
+          const paid = ["paid","success","successful","completed"].includes(status);
+          const canPay = amount > 0 && !paid;
+          return `<tr><td>${sanitize(i.invoice_number || i.id || "—")}</td><td>${sanitize(i.currency || "NGN")} ${amount.toLocaleString("en-NG",{minimumFractionDigits:2})}</td><td>${sanitize(i.status || "open")}</td><td>${i.due_date ? formatDate(i.due_date) : "—"}</td><td>${canPay ? `<button type="button" class="btn btn-accent btn-sm" data-pay-invoice="${sanitize(i.id || "")}" data-pay-amount="${amount}">Pay now</button>` : paid ? '<span class="text-muted">Paid</span>' : '—'}</td></tr>`;
+        }).join("")
+      : '<tr><td colspan="5" class="text-muted">No invoices are available yet.</td></tr>';
 
     const docs = document.getElementById("documents-list");
     if (docs) docs.innerHTML = this.state.documents.length
@@ -117,6 +123,11 @@ const StudentPortal = {
         if (error) return Toast.error("Could not update notification.");
         await this.loadNotifications(); this.renderAll();
       }
+      const pay = e.target.closest("[data-pay-invoice]");
+      if (pay) {
+        await this.payInvoice(pay);
+        return;
+      }
       const doc = e.target.closest("[data-doc-path]");
       if (doc) {
         try {
@@ -126,6 +137,46 @@ const StudentPortal = {
         } catch { Toast.error("This document is not currently available."); }
       }
     });
+  },
+
+
+  async payInvoice(button) {
+    const amount = Number(button.dataset.payAmount);
+    const invoiceId = button.dataset.payInvoice || null;
+    if (!Number.isFinite(amount) || amount <= 0) {
+      Toast.error("This invoice does not have a valid amount.");
+      return;
+    }
+    button.disabled = true;
+    button.textContent = "Starting…";
+    try {
+      const { data, error } = await this.db.functions.invoke("create-payment", {
+        body: { amount, fee_record_id: invoiceId }
+      });
+      if (error) throw error;
+      if (!data?.reference) throw new Error(data?.error || "Could not create payment reference.");
+      await window.CUNPayments.open({
+        email: this.context.user.email,
+        amount: data.amount,
+        reference: data.reference,
+        onSuccess: () => {
+          Toast.success("Payment received. We are verifying the transaction now.");
+          button.disabled = true;
+          button.textContent = "Verification pending";
+          setTimeout(() => this.loadFinance().then(() => this.renderAll()).catch(() => {}), 3000);
+        },
+        onCancel: () => {
+          button.disabled = false;
+          button.textContent = "Pay now";
+          Toast.info("Payment cancelled.");
+        }
+      });
+    } catch (e) {
+      console.error("CUN Paystack payment error", e);
+      button.disabled = false;
+      button.textContent = "Pay now";
+      Toast.error(e?.message || "Payment could not be started.");
+    }
   },
 
   text(id, value) { document.getElementById(id)?.replaceChildren(document.createTextNode(String(value ?? ""))); }
