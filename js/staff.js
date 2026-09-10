@@ -1,17 +1,3 @@
-/**
- * Staff portal helpers
- */
-
-function initStaffPortal() {
-  const session = Auth.requireRole("staff");
-  if (!session) return;
-
-  const nameEl = document.getElementById("staff-name");
-  const deptEl = document.getElementById("staff-dept");
-  if (nameEl) nameEl.textContent = session.name;
-  if (deptEl) deptEl.textContent = session.department || "—";
-}
-
-document.addEventListener("DOMContentLoaded", () => {
-  if (document.body.dataset.portal === "staff") initStaffPortal();
-});
+/** CUN staff portal — reads only records allowed by Supabase RLS. */
+const StaffPortal={context:null,db:null,async init(){this.context=await Auth.requireRole('staff');if(!this.context)return;this.db=window.SupabaseClient;if(!this.db)throw new Error('Supabase is not configured.');document.getElementById('staff-name')?.replaceChildren(document.createTextNode(this.context.profile?.full_name||this.context.user.email));document.getElementById('staff-dept')?.replaceChildren(document.createTextNode(this.context.profile?.staff_id||'Staff'));await this.load();},async load(){const [courses,apps]=await Promise.allSettled([this.db.from('courses').select('code,title,description').eq('is_active',true).limit(20),this.db.from('applications').select('id,status').in('status',['received','under_review']).limit(100)]);const c=courses.status==='fulfilled'&&!courses.value.error?courses.value.data||[]:[];const a=apps.status==='fulfilled'&&!apps.value.error?apps.value.data||[]:[];document.getElementById('staff-course-count')?.replaceChildren(document.createTextNode(String(c.length)));document.getElementById('staff-pending-results')?.replaceChildren(document.createTextNode('—'));const t=document.getElementById('staff-courses');if(t)t.innerHTML=c.map(x=>`<tr><td>${sanitize(x.code)}</td><td>${sanitize(x.title)}</td><td>${sanitize(x.description||'')}</td></tr>`).join('')||'<tr><td colspan="3" class="text-muted">No active course records are available to this account.</td></tr>';}};
+window.StaffPortal=StaffPortal;document.addEventListener('DOMContentLoaded',()=>{if(document.body.dataset.portal==='staff')StaffPortal.init().catch(e=>{console.error(e);Toast?.error(e.message||'Unable to load staff portal.');});});

@@ -72,21 +72,20 @@ const StudentPortal = {
   },
 
   async loadFinance() {
-    const { data, error } = await this.db
-      .from("invoices")
-      .select("*")
-      .order("created_at", { ascending: false })
-      .limit(25);
+    // Primary production table: fee_records. Legacy deployments may still expose invoices.
+    let result = await this.db.from("fee_records").select("*").order("due_date", { ascending: true }).limit(25);
+    if (result.error) {
+      console.warn("fee_records unavailable; trying invoices compatibility table", result.error);
+      result = await this.db.from("invoices").select("*").limit(25);
+    }
+    if (result.error) throw result.error;
 
-    if (error) throw error;
-
-    // Keep the existing compatibility logic for deployments where invoice
-    // ownership is stored as student_id or profile_id.
-    this.state.invoices = (data || []).filter(x =>
+    const uid = this.context.user.id;
+    this.state.invoices = (result.data || []).filter(x =>
       (!x.student_id && !x.profile_id) ||
-      x.student_id === this.context.user.id ||
-      x.profile_id === this.context.user.id
-    );
+      x.student_id === uid ||
+      x.profile_id === uid
+    ).sort((a,b) => new Date(a.due_date || a.created_at || 0) - new Date(b.due_date || b.created_at || 0));
   },
 
   async loadNotifications() {
@@ -165,7 +164,7 @@ const StudentPortal = {
       invoices.innerHTML = this.state.invoices.length
         ? this.state.invoices.map(i => {
             const amount = Number(i.total ?? i.total_amount ?? i.amount ?? 0);
-            const status = String(i.status || "open").toLowerCase();
+            const status = String(i.status || "outstanding").toLowerCase();
             const paid = ["paid", "success", "successful", "completed"].includes(status);
             const canPay = amount > 0 && !paid;
 
@@ -178,7 +177,7 @@ const StudentPortal = {
                 ${canPay
                   ? `<button type="button" class="btn btn-accent btn-sm"
                       data-pay-invoice="${sanitize(i.id || "")}"
-                      data-pay-amount="${amount}">Pay now</button>`
+                      data-pay-amount="${amount}" data-fee-record-id="${sanitize(i.fee_record_id || i.id || "")}">Pay now</button>`
                   : paid
                     ? '<span class="text-muted">Paid</span>'
                     : '—'}

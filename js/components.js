@@ -97,3 +97,41 @@ document.addEventListener("DOMContentLoaded", () => {
 
 window.Toast = Toast;
 window.Modal = Modal;
+
+
+function enhanceGlobalNavigation() {
+  const nav = document.querySelector('.main-nav');
+  if (nav && !nav.dataset.enhanced) {
+    nav.dataset.enhanced = 'true';
+    nav.innerHTML = `
+      <div class="nav-item has-menu"><a href="about.html" class="nav-link">About <span aria-hidden="true">⌄</span></a><div class="nav-mega" role="menu">
+        <a href="about.html">University Overview</a><a href="history.html">History</a><a href="leadership.html">Leadership</a><a href="governance.html">Governance</a><a href="accreditation.html">Accreditation</a><a href="directory.html">Directory</a>
+      </div></div>
+      <div class="nav-item has-menu"><a href="academics.html" class="nav-link">Academics <span aria-hidden="true">⌄</span></a><div class="nav-mega" role="menu">
+        <a href="academics.html">Academic Overview</a><a href="programmes.html">Programmes</a><a href="faculties.html">Faculties</a><a href="departments.html">Departments</a><a href="academic-calendar.html">Academic Calendar</a><a href="library.html">Library</a><a href="research.html">Research</a>
+      </div></div>
+      <div class="nav-item has-menu"><a href="admissions.html" class="nav-link">Admissions <span aria-hidden="true">⌄</span></a><div class="nav-mega" role="menu">
+        <a href="admissions.html">Admissions Overview</a><a href="undergraduate-admissions.html">Undergraduate</a><a href="postgraduate-admissions.html">Postgraduate</a><a href="international-admissions.html">International</a><a href="admission-requirements.html">Requirements</a><a href="how-to-apply.html">How to Apply</a><a href="fees.html">Fees</a><a href="application-status.html">Check Status</a>
+      </div></div>
+      <div class="nav-item"><a href="research.html" class="nav-link">Research</a></div>
+      <div class="nav-item has-menu"><a href="student-life.html" class="nav-link">Campus Life <span aria-hidden="true">⌄</span></a><div class="nav-mega" role="menu">
+        <a href="student-life.html">Campus Life</a><a href="accommodation.html">Accommodation</a><a href="clubs.html">Clubs & Societies</a><a href="sports.html">Sports</a><a href="health.html">Health Services</a><a href="student-support.html">Student Support</a>
+      </div></div>
+      <div class="nav-item has-menu"><a href="news.html" class="nav-link">News & Events <span aria-hidden="true">⌄</span></a><div class="nav-mega" role="menu">
+        <a href="news.html">News</a><a href="events.html">Events</a><a href="gallery.html">Gallery</a><a href="downloads.html">Document Centre</a><a href="faq.html">FAQs</a>
+      </div></div>
+      <div class="nav-item"><a href="contact.html" class="nav-link">Contact</a></div>`;
+  }
+  const mobile = document.querySelector('.mobile-nav');
+  if (mobile && !mobile.dataset.enhanced) {
+    mobile.dataset.enhanced='true';
+    mobile.innerHTML=`<a href="about.html">About</a><a href="academics.html">Academics</a><a href="admissions.html">Admissions</a><a href="programmes.html">Programmes</a><a href="faculties.html">Faculties</a><a href="research.html">Research</a><a href="student-life.html">Campus Life</a><a href="news.html">News</a><a href="events.html">Events</a><a href="library.html">Library</a><a href="contact.html">Contact</a><a href="login.html">Portals</a><a href="apply.html" class="btn btn-accent" style="margin-top:1rem;text-align:center">Apply Now</a>`;
+  }
+  document.querySelectorAll('.has-menu > .nav-link').forEach(link=>{
+    link.setAttribute('aria-haspopup','true');
+    link.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();link.parentElement.classList.toggle('open')}});
+  });
+}
+
+document.addEventListener('DOMContentLoaded', enhanceGlobalNavigation);
+window.enhanceGlobalNavigation=enhanceGlobalNavigation;
