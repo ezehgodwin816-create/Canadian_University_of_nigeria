@@ -203,6 +203,10 @@
       document.getElementById("success-panel").style.display="block";
       document.getElementById("app-number").textContent=record.application_number;
       Toast.success("Application submitted successfully");
+      } catch(error){
+        console.error("CUN application submit error", error);
+        Toast.error(error?.message || "The application could not be submitted.");
+      }
     };
   </script>
 <script>if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.serviceWorker.getRegistrations().then(rs=>rs.forEach(r=>r.unregister())).catch(()=>{}));}</script>
