@@ -165,13 +165,39 @@
     form.onsubmit=async (e)=>{
       e.preventDefault();
       if(!validateRequired(form)) return;
-      const fd=new FormData(form);
-      const data=Object.fromEntries(fd.entries());
-      data.programmeId = document.getElementById("programme-id")?.value || "";
-      data.programmeName = data.programme || "";
-      const result=await Application.submit(data);
-      if(!result.success){ Toast.error(result.message); return; }
-      const record=result.record;
+      try {
+        if(window.CUNSupabaseReady) await window.CUNSupabaseReady;
+        const { data: sessionData, error: sessionError } = await window.SupabaseClient.auth.getSession();
+        const session = sessionData?.session;
+        if(sessionError || !session?.user?.id){
+          Toast.error("Your student session has expired. Please sign in again.");
+          return;
+        }
+        const fd=new FormData(form);
+        const data=Object.fromEntries(fd.entries());
+        const programmeId = document.getElementById("programme-id")?.value || data.programmeId || "";
+        const payload = {
+          user_id: session.user.id,
+          email: String(data.email || session.user.email || "").trim().toLowerCase(),
+          first_name: String(data.firstName || "").trim(),
+          last_name: String(data.lastName || "").trim(),
+          programme_id: programmeId || null,
+          programme_name: String(data.programme || "").trim(),
+          status: "received",
+          entry_type: data.entryType || "UTME",
+          study_mode: data.studyMode || "Full-time",
+          data: data
+        };
+        const { data: record, error } = await window.SupabaseClient
+          .from("applications")
+          .insert(payload)
+          .select("*")
+          .single();
+        if(error){
+          console.error("CUN application submit error", error);
+          Toast.error(error.message || "The application could not be submitted.");
+          return;
+        }
       form.style.display="none";
       document.getElementById("wizard-steps").style.display="none";
       document.getElementById("success-panel").style.display="block";
