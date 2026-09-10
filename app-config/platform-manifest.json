@@ -2,9 +2,15 @@
   "name": "Canadian University of Nigeria",
   "short_name": "CUN",
   "description": "Official digital platform for the Canadian University of Nigeria.",
-  "start_url": "/",
+  "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#071522",
   "theme_color": "#071522",
-  "icons": [{"src":"assets/favicon.svg","sizes":"any","type":"image/svg+xml"}]
+  "icons": [
+    {
+      "src": "assets/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
 }
