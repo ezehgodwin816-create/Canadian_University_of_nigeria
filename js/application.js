@@ -39,18 +39,38 @@ const Application = {
       return {success:false,message:"Please select a programme."};
 
     try {
-      const {data: row, error} = await window.SupabaseClient.rpc("submit_application", {p_payload: payload});
+      // Submit directly to the applications table. The database already has an
+      // authenticated applicant INSERT policy and the DB trigger protects the
+      // workflow fields. This avoids depending on PostgREST's RPC schema cache
+      // for submit_application.
+      const insertPayload = {
+        user_id: session.user.id,
+        email: payload.email,
+        first_name: payload.first_name,
+        last_name: payload.last_name,
+        programme_id: payload.programme_id,
+        programme_name: payload.programme_name,
+        status: "received",
+        entry_type: payload.entry_type,
+        study_mode: payload.study_mode,
+        data: payload.data
+      };
+
+      const {data: row, error} = await window.SupabaseClient
+        .from("applications")
+        .insert(insertPayload)
+        .select("*")
+        .single();
+
       if(error) {
-        // Give a useful message for the common case where the database function
-        // has not yet been installed, instead of silently failing.
-        if(/submit_application|function.*does not exist|404/i.test(error.message || ""))
-          return {success:false,message:"The admissions submission service is not installed in Supabase yet. Run the CUN FINAL_DEPLOY.sql script, then try again."};
         return {success:false,message:error.message || "The application could not be submitted."};
       }
-      const record = Array.isArray(row) ? row[0] : row;
-      if(!record) return {success:false,message:"The admissions service did not return an application number. Please try again."};
+
+      if(!row?.application_number)
+        return {success:false,message:"The application was saved but no application number was returned. Please contact Admissions."};
+
       this.clearCurrent();
-      return {success:true,record};
+      return {success:true,record:row};
     } catch(e) {
       return {success:false,message:e?.message || "The application could not be submitted. Please try again."};
     }
