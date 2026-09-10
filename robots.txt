@@ -3,4 +3,7 @@ Allow: /
 Disallow: /admin.html
 Disallow: /student-portal.html
 Disallow: /staff-portal.html
-Sitemap: /sitemap.xml
+Disallow: /login.html
+Disallow: /reset-password.html
+Disallow: /forgot-password.html
+Sitemap: https://ezehgodwin816-create.github.io/Canadian_University_of_nigeria/sitemap.xml

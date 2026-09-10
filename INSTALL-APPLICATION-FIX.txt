@@ -1,0 +1,9 @@
+CUN — DEFINITIVE APPLICATION/LOGIN BUILD
+
+1. Upload/extract this entire cun-website folder. Do not upload only the patch files.
+2. In Supabase SQL Editor, run: supabase/FINAL_DEPLOY.sql (entire file).
+3. In Supabase Authentication, create/confirm the applicant account.
+4. Open login.html, sign in, then open apply.html.
+5. If an old browser/service-worker cache exists, reload once after deployment.
+
+The website config contains only the public Supabase publishable key. Never add a service-role/secret key to the site.

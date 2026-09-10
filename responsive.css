@@ -1,0 +1,98 @@
+/* Responsive overrides and mobile refinements */
+
+@media (max-width: 991px) {
+  :root { --header-height: 64px; }
+  .hero { min-height: 55vh; }
+  .hero-content { padding: var(--space-2xl) 0; }
+  .quick-actions { margin-top: calc(-1 * var(--space-xl)); grid-template-columns: repeat(2, 1fr); }
+  .section { padding: var(--space-2xl) 0; }
+  .stats-grid { grid-template-columns: repeat(2, 1fr); }
+  .wizard-steps { flex-wrap: wrap; gap: 1rem; }
+  .wizard-steps::before { display: none; }
+  .wizard-step { flex: 0 0 30%; }
+}
+
+@media (max-width: 600px) {
+  .container { padding: 0 var(--space-md); }
+  .quick-actions { grid-template-columns: 1fr 1fr; gap: var(--space-sm); }
+  .quick-action { padding: var(--space-md); }
+  .quick-action h4 { font-size: 0.85rem; }
+  .stats-grid { grid-template-columns: 1fr 1fr; }
+  .stat-number { font-size: 1.75rem; }
+  .hero-actions { flex-direction: column; }
+  .hero-actions .btn { width: 100%; }
+  .footer-grid { grid-template-columns: 1fr 1fr; gap: var(--space-xl); }
+  .dash-cards { grid-template-columns: 1fr 1fr; }
+  .filter-bar { flex-direction: column; align-items: stretch; }
+  .filter-bar select, .filter-bar input { min-width: 100%; }
+  .form-row { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 400px) {
+  .quick-actions { grid-template-columns: 1fr; }
+  .stats-grid { grid-template-columns: 1fr; }
+  .footer-grid { grid-template-columns: 1fr; }
+}
+
+/* Large screens */
+@media (min-width: 1400px) {
+  .container { max-width: 1280px; }
+}
+
+/* Mobile viewport integrity: keep the page canvas full-width.
+   This is intentionally scoped to small screens so desktop layout is untouched. */
+@media (max-width: 991px) {
+  html, body { width: 100%; max-width: 100%; }
+  main { width: 100%; max-width: 100%; margin: 0; }
+  .hero, .section, .site-footer { width: 100%; max-width: 100%; }
+  .hero { margin-left: 0; margin-right: 0; }
+  .hero-bg, .hero-overlay { width: 100%; left: 0; right: 0; }
+  .hero-content { width: 100%; max-width: 100%; margin-left: 0; margin-right: 0; }
+}
+
+@media (max-width: 600px) {
+  .container { width: 100%; max-width: 100%; }
+  .hero h1 { max-width: 100%; }
+  .hero p { max-width: 100%; }
+}
+
+
+/* Final mobile correction: compact header + full-width page canvas */
+@media (max-width: 991px) {
+  /* There is already an Apply Now action in the mobile menu/hero; reclaim this header space. */
+  .header-actions .btn-accent { display: none !important; }
+
+  /* Keep the useful header controls visible. */
+  .header-actions { display: flex !important; align-items: center; flex: 0 0 auto; gap: 4px; }
+  .header-actions .btn-ghost { display: inline-flex !important; }
+  .search-toggle, .menu-toggle { display: inline-flex !important; flex: 0 0 32px; width: 32px; height: 32px; }
+
+  /* Force the public page itself to occupy the whole mobile viewport. */
+  #main, main, .hero, .section, .site-footer {
+    width: 100vw !important;
+    max-width: none !important;
+    min-width: 100vw !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+  .hero-bg, .hero-overlay { width: 100% !important; left: 0 !important; right: 0 !important; }
+  .hero-content, .hero > .container { width: 100% !important; max-width: none !important; }
+}
+
+@media (max-width: 600px) {
+  .header-inner { width: 100% !important; min-width: 0 !important; padding-left: 6px !important; padding-right: 6px !important; gap: 4px !important; }
+  .logo-link { min-width: 0 !important; flex: 1 1 auto !important; max-width: 46% !important; gap: 5px !important; overflow: hidden !important; }
+  .logo-link img { width: 34px !important; height: 34px !important; flex: 0 0 34px !important; }
+  .logo-link::after { font-size: 9px !important; line-height: 1 !important; }
+  .header-actions { gap: 2px !important; }
+  .header-actions .btn-ghost { padding: 0 6px !important; font-size: 0.62rem !important; min-height: 32px !important; }
+  .search-toggle, .menu-toggle { width: 30px !important; height: 30px !important; flex-basis: 30px !important; }
+  .hero-content { padding-left: var(--space-md) !important; padding-right: var(--space-md) !important; }
+}
+
+@media (max-width: 400px) {
+  .header-inner { padding-left: 4px !important; padding-right: 4px !important; }
+  .logo-link { max-width: 42% !important; }
+  .logo-link::after { display: none !important; }
+  .header-actions .btn-ghost { padding: 0 4px !important; font-size: 0.58rem !important; }
+}
