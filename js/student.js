@@ -272,8 +272,13 @@ const StudentPortal = {
     try {
       // Do not send the invoice UUID as fee_record_id. An invoices.id value
       // is not necessarily a fee_records.id and can cause a foreign-key error.
+      const feeRecordId = button.dataset.feeRecordId || null;
+
       const { data, error } = await this.db.functions.invoke("create-payment", {
-        body: { amount }
+        body: {
+          amount,
+          fee_record_id: feeRecordId
+        }
       });
 
       if (error) throw error;
