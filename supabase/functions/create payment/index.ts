@@ -1,294 +1,96 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
-const corsHeaders = {
+const cors = {
   'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers':
-    'authorization, x-client-info, apikey, content-type',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
   'Access-Control-Allow-Methods': 'POST, OPTIONS'
 };
 
-function response(
-  body: Record<string, unknown>,
-  status = 200
-) {
-  return new Response(
-    JSON.stringify(body),
-    {
-      status,
-      headers: {
-        ...corsHeaders,
-        'Content-Type': 'application/json'
-      }
-    }
-  );
+function response(body: unknown, status = 200) {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: { ...cors, 'Content-Type': 'application/json' }
+  });
 }
 
-Deno.serve(async (req) => {
-  if (req.method === 'OPTIONS') {
-    return new Response('ok', {
-      status: 200,
-      headers: corsHeaders
-    });
-  }
+function env(name: string) {
+  const value = Deno.env.get(name);
+  if (!value) throw new Error(`Missing environment variable: ${name}`);
+  return value;
+}
 
-  if (req.method !== 'POST') {
-    return response(
-      { error: 'Method Not Allowed' },
-      405
-    );
-  }
+Deno.serve(async req => {
+  if (req.method === 'OPTIONS') return new Response('ok', { status: 200, headers: cors });
+  if (req.method !== 'POST') return response({ error: 'Method Not Allowed' }, 405);
 
   try {
-    const supabaseUrl =
-      Deno.env.get('SUPABASE_URL');
+    const authorization = req.headers.get('authorization');
+    if (!authorization) return response({ error: 'Unauthorized' }, 401);
 
-    const supabaseAnonKey =
-      Deno.env.get('SUPABASE_ANON_KEY');
+    const supabaseUrl = env('SUPABASE_URL');
+    const anonKey = env('SUPABASE_ANON_KEY');
+    const serviceRoleKey = env('SUPABASE_SERVICE_ROLE_KEY');
 
-    const serviceRoleKey =
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
+    const userDb = createClient(supabaseUrl, anonKey, {
+      global: { headers: { Authorization: authorization } }
+    });
+    const adminDb = createClient(supabaseUrl, serviceRoleKey);
 
-    if (
-      !supabaseUrl ||
-      !supabaseAnonKey ||
-      !serviceRoleKey
-    ) {
-      console.error(
-        'Missing Supabase environment variables'
-      );
+    const { data: authData, error: authError } = await userDb.auth.getUser();
+    const user = authData?.user;
+    if (authError || !user) return response({ error: 'Unauthorized' }, 401);
 
-      return response(
-        { error: 'Server configuration error' },
-        500
-      );
-    }
-
-    const authorization =
-      req.headers.get('Authorization');
-
-    if (!authorization) {
-      return response(
-        { error: 'Unauthorized' },
-        401
-      );
-    }
-
-    /*
-     * Client using the student's JWT.
-     * This is used only to identify the authenticated user.
-     */
-    const userClient = createClient(
-      supabaseUrl,
-      supabaseAnonKey,
-      {
-        global: {
-          headers: {
-            Authorization: authorization
-          }
-        }
-      }
-    );
-
-    const {
-      data: {
-        user
-      },
-      error: authError
-    } = await userClient.auth.getUser();
-
-    if (authError || !user) {
-      console.error(
-        'Authentication error:',
-        authError
-      );
-
-      return response(
-        { error: 'Unauthorized' },
-        401
-      );
-    }
-
-    /*
-     * Service-role client is used only inside this
-     * trusted Edge Function for the payment insert.
-     *
-     * The service-role key is NEVER returned to
-     * the browser.
-     */
-    const adminClient = createClient(
-      supabaseUrl,
-      serviceRoleKey
-    );
-
-    const body = await req.json();
-
-    const feeRecordId =
-      body?.fee_record_id || null;
-
-    /*
-     * When a fee record is supplied, retrieve the
-     * actual fee from the database rather than trusting
-     * an amount supplied by the browser.
-     */
-    let amount: number;
+    const body = await req.json().catch(() => ({}));
+    const feeRecordId = body?.fee_record_id ? String(body.fee_record_id) : null;
+    let amount = Number(body?.amount);
 
     if (feeRecordId) {
-      const {
-        data: fee,
-        error: feeError
-      } = await adminClient
+      const { data: fee, error: feeError } = await adminDb
         .from('fee_records')
-        .select(
-          'id, student_id, amount, status'
-        )
+        .select('id, student_id, amount, status')
         .eq('id', feeRecordId)
         .maybeSingle();
 
-      if (feeError) {
-        console.error(
-          'Fee lookup error:',
-          feeError
-        );
-
-        return response(
-          { error: 'Could not verify fee' },
-          500
-        );
+      if (feeError) throw feeError;
+      if (!fee || fee.student_id !== user.id) {
+        return response({ error: 'Invalid fee record' }, 403);
       }
 
-      if (!fee) {
-        return response(
-          { error: 'Fee record not found' },
-          404
-        );
-      }
-
-      /*
-       * Critical ownership check.
-       */
-      if (fee.student_id !== user.id) {
-        return response(
-          { error: 'You cannot pay this fee' },
-          403
-        );
-      }
-
-      const status =
-        String(fee.status || '')
-          .toLowerCase();
-
-      if (
-        status === 'paid' ||
-        status === 'settled' ||
-        status === 'cancelled'
-      ) {
-        return response(
-          { error: 'This fee is not payable' },
-          400
-        );
+      const status = String(fee.status || '').toLowerCase();
+      if (['paid', 'settled', 'cancelled'].includes(status)) {
+        return response({ error: 'Fee is not payable' }, 400);
       }
 
       amount = Number(fee.amount);
-    } else {
-      /*
-       * Only allow an amount when no fee record was
-       * supplied. This keeps the function compatible
-       * with the existing frontend while still validating
-       * the value.
-       */
-      amount = Number(body?.amount);
     }
 
-    if (
-      !Number.isFinite(amount) ||
-      amount <= 0
-    ) {
-      return response(
-        { error: 'Invalid payment amount' },
-        400
-      );
+    if (!Number.isFinite(amount) || amount <= 0) {
+      return response({ error: 'Invalid amount' }, 400);
     }
 
-    /*
-     * Paystack expects the amount in kobo.
-     * Example: ₦5,000 = 500000 kobo.
-     */
-    const amountInKobo =
-      Math.round(amount * 100);
+    const reference = `CUN-${Date.now()}-${crypto.randomUUID().slice(0, 8)}`;
 
-    const reference =
-      `CUN-${Date.now()}-${crypto
-        .randomUUID()
-        .replaceAll('-', '')
-        .slice(0, 12)}`;
-
-    /*
-     * Store the pending payment.
-     *
-     * IMPORTANT:
-     * This insert happens server-side using the
-     * service-role client, so the student's normal
-     * payments INSERT RLS restriction is preserved.
-     */
-    const paymentData: Record<string, unknown> = {
-      student_id: user.id,
-      amount,
-      reference,
-      provider: 'paystack',
-      status: 'pending'
-    };
-
-    if (feeRecordId) {
-      paymentData.fee_record_id =
-        feeRecordId;
-    }
-
-    const {
-      error: paymentError
-    } = await adminClient
+    const { error: paymentError } = await adminDb
       .from('payments')
-      .insert(paymentData);
+      .insert({
+        student_id: user.id,
+        fee_record_id: feeRecordId,
+        amount,
+        reference,
+        provider: 'paystack',
+        status: 'pending'
+      });
 
-    if (paymentError) {
-      console.error(
-        'Payment insert error:',
-        paymentError
-      );
+    if (paymentError) throw paymentError;
 
-      return response(
-        {
-          error:
-            'Could not create payment reference'
-        },
-        500
-      );
-    }
-
-    /*
-     * Return only information required by the
-     * frontend. Never return secrets.
-     */
     return response({
-      success: true,
       reference,
       amount,
-      amount_in_kobo: amountInKobo,
       currency: 'NGN',
       email: user.email
     });
-
   } catch (error) {
-    console.error(
-      'create-payment error:',
-      error
-    );
-
-    return response(
-      {
-        error:
-          'Could not create payment reference'
-      },
-      500
-    );
+    console.error('create-payment error:', error);
+    return response({ error: 'Could not create payment' }, 500);
   }
 });
