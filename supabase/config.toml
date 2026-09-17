@@ -1,1 +1,18 @@
+project_id = "cun-production"
 
+[api]
+enabled = true
+
+[auth]
+enabled = true
+site_url = "https://www.cun.edu.ng/"
+additional_redirect_urls = ["https://www.cun.edu.ng/login.html", "https://www.cun.edu.ng/reset-password.html"]
+
+[functions.paystack-webhook]
+verify_jwt = false
+
+[functions.create-payment]
+verify_jwt = true
+
+[functions.secure-document-url]
+verify_jwt = true
