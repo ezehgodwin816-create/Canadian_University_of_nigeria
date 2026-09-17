@@ -1,1 +1,3 @@
-
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+import { json, requireEnv } from '../_shared/security.ts';
+Deno.serve(async req=>{try{if(req.method!=='POST')return json({error:'Method Not Allowed'},405);const auth=req.headers.get('authorization');if(!auth)return json({error:'Unauthorized'},401);const {path}=await req.json();if(typeof path!=='string'||!path||path.includes('..'))return json({error:'Invalid path'},400);const db=createClient(requireEnv('SUPABASE_URL'),requireEnv('SUPABASE_ANON_KEY'),{global:{headers:{Authorization:auth}}});const {data:{user}}=await db.auth.getUser();if(!user)return json({error:'Unauthorized'},401);if(!path.startsWith(`${user.id}/`))return json({error:'Forbidden'},403);const {data,error}=await db.storage.from('application-documents').createSignedUrl(path,300);if(error)throw error;return json({url:data.signedUrl,expiresIn:300});}catch(e){console.error(e);return json({error:'Could not create secure URL'},500);}});
