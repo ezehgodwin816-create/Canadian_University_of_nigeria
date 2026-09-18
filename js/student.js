@@ -16,8 +16,6 @@ const StudentPortal = {
 
     this.renderProfile();
 
-    // Load each area independently. One unavailable table must not prevent
-    // Finance/Invoices or the rest of the portal from rendering.
     const loaders = [
       ["applications", () => this.loadApplications()],
       ["academics", () => this.loadAcademics()],
@@ -29,7 +27,7 @@ const StudentPortal = {
     const results = await Promise.allSettled(loaders.map(([, fn]) => fn()));
     results.forEach((result, index) => {
       if (result.status === "rejected") {
-        console.error(`CUN Student Portal ${loaders[index][0]} error:`, result.reason);
+        console.error("CUN Student Portal " + loaders[index][0] + " error:", result.reason);
       }
     });
 
@@ -72,7 +70,6 @@ const StudentPortal = {
   },
 
   async loadFinance() {
-    // Primary production table: fee_records. Legacy deployments may still expose invoices.
     let result = await this.db.from("fee_records").select("*").order("due_date", { ascending: true }).limit(25);
     if (result.error) {
       console.warn("fee_records unavailable; trying invoices compatibility table", result.error);
@@ -85,7 +82,7 @@ const StudentPortal = {
       (!x.student_id && !x.profile_id) ||
       x.student_id === uid ||
       x.profile_id === uid
-    ).sort((a,b) => new Date(a.due_date || a.created_at || 0) - new Date(b.due_date || b.created_at || 0));
+    ).sort((a, b) => new Date(a.due_date || a.created_at || 0) - new Date(b.due_date || b.created_at || 0));
   },
 
   async loadNotifications() {
@@ -130,17 +127,23 @@ const StudentPortal = {
     const notifications = document.getElementById("notif-list");
     if (notifications) {
       notifications.innerHTML = this.state.notifications.length
-        ? this.state.notifications.map(n =>
-            `<article class="card mb-2" style="padding:1rem">
-              <div style="display:flex;justify-content:space-between;gap:1rem">
-                <strong>${sanitize(n.title || "Notification")}</strong>
-                ${n.is_read ? "" : '<span class="badge badge-info">New</span>'}
-              </div>
-              <p>${sanitize(n.message || "")}</p>
-              <div class="text-muted" style="font-size:.85rem">${formatDate(n.created_at)}</div>
-              \( {n.is_read ? "" : `<button class="btn btn-ghost btn-sm mt-2" data-read-notification=" \){sanitize(n.id)}">Mark as read</button>`}
-            </article>`
-          ).join("")
+        ? this.state.notifications.map(n => {
+            const readBtn = n.is_read
+              ? ""
+              : '<button class="btn btn-ghost btn-sm mt-2" data-read-notification="' + sanitize(n.id) + '">Mark as read</button>';
+            const badge = n.is_read ? "" : '<span class="badge badge-info">New</span>';
+            return (
+              '<article class="card mb-2" style="padding:1rem">' +
+                '<div style="display:flex;justify-content:space-between;gap:1rem">' +
+                  "<strong>" + sanitize(n.title || "Notification") + "</strong>" +
+                  badge +
+                "</div>" +
+                "<p>" + sanitize(n.message || "") + "</p>" +
+                '<div class="text-muted" style="font-size:.85rem">' + formatDate(n.created_at) + "</div>" +
+                readBtn +
+              "</article>"
+            );
+          }).join("")
         : '<div class="empty-state"><p>No notifications yet.</p></div>';
     }
 
@@ -148,17 +151,16 @@ const StudentPortal = {
     if (courses) {
       courses.innerHTML = this.state.enrolments.length
         ? this.state.enrolments.map(e =>
-            `<tr>
-              <td>${sanitize(e.course_code || e.code || "—")}</td>
-              <td>${sanitize(e.course_title || e.title || "Course offering")}</td>
-              <td>${sanitize(e.status || "registered")}</td>
-              <td>${formatDate(e.created_at)}</td>
-            </tr>`
+            "<tr>" +
+              "<td>" + sanitize(e.course_code || e.code || "—") + "</td>" +
+              "<td>" + sanitize(e.course_title || e.title || "Course offering") + "</td>" +
+              "<td>" + sanitize(e.status || "registered") + "</td>" +
+              "<td>" + formatDate(e.created_at) + "</td>" +
+            "</tr>"
           ).join("")
         : '<tr><td colspan="4" class="text-muted">No course registrations are available yet.</td></tr>';
     }
 
-    // Finance/Invoices is rendered independently of every other portal area.
     const invoices = document.getElementById("invoices-list");
     if (invoices) {
       invoices.innerHTML = this.state.invoices.length
@@ -167,25 +169,29 @@ const StudentPortal = {
             const status = String(i.status || "outstanding").toLowerCase();
             const paid = ["paid", "success", "successful", "completed"].includes(status);
             const canPay = amount > 0 && !paid;
-            // Always use the fee_records primary key (id)
             const feeId = i.id || "";
+            const amountText = (i.currency || "NGN") + " " + amount.toLocaleString("en-NG", { minimumFractionDigits: 2 });
 
-            return `<tr>
-              <td>${sanitize(i.invoice_number || i.id || "—")}</td>
-              <td>${sanitize(i.currency || "NGN")} ${amount.toLocaleString("en-NG", {minimumFractionDigits:2})}</td>
-              <td>${sanitize(i.status || "open")}</td>
-              <td>${i.due_date ? formatDate(i.due_date) : "—"}</td>
-              <td>
-                ${canPay
-                  ? `<button type="button" class="btn btn-accent btn-sm"
-                      data-pay-invoice="${sanitize(feeId)}"
-                      data-pay-amount="${amount}"
-                      data-fee-record-id="${sanitize(feeId)}">Pay now</button>`
-                  : paid
-                    ? '<span class="text-muted">Paid</span>'
-                    : '—'}
-              </td>
-            </tr>`;
+            let paymentCell = "—";
+            if (canPay) {
+              paymentCell =
+                '<button type="button" class="btn btn-accent btn-sm" ' +
+                'data-pay-invoice="' + sanitize(feeId) + '" ' +
+                'data-pay-amount="' + amount + '" ' +
+                'data-fee-record-id="' + sanitize(feeId) + '">Pay now</button>';
+            } else if (paid) {
+              paymentCell = '<span class="text-muted">Paid</span>';
+            }
+
+            return (
+              "<tr>" +
+                "<td>" + sanitize(i.invoice_number || i.id || "—") + "</td>" +
+                "<td>" + sanitize(amountText) + "</td>" +
+                "<td>" + sanitize(i.status || "open") + "</td>" +
+                "<td>" + (i.due_date ? formatDate(i.due_date) : "—") + "</td>" +
+                "<td>" + paymentCell + "</td>" +
+              "</tr>"
+            );
           }).join("")
         : '<tr><td colspan="5" class="text-muted">No invoices are available yet.</td></tr>';
     }
@@ -194,11 +200,11 @@ const StudentPortal = {
     if (docs) {
       docs.innerHTML = this.state.documents.length
         ? this.state.documents.map(d =>
-            `<tr>
-              <td>${sanitize(d.doc_type)}</td>
-              <td>${formatDate(d.uploaded_at)}</td>
-              <td><button class="btn btn-ghost btn-sm" data-doc-path="${sanitize(d.file_path)}">Open securely</button></td>
-            </tr>`
+            "<tr>" +
+              "<td>" + sanitize(d.doc_type) + "</td>" +
+              "<td>" + formatDate(d.uploaded_at) + "</td>" +
+              '<td><button class="btn btn-ghost btn-sm" data-doc-path="' + sanitize(d.file_path) + '">Open securely</button></td>' +
+            "</tr>"
           ).join("")
         : '<tr><td colspan="3" class="text-muted">No application documents are available yet.</td></tr>';
     }
@@ -207,12 +213,12 @@ const StudentPortal = {
     if (apps) {
       apps.innerHTML = this.state.applications.length
         ? this.state.applications.map(a =>
-            `<tr>
-              <td>${sanitize(a.application_number)}</td>
-              <td>${sanitize(a.programme_name || "—")}</td>
-              <td><span class="badge badge-info">${sanitize(a.status)}</span></td>
-              <td>${formatDate(a.submitted_at)}</td>
-            </tr>`
+            "<tr>" +
+              "<td>" + sanitize(a.application_number) + "</td>" +
+              "<td>" + sanitize(a.programme_name || "—") + "</td>" +
+              '<td><span class="badge badge-info">' + sanitize(a.status) + "</span></td>" +
+              "<td>" + formatDate(a.submitted_at) + "</td>" +
+            "</tr>"
           ).join("")
         : '<tr><td colspan="4" class="text-muted">No applications found.</td></tr>';
     }
