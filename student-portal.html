@@ -9,7 +9,6 @@
   <link rel="stylesheet" href="css/responsive.css">
   <link rel="manifest" href="app-config/platform-manifest.json">
   <style>
-    /* Student portal mobile navigation: real backdrop + touch-safe navigation */
     .portal-sidebar-backdrop{display:none;position:fixed;inset:0;background:rgba(4,10,18,.48);backdrop-filter:blur(2px);-webkit-backdrop-filter:blur(2px);z-index:90;touch-action:manipulation}
     .portal-sidebar-backdrop.open{display:block}
     @media(max-width:900px){
@@ -67,31 +66,14 @@
           </div>
 
           <div class="grid grid-2 mt-4">
-            <div class="card">
-              <div class="card-body">
-                <h4>Registered Courses</h4>
-                <div class="dash-card-value" id="stat-courses">0</div>
-              </div>
-            </div>
-            <div class="card">
-              <div class="card-body">
-                <h4>Recent Invoices</h4>
-                <div class="dash-card-value" id="stat-invoices">0</div>
-              </div>
-            </div>
+            <div class="card"><div class="card-body"><h4>Registered Courses</h4><div class="dash-card-value" id="stat-courses">0</div></div></div>
+            <div class="card"><div class="card-body"><h4>Recent Invoices</h4><div class="dash-card-value" id="stat-invoices">0</div></div></div>
           </div>
 
           <h2 id="applications" class="mt-4">Applications</h2>
           <div class="table-wrap mt-2">
             <table>
-              <thead>
-                <tr>
-                  <th>Application</th>
-                  <th>Programme</th>
-                  <th>Status</th>
-                  <th>Submitted</th>
-                </tr>
-              </thead>
+              <thead><tr><th>Application</th><th>Programme</th><th>Status</th><th>Submitted</th></tr></thead>
               <tbody id="student-applications"></tbody>
             </table>
           </div>
@@ -99,14 +81,7 @@
           <h2 id="courses" class="mt-4">Courses</h2>
           <div class="table-wrap mt-2">
             <table>
-              <thead>
-                <tr>
-                  <th>Code</th>
-                  <th>Course</th>
-                  <th>Status</th>
-                  <th>Registered</th>
-                </tr>
-              </thead>
+              <thead><tr><th>Code</th><th>Course</th><th>Status</th><th>Registered</th></tr></thead>
               <tbody id="courses-list"></tbody>
             </table>
           </div>
@@ -114,15 +89,7 @@
           <h2 id="fees" class="mt-4">Invoices</h2>
           <div class="table-wrap mt-2">
             <table>
-              <thead>
-                <tr>
-                  <th>Invoice / Fee</th>
-                  <th>Amount</th>
-                  <th>Status</th>
-                  <th>Due</th>
-                  <th>Payment</th>
-                </tr>
-              </thead>
+              <thead><tr><th>Invoice / Fee</th><th>Amount</th><th>Status</th><th>Due</th><th>Payment</th></tr></thead>
               <tbody id="invoices-list"></tbody>
             </table>
           </div>
@@ -130,13 +97,7 @@
           <h2 id="documents" class="mt-4">Documents</h2>
           <div class="table-wrap mt-2">
             <table>
-              <thead>
-                <tr>
-                  <th>Document</th>
-                  <th>Uploaded</th>
-                  <th>Access</th>
-                </tr>
-              </thead>
+              <thead><tr><th>Document</th><th>Uploaded</th><th>Access</th></tr></thead>
               <tbody id="documents-list"></tbody>
             </table>
           </div>
@@ -146,38 +107,24 @@
 
           <h2 id="results" class="mt-4">Quick Links</h2>
           <div class="grid grid-3 mt-2">
-            <a class="card" href="#courses" style="text-decoration:none;color:inherit">
-              <div class="card-body">
-                <h4>Course Registration</h4>
-                <p class="text-muted">Open your registered courses</p>
-              </div>
-            </a>
-            <a class="card" href="#courses" style="text-decoration:none;color:inherit">
-              <div class="card-body">
-                <h4>Timetable</h4>
-                <p class="text-muted">View your course area</p>
-              </div>
-            </a>
-            <a class="card" href="#fees" style="text-decoration:none;color:inherit">
-              <div class="card-body">
-                <h4>Fee Statement</h4>
-                <p class="text-muted">Open your fee statement</p>
-              </div>
-            </a>
+            <a class="card" href="#courses" style="text-decoration:none;color:inherit"><div class="card-body"><h4>Course Registration</h4><p class="text-muted">Open your registered courses</p></div></a>
+            <a class="card" href="#courses" style="text-decoration:none;color:inherit"><div class="card-body"><h4>Timetable</h4><p class="text-muted">View your course area</p></div></a>
+            <a class="card" href="#fees" style="text-decoration:none;color:inherit"><div class="card-body"><h4>Fee Statement</h4><p class="text-muted">Open your fee statement</p></div></a>
           </div>
         </section>
       </div>
     </div>
   </div>
 
-  <!-- Core scripts only (removed missing js/services/* files that were 404) -->
+  <!-- Load Supabase the same way login.html does -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="js/data.js"></script>
-  <script src="js/config.js"></script>
-  <script src="js/app.js"></script>
-  <script src="js/auth.js"></script>
-  <script src="js/components.js"></script>
+  <script src="js/config.js?v=20260918-fix3"></script>
+  <script src="js/app.js?v=20260918-fix3"></script>
+  <script src="js/auth.js?v=20260918-fix3"></script>
+  <script src="js/components.js?v=20260918-fix3"></script>
   <script src="js/seo.js"></script>
-  <script src="js/student.js?v=20260918-fix2"></script>
+  <script src="js/student.js?v=20260918-fix3"></script>
 
   <script>
   (() => {
@@ -200,9 +147,7 @@
       e.stopPropagation();
       setMenu(!sidebar.classList.contains("open"));
     });
-
     backdrop.addEventListener("click", () => setMenu(false));
-
     nav?.addEventListener("click", (e) => {
       const link = e.target.closest("a");
       if (!link) return;
@@ -211,14 +156,9 @@
       link.classList.add("active");
       setMenu(false);
     });
-
-    document.addEventListener("keydown", (e) => {
-      if (e.key === "Escape") setMenu(false);
-    });
-
+    document.addEventListener("keydown", (e) => { if (e.key === "Escape") setMenu(false); });
     window.addEventListener("hashchange", () => setMenu(false));
 
-    // Avoid stale service worker caching
     if ("serviceWorker" in navigator) {
       navigator.serviceWorker.getRegistrations()
         .then(rs => rs.forEach(r => r.unregister()))
