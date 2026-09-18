@@ -16,3 +16,6 @@ verify_jwt = true
 
 [functions.secure-document-url]
 verify_jwt = true
+
+[functions.cun-ai]
+verify_jwt = false
