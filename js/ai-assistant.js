@@ -40,8 +40,10 @@
     return {
       university:d.university||{},
       stats:d.stats||[],
-      faculties:(d.faculties||[]).map(x=>({id:x.id,name:x.name,description:x.description,programmes:x.programmes})),
-      programmes:(d.programmes||[]).map(x=>({id:x.id,name:x.name,faculty:x.faculty,level:x.level})),
+      faculties:d.faculties||[],
+      departments:d.departments||[],
+      programmes:d.programmes||[],
+      faq:d.faq||[],
       pages
     };
   }
