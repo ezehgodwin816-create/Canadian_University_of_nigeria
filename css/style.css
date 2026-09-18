@@ -942,6 +942,30 @@ html[data-motion="reduced"] *::after {
   background: linear-gradient(135deg,#0a2540,#123e5c);
   color:#fff;
 }
+.ai-headline-row {
+  display:flex;
+  justify-content:space-between;
+  gap:1rem;
+  align-items:flex-start;
+}
+.ai-headline-row strong { display:block; font-size:1.15rem; margin-top:.25rem; }
+.ai-headline-row p { margin:.45rem 0 0; opacity:.86; }
+.ai-kicker { display:block; font-size:.72rem; text-transform:uppercase; letter-spacing:.16em; opacity:.72; }
+.ai-status { white-space:nowrap; font-size:.78rem; opacity:.86; display:inline-flex; align-items:center; gap:.4rem; }
+.ai-status i { width:7px; height:7px; border-radius:50%; background:#7ee2a8; display:inline-block; box-shadow:0 0 0 4px rgba(126,226,168,.12); }
+.ai-prompts { display:flex; flex-wrap:wrap; gap:.5rem; margin-top:1.1rem; }
+.ai-prompt {
+  border:1px solid rgba(255,255,255,.2);
+  background:rgba(255,255,255,.08);
+  color:#fff;
+  border-radius:999px;
+  padding:.5rem .75rem;
+  font:inherit;
+  font-size:.82rem;
+  cursor:pointer;
+  transition:transform .18s ease, background .18s ease, border-color .18s ease;
+}
+.ai-prompt:hover { transform:translateY(-1px); background:rgba(255,255,255,.14); border-color:rgba(255,255,255,.35); }
 .ai-messages {
   min-height: 420px;
   max-height: 62vh;
