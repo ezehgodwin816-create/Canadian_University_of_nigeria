@@ -4,48 +4,255 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Staff Portal | CUN official</title>
+  <meta name="robots" content="noindex,nofollow">
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/responsive.css">
-<link rel="manifest" href="app-config/platform-manifest.json">
+  <style>
+    .portal-sidebar-backdrop{display:none;position:fixed;inset:0;background:rgba(4,10,18,.48);backdrop-filter:blur(2px);z-index:90}
+    .portal-sidebar-backdrop.open{display:block}
+    @media(max-width:900px){
+      .portal-sidebar{z-index:100;box-shadow:0 18px 60px rgba(0,0,0,.28)}
+      .portal-sidebar.open{left:0}
+    }
+    .portal-section{display:none}
+    .portal-section.active{display:block}
+    .form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:0.75rem}
+    .panel-card{background:var(--surface,#fff);border:1px solid rgba(0,0,0,.08);border-radius:12px;padding:1rem;margin-bottom:1rem}
+    .muted{color:#6b7280;font-size:.9rem}
+  </style>
 </head>
 <body data-portal="staff">
-<div class="portal-layout">
+  <div class="portal-layout">
+    <div class="portal-sidebar-backdrop" id="sidebar-backdrop"></div>
     <aside class="portal-sidebar" id="sidebar">
-      <div class="portal-sidebar-header"><img src="assets/logo.svg" alt="CUN" style="height:36px"></div>
-      <nav class="portal-nav">
-        <a href="#" class="active">Dashboard</a>
-        <a href="#">My Courses</a>
-        <a href="#">Class Lists</a>
-        <a href="#">Results Entry</a>
-        <a href="#">Attendance</a>
+      <div class="portal-sidebar-header">
+        <img src="assets/logo.svg" alt="CUN" style="height:36px">
+      </div>
+      <nav class="portal-nav" id="staff-nav">
+        <a href="#dashboard" data-section="dashboard" class="active">Dashboard</a>
+        <a href="#courses" data-section="courses">Courses</a>
+        <a href="#students" data-section="students">Students</a>
+        <a href="#applications" data-section="applications">Applications</a>
+        <a href="#results" data-section="results">Results entry</a>
+        <a href="#fees" data-section="fees">Fee overview</a>
         <a href="#" onclick="Auth.logout();return false">Logout</a>
       </nav>
     </aside>
+
     <div class="portal-main">
       <div class="portal-topbar">
-        <button class="portal-mobile-toggle btn btn-ghost" onclick="document.getElementById('sidebar').classList.toggle('open')">☰</button>
+        <button type="button" class="portal-mobile-toggle btn btn-ghost" id="portal-menu-toggle" aria-label="Open navigation">☰</button>
         <strong>Staff Portal</strong>
         <span id="staff-name">—</span>
       </div>
+
       <div class="portal-content">
-        <div class="dash-cards">
-          <div class="dash-card"><div class="dash-card-label">Department</div><div class="dash-card-value" style="font-size:1.1rem" id="staff-dept">—</div></div>
-          <div class="dash-card"><div class="dash-card-label">Courses Assigned</div><div class="dash-card-value" id="staff-course-count">—</div></div>
-          <div class="dash-card"><div class="dash-card-label">Pending Results</div><div class="dash-card-value" id="staff-pending-results">—</div></div>
-        </div>
-        <h2>Assigned Courses</h2>
-        <div class="table-wrap mt-2"><table><thead><tr><th>Code</th><th>Title</th><th>Students</th></tr></thead>
-        <tbody id="staff-courses"><tr><td colspan="3" class="text-muted">Loading assigned courses…</td></tr></tbody></table></div>
+        <section id="dashboard" class="portal-section active">
+          <div class="dash-cards">
+            <div class="dash-card">
+              <div class="dash-card-label">Staff ID</div>
+              <div class="dash-card-value" style="font-size:1.1rem" id="staff-dept">—</div>
+            </div>
+            <div class="dash-card">
+              <div class="dash-card-label">Courses</div>
+              <div class="dash-card-value" id="staff-course-count">0</div>
+            </div>
+            <div class="dash-card">
+              <div class="dash-card-label">Students</div>
+              <div class="dash-card-value" id="staff-student-count">0</div>
+            </div>
+            <div class="dash-card">
+              <div class="dash-card-label">Pending applications</div>
+              <div class="dash-card-value" id="staff-pending-apps">0</div>
+            </div>
+          </div>
+          <div class="panel-card mt-4">
+            <h3>Welcome</h3>
+            <p class="muted">Use this portal to review applications, view students, manage course lists, and enter results where permitted by your role.</p>
+          </div>
+        </section>
+
+        <section id="courses" class="portal-section">
+          <h2>Courses</h2>
+          <div class="table-wrap mt-2">
+            <table>
+              <thead>
+                <tr>
+                  <th>Code</th>
+                  <th>Title</th>
+                  <th>Description</th>
+                </tr>
+              </thead>
+              <tbody id="staff-courses"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section id="students" class="portal-section">
+          <div class="flex" style="justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap">
+            <h2>Students</h2>
+            <input id="student-search" class="form-control" style="max-width:280px" placeholder="Search students">
+          </div>
+          <div class="table-wrap mt-2">
+            <table>
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Email</th>
+                  <th>Student ID</th>
+                </tr>
+              </thead>
+              <tbody id="staff-students"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section id="applications" class="portal-section">
+          <h2>Applications under review</h2>
+          <div class="table-wrap mt-2">
+            <table>
+              <thead>
+                <tr>
+                  <th>Application</th>
+                  <th>Name</th>
+                  <th>Programme</th>
+                  <th>Status</th>
+                  <th>Submitted</th>
+                </tr>
+              </thead>
+              <tbody id="staff-apps"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section id="results" class="portal-section">
+          <h2>Results entry</h2>
+          <div class="panel-card">
+            <form id="grade-form" class="form-grid">
+              <div>
+                <label class="form-label">Student</label>
+                <select name="student_id" id="grade-student" class="form-control" required>
+                  <option value="">Select student…</option>
+                </select>
+              </div>
+              <div>
+                <label class="form-label">Course code</label>
+                <input name="course_code" class="form-control" placeholder="CSC101" required>
+              </div>
+              <div>
+                <label class="form-label">Course title</label>
+                <input name="course_title" class="form-control" placeholder="Introduction to Computing">
+              </div>
+              <div>
+                <label class="form-label">Score</label>
+                <input name="score" type="number" min="0" max="100" step="0.01" class="form-control" required>
+              </div>
+              <div>
+                <label class="form-label">Grade letter</label>
+                <input name="grade_letter" class="form-control" placeholder="A">
+              </div>
+              <div>
+                <label class="form-label">Grade point</label>
+                <input name="grade_point" type="number" min="0" max="5" step="0.01" class="form-control">
+              </div>
+              <div>
+                <label class="form-label">Session</label>
+                <input name="session" class="form-control" placeholder="2025/2026">
+              </div>
+              <div>
+                <button type="submit" class="btn btn-primary">Save result</button>
+              </div>
+            </form>
+            <p class="muted mt-2">Requires a working <code>grades</code> table and staff write policy in Supabase.</p>
+          </div>
+          <div class="table-wrap mt-2">
+            <table>
+              <thead>
+                <tr>
+                  <th>Student</th>
+                  <th>Course</th>
+                  <th>Score</th>
+                  <th>Grade</th>
+                  <th>Session</th>
+                </tr>
+              </thead>
+              <tbody id="staff-grades"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section id="fees" class="portal-section">
+          <h2>Fee overview</h2>
+          <p class="muted">Staff can view fee status. Creating or editing fees is done in the Admin portal.</p>
+          <div class="table-wrap mt-2">
+            <table>
+              <thead>
+                <tr>
+                  <th>Student</th>
+                  <th>Description</th>
+                  <th>Amount</th>
+                  <th>Status</th>
+                  <th>Due</th>
+                </tr>
+              </thead>
+              <tbody id="staff-fees"></tbody>
+            </table>
+          </div>
+        </section>
       </div>
     </div>
   </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="js/data.js"></script>
-  <script src="js/config.js"></script>
-  <script src="js/app.js"></script><script src="js/services/platform.js"></script><script src="js/services/runtime.js"></script>
-  <script src="js/auth.js"></script>
-  <script src="js/components.js"></script><script src="js/seo.js"></script>
-  <script src="js/staff.js"></script>
-<script>if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));}</script>
+  <script src="js/config.js?v=20260918-staff1"></script>
+  <script src="js/app.js?v=20260918-staff1"></script>
+  <script src="js/auth.js?v=20260918-staff1"></script>
+  <script src="js/components.js?v=20260918-staff1"></script>
+  <script src="js/staff.js?v=20260918-staff1"></script>
+  <script>
+  (() => {
+    const sidebar = document.getElementById("sidebar");
+    const backdrop = document.getElementById("sidebar-backdrop");
+    const toggle = document.getElementById("portal-menu-toggle");
+    const nav = document.getElementById("staff-nav");
+
+    const setMenu = (open) => {
+      sidebar?.classList.toggle("open", open);
+      backdrop?.classList.toggle("open", open);
+    };
+
+    toggle?.addEventListener("click", (e) => {
+      e.preventDefault();
+      setMenu(!sidebar.classList.contains("open"));
+    });
+    backdrop?.addEventListener("click", () => setMenu(false));
+
+    const showSection = (id) => {
+      document.querySelectorAll(".portal-section").forEach(s => s.classList.remove("active"));
+      document.getElementById(id)?.classList.add("active");
+      nav?.querySelectorAll("a[data-section]").forEach(a => {
+        a.classList.toggle("active", a.dataset.section === id);
+      });
+      setMenu(false);
+    };
+
+    nav?.addEventListener("click", (e) => {
+      const link = e.target.closest("a[data-section]");
+      if (!link) return;
+      e.preventDefault();
+      showSection(link.dataset.section);
+      history.replaceState(null, "", "#" + link.dataset.section);
+    });
+
+    const hash = (location.hash || "#dashboard").replace("#", "");
+    showSection(document.getElementById(hash) ? hash : "dashboard");
+
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.getRegistrations().then(rs => rs.forEach(r => r.unregister())).catch(() => {});
+    }
+  })();
+  </script>
 </body>
 </html>

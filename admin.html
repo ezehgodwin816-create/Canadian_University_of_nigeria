@@ -1,1 +1,399 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Administration | Canadian University of Nigeria</title><meta name="robots" content="noindex,nofollow"><link rel="icon" href="assets/favicon.svg"><link rel="stylesheet" href="css/style.css"><link rel="stylesheet" href="css/responsive.css"></head><body data-portal="admin"><div class="portal-layout"><aside class="portal-sidebar" id="sidebar"><div class="portal-sidebar-header"><img src="assets/logo.svg" alt="CUN" style="height:40px"></div><nav class="portal-nav"><a href="#dashboard" class="active">Dashboard</a><a href="#applications">Applications</a><a href="#users">Users</a><a href="#programmes">Programmes</a><a href="#news">News</a><a href="#events">Events</a><a href="#audit">Audit log</a><a href="#" onclick="Auth.logout();return false">Logout</a></nav></aside><div class="portal-main"><div class="portal-topbar"><button class="portal-mobile-toggle btn btn-ghost" onclick="document.getElementById('sidebar').classList.toggle('open')">☰</button><strong>Administration</strong><span id="admin-name">—</span></div><div class="portal-content"><section id="dashboard"><div class="dash-cards"><div class="dash-card"><div class="dash-card-label">Applications</div><div class="dash-card-value" id="stat-applications">0</div></div><div class="dash-card"><div class="dash-card-label">Users</div><div class="dash-card-value" id="stat-students">0</div></div><div class="dash-card"><div class="dash-card-label">Programmes</div><div class="dash-card-value" id="stat-programmes">0</div></div><div class="dash-card"><div class="dash-card-label">Pending</div><div class="dash-card-value" id="stat-pending">0</div></div></div></section><section id="applications" class="mt-5"><div class="flex" style="justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap"><h2>Applications</h2><input id="application-search" class="form-control" style="max-width:320px" placeholder="Search applications"></div><div class="table-wrap mt-2"><table><thead><tr><th>Application</th><th>Name</th><th>Programme</th><th>Status</th><th>Date</th></tr></thead><tbody id="apps-tbody"></tbody></table></div></section><section id="users" class="mt-5"><h2>User management</h2><div class="table-wrap mt-2"><table><thead><tr><th>Name</th><th>Email</th><th>Role</th><th>ID</th></tr></thead><tbody id="users-tbody"></tbody></table></div></section><section id="programmes" class="mt-5"><h2>Programme catalogue</h2><div class="table-wrap mt-2"><table><thead><tr><th>Programme</th><th>Area</th><th>Status</th></tr></thead><tbody id="programme-tbody"></tbody></table></div></section><section id="news" class="mt-5"><h2>News management</h2><form id="news-form" class="card mt-2"><div class="card-body grid grid-2"><div class="form-group"><label class="form-label">Title</label><input class="form-control" name="title" required maxlength="180"></div><div class="form-group"><label class="form-label">Category</label><input class="form-control" name="category" required maxlength="80"></div><div class="form-group"><label class="form-label">Excerpt</label><textarea class="form-control" name="excerpt" required maxlength="1000"></textarea></div><div class="form-group"><label class="form-label">Image URL</label><input class="form-control" name="image_url" maxlength="500"></div><div class="form-group"><label class="form-label">Publication date</label><input class="form-control" type="date" name="published_at"></div><div><button class="btn btn-primary">Publish news</button></div></div></form><div class="table-wrap mt-2"><table><thead><tr><th>Title</th><th>Category</th><th>Published</th><th>Action</th></tr></thead><tbody id="news-tbody"></tbody></table></div></section><section id="events" class="mt-5"><h2>Events management</h2><form id="event-form" class="card mt-2"><div class="card-body grid grid-2"><div class="form-group"><label class="form-label">Title</label><input class="form-control" name="title" required maxlength="180"></div><div class="form-group"><label class="form-label">Category</label><input class="form-control" name="category" required maxlength="80"></div><div class="form-group"><label class="form-label">Date</label><input class="form-control" type="date" name="event_date" required></div><div class="form-group"><label class="form-label">Location</label><input class="form-control" name="location" maxlength="180"></div><div class="form-group"><label class="form-label">Description</label><textarea class="form-control" name="description" required maxlength="2000"></textarea></div><div><button class="btn btn-primary">Publish event</button></div></div></form><div class="table-wrap mt-2"><table><thead><tr><th>Title</th><th>Date</th><th>Location</th><th>Action</th></tr></thead><tbody id="events-tbody"></tbody></table></div></section><section id="audit" class="mt-5"><h2>Audit log</h2><div class="table-wrap mt-2"><table><thead><tr><th>Action</th><th>Entity</th><th>Date</th></tr></thead><tbody id="audit-tbody"></tbody></table></div></section></div></div></div><script src="js/data.js"></script><script src="js/config.js"></script><script src="js/app.js"></script><script src="js/services/platform.js"></script><script src="js/services/runtime.js"></script><script src="js/auth.js"></script><script src="js/components.js"></script><script src="js/admin.js"></script></body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Administration | Canadian University of Nigeria</title>
+  <meta name="robots" content="noindex,nofollow">
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/responsive.css">
+  <style>
+    .portal-sidebar-backdrop{display:none;position:fixed;inset:0;background:rgba(4,10,18,.48);backdrop-filter:blur(2px);z-index:90}
+    .portal-sidebar-backdrop.open{display:block}
+    @media(max-width:900px){
+      .portal-sidebar{z-index:100;box-shadow:0 18px 60px rgba(0,0,0,.28)}
+      .portal-sidebar.open{left:0}
+    }
+    .portal-section{display:none}
+    .portal-section.active{display:block}
+    .form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:0.75rem}
+    .panel-card{background:var(--surface,#fff);border:1px solid rgba(0,0,0,.08);border-radius:12px;padding:1rem;margin-bottom:1rem}
+    .muted{color:#6b7280;font-size:.9rem}
+    .status-pill{display:inline-block;padding:.15rem .55rem;border-radius:999px;font-size:.8rem;background:#eef2ff}
+    select.form-control,input.form-control,textarea.form-control{width:100%}
+  </style>
+</head>
+<body data-portal="admin">
+  <div class="portal-layout">
+    <div class="portal-sidebar-backdrop" id="sidebar-backdrop"></div>
+    <aside class="portal-sidebar" id="sidebar">
+      <div class="portal-sidebar-header">
+        <img src="assets/logo.svg" alt="CUN" style="height:40px">
+      </div>
+      <nav class="portal-nav" id="admin-nav">
+        <a href="#dashboard" data-section="dashboard" class="active">Dashboard</a>
+        <a href="#applications" data-section="applications">Applications</a>
+        <a href="#users" data-section="users">Users</a>
+        <a href="#fees" data-section="fees">Fees</a>
+        <a href="#payments" data-section="payments">Payments</a>
+        <a href="#programmes" data-section="programmes">Programmes</a>
+        <a href="#news" data-section="news">News</a>
+        <a href="#events" data-section="events">Events</a>
+        <a href="#audit" data-section="audit">Audit log</a>
+        <a href="#" onclick="Auth.logout();return false">Logout</a>
+      </nav>
+    </aside>
+
+    <div class="portal-main">
+      <div class="portal-topbar">
+        <button type="button" class="portal-mobile-toggle btn btn-ghost" id="portal-menu-toggle" aria-label="Open navigation">☰</button>
+        <strong>Administration</strong>
+        <span id="admin-name">—</span>
+      </div>
+
+      <div class="portal-content">
+        <!-- Dashboard -->
+        <section id="dashboard" class="portal-section active">
+          <div class="dash-cards">
+            <div class="dash-card"><div class="dash-card-label">Applications</div><div class="dash-card-value" id="stat-applications">0</div></div>
+            <div class="dash-card"><div class="dash-card-label">Users</div><div class="dash-card-value" id="stat-users">0</div></div>
+            <div class="dash-card"><div class="dash-card-label">Outstanding fees</div><div class="dash-card-value" id="stat-fees">0</div></div>
+            <div class="dash-card"><div class="dash-card-label">Successful payments</div><div class="dash-card-value" id="stat-payments">0</div></div>
+          </div>
+          <div class="grid grid-2 mt-4">
+            <div class="panel-card">
+              <h3>Pending applications</h3>
+              <p class="muted" id="stat-pending-label">0 awaiting review</p>
+            </div>
+            <div class="panel-card">
+              <h3>Quick actions</h3>
+              <p class="muted">Use Fees to bill students. Use Applications to accept or reject applicants.</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- Applications -->
+        <section id="applications" class="portal-section">
+          <div class="flex" style="justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap">
+            <h2>Applications</h2>
+            <input id="application-search" class="form-control" style="max-width:320px" placeholder="Search applications">
+          </div>
+          <div class="table-wrap mt-2">
+            <table>
+              <thead>
+                <tr>
+                  <th>Application</th>
+                  <th>Name</th>
+                  <th>Programme</th>
+                  <th>Status</th>
+                  <th>Submitted</th>
+                </tr>
+              </thead>
+              <tbody id="apps-tbody"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- Users -->
+        <section id="users" class="portal-section">
+          <div class="flex" style="justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap">
+            <h2>User management</h2>
+            <input id="user-search" class="form-control" style="max-width:320px" placeholder="Search users">
+          </div>
+          <div class="table-wrap mt-2">
+            <table>
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Email</th>
+                  <th>Role</th>
+                  <th>Student / Staff ID</th>
+                </tr>
+              </thead>
+              <tbody id="users-tbody"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- Fees -->
+        <section id="fees" class="portal-section">
+          <h2>Fee management</h2>
+          <div class="panel-card">
+            <h3>Create fee for a student</h3>
+            <form id="fee-form" class="form-grid mt-2">
+              <div>
+                <label class="form-label">Student</label>
+                <select name="student_id" id="fee-student" class="form-control" required>
+                  <option value="">Select student…</option>
+                </select>
+              </div>
+              <div>
+                <label class="form-label">Session</label>
+                <input name="session" class="form-control" placeholder="2025/2026" required>
+              </div>
+              <div>
+                <label class="form-label">Amount (NGN)</label>
+                <input name="amount" type="number" min="1" step="0.01" class="form-control" required>
+              </div>
+              <div>
+                <label class="form-label">Due date</label>
+                <input name="due_date" type="date" class="form-control">
+              </div>
+              <div style="grid-column:1/-1">
+                <label class="form-label">Description</label>
+                <input name="description" class="form-control" placeholder="Tuition Fee" required>
+              </div>
+              <div>
+                <button type="submit" class="btn btn-primary">Create fee</button>
+              </div>
+            </form>
+          </div>
+
+          <div class="panel-card">
+            <h3>Bulk create tuition for all students</h3>
+            <form id="bulk-fee-form" class="form-grid mt-2">
+              <div>
+                <label class="form-label">Session</label>
+                <input name="session" class="form-control" placeholder="2025/2026" required>
+              </div>
+              <div>
+                <label class="form-label">Amount (NGN)</label>
+                <input name="amount" type="number" min="1" step="0.01" class="form-control" required>
+              </div>
+              <div>
+                <label class="form-label">Due date</label>
+                <input name="due_date" type="date" class="form-control">
+              </div>
+              <div style="grid-column:1/-1">
+                <label class="form-label">Description</label>
+                <input name="description" class="form-control" value="Tuition Fee" required>
+              </div>
+              <div>
+                <button type="submit" class="btn btn-accent">Generate for all students</button>
+              </div>
+            </form>
+            <p class="muted mt-2">Creates one outstanding fee for every profile with role = student.</p>
+          </div>
+
+          <div class="flex" style="justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap">
+            <h3>All fees</h3>
+            <input id="fee-search" class="form-control" style="max-width:280px" placeholder="Search fees">
+          </div>
+          <div class="table-wrap mt-2">
+            <table>
+              <thead>
+                <tr>
+                  <th>Student</th>
+                  <th>Description</th>
+                  <th>Session</th>
+                  <th>Amount</th>
+                  <th>Status</th>
+                  <th>Due</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="fees-tbody"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- Payments -->
+        <section id="payments" class="portal-section">
+          <h2>Payments</h2>
+          <div class="table-wrap mt-2">
+            <table>
+              <thead>
+                <tr>
+                  <th>Reference</th>
+                  <th>Student</th>
+                  <th>Amount</th>
+                  <th>Status</th>
+                  <th>Provider</th>
+                  <th>Date</th>
+                </tr>
+              </thead>
+              <tbody id="payments-tbody"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- Programmes -->
+        <section id="programmes" class="portal-section">
+          <h2>Programmes</h2>
+          <div class="table-wrap mt-2">
+            <table>
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Faculty</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="programme-tbody"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- News -->
+        <section id="news" class="portal-section">
+          <h2>News</h2>
+          <div class="panel-card">
+            <form id="news-form" class="form-grid">
+              <div>
+                <label class="form-label">Title</label>
+                <input name="title" class="form-control" required>
+              </div>
+              <div>
+                <label class="form-label">Category</label>
+                <input name="category" class="form-control" placeholder="General">
+              </div>
+              <div style="grid-column:1/-1">
+                <label class="form-label">Excerpt</label>
+                <textarea name="excerpt" class="form-control" rows="3" required></textarea>
+              </div>
+              <div>
+                <label class="form-label">Image URL (optional)</label>
+                <input name="image_url" class="form-control">
+              </div>
+              <div>
+                <label class="form-label">Publish date</label>
+                <input name="published_at" type="datetime-local" class="form-control">
+              </div>
+              <div>
+                <button class="btn btn-primary" type="submit">Publish news</button>
+              </div>
+            </form>
+          </div>
+          <div class="table-wrap mt-2">
+            <table>
+              <thead>
+                <tr>
+                  <th>Title</th>
+                  <th>Category</th>
+                  <th>Status</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="news-tbody"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- Events -->
+        <section id="events" class="portal-section">
+          <h2>Events</h2>
+          <div class="panel-card">
+            <form id="event-form" class="form-grid">
+              <div>
+                <label class="form-label">Title</label>
+                <input name="title" class="form-control" required>
+              </div>
+              <div>
+                <label class="form-label">Category</label>
+                <input name="category" class="form-control">
+              </div>
+              <div>
+                <label class="form-label">Event date</label>
+                <input name="event_date" type="date" class="form-control" required>
+              </div>
+              <div>
+                <label class="form-label">Location</label>
+                <input name="location" class="form-control">
+              </div>
+              <div style="grid-column:1/-1">
+                <label class="form-label">Description</label>
+                <textarea name="description" class="form-control" rows="3"></textarea>
+              </div>
+              <div>
+                <button class="btn btn-primary" type="submit">Publish event</button>
+              </div>
+            </form>
+          </div>
+          <div class="table-wrap mt-2">
+            <table>
+              <thead>
+                <tr>
+                  <th>Title</th>
+                  <th>Date</th>
+                  <th>Location</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="events-tbody"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- Audit -->
+        <section id="audit" class="portal-section">
+          <h2>Audit log</h2>
+          <div class="table-wrap mt-2">
+            <table>
+              <thead>
+                <tr>
+                  <th>Action</th>
+                  <th>Entity</th>
+                  <th>When</th>
+                </tr>
+              </thead>
+              <tbody id="audit-tbody"></tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/data.js"></script>
+  <script src="js/config.js?v=20260918-admin1"></script>
+  <script src="js/app.js?v=20260918-admin1"></script>
+  <script src="js/auth.js?v=20260918-admin1"></script>
+  <script src="js/components.js?v=20260918-admin1"></script>
+  <script src="js/admin.js?v=20260918-admin1"></script>
+  <script>
+  (() => {
+    const sidebar = document.getElementById("sidebar");
+    const backdrop = document.getElementById("sidebar-backdrop");
+    const toggle = document.getElementById("portal-menu-toggle");
+    const nav = document.getElementById("admin-nav");
+
+    const setMenu = (open) => {
+      sidebar?.classList.toggle("open", open);
+      backdrop?.classList.toggle("open", open);
+    };
+
+    toggle?.addEventListener("click", (e) => {
+      e.preventDefault();
+      setMenu(!sidebar.classList.contains("open"));
+    });
+    backdrop?.addEventListener("click", () => setMenu(false));
+
+    const showSection = (id) => {
+      document.querySelectorAll(".portal-section").forEach(s => s.classList.remove("active"));
+      document.getElementById(id)?.classList.add("active");
+      nav?.querySelectorAll("a[data-section]").forEach(a => {
+        a.classList.toggle("active", a.dataset.section === id);
+      });
+      setMenu(false);
+    };
+
+    nav?.addEventListener("click", (e) => {
+      const link = e.target.closest("a[data-section]");
+      if (!link) return;
+      e.preventDefault();
+      showSection(link.dataset.section);
+      history.replaceState(null, "", "#" + link.dataset.section);
+    });
+
+    const hash = (location.hash || "#dashboard").replace("#", "");
+    showSection(document.getElementById(hash) ? hash : "dashboard");
+
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.getRegistrations().then(rs => rs.forEach(r => r.unregister())).catch(() => {});
+    }
+  })();
+  </script>
+</body>
+</html>
