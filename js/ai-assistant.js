@@ -40,10 +40,12 @@
     return {
       university:d.university||{},
       stats:d.stats||[],
-      faculties:d.faculties||[],
-      departments:d.departments||[],
-      programmes:d.programmes||[],
-      faq:d.faq||[],
+      faculties:(d.faculties||[]).map(x=>({id:x.id,name:x.name,code:x.code,type:x.type,description:x.description,programmes:x.programmes})),
+      departments:(d.departments||[]).map(x=>({id:x.id,name:x.name,faculty:x.faculty,programmes:x.programmes})),
+      programmes:(d.programmes||[]).map(x=>({id:x.id,name:x.name,faculty:x.faculty,department:x.department,degree:x.degree,duration:x.duration,mode:x.mode,overview:x.overview,requirements:x.requirements,utme:x.utme,directEntry:x.directEntry,careers:x.careers})),
+      faqs:(d.faqs||[]).map(x=>({category:x.category,q:x.q,a:x.a})),
+      news:(d.news||[]).map(x=>({id:x.id,title:x.title,category:x.category,date:x.date,excerpt:x.excerpt,source:x.source})),
+      events:(d.events||[]).map(x=>({id:x.id,title:x.title,category:x.category,date:x.date,location:x.location,description:x.description})),
       pages
     };
   }
