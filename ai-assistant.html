@@ -36,8 +36,22 @@
   <section class="section"><div class="container ai-shell">
     <div class="ai-panel">
       <div class="ai-panel-head">
-        <strong>Where should we start?</strong>
-        <p style="margin:.45rem 0 0;opacity:.86">Try “How do I apply?”, “What programmes are listed?”, or “Where can I find student support?”</p>
+        <div class="ai-headline-row">
+          <div>
+            <span class="ai-kicker">CUN AI Concierge</span>
+            <strong>Where should we start?</strong>
+            <p>Ask naturally. I can search the approved CUN web catalogue before answering.</p>
+          </div>
+          <span class="ai-status"><i></i> Online</span>
+        </div>
+        <div class="ai-prompts" aria-label="Suggested questions">
+          <button type="button" class="ai-prompt" data-question="What programmes does Canadian University of Nigeria offer?">Programmes</button>
+          <button type="button" class="ai-prompt" data-question="How do I apply to CUN?">How to apply</button>
+          <button type="button" class="ai-prompt" data-question="What are the admission requirements?">Requirements</button>
+          <button type="button" class="ai-prompt" data-question="What faculties and departments does CUN have?">Faculties</button>
+          <button type="button" class="ai-prompt" data-question="Where can I find information about fees?">Fees</button>
+          <button type="button" class="ai-prompt" data-question="Where is Canadian University of Nigeria located?">Location</button>
+        </div>
       </div>
       <div id="ai-messages" class="ai-messages" aria-live="polite"></div>
       <form id="ai-form" class="ai-composer">
