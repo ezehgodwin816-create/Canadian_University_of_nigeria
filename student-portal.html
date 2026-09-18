@@ -17,6 +17,27 @@
       .portal-sidebar-backdrop{display:none}
       .portal-sidebar-backdrop.open{display:block}
     }
+    #portal-debug {
+      margin: 1rem;
+      padding: 0.9rem 1rem;
+      border-radius: 10px;
+      background: #fff3cd;
+      color: #664d03;
+      border: 1px solid #ffecb5;
+      font-size: 0.92rem;
+      line-height: 1.4;
+      white-space: pre-wrap;
+    }
+    #portal-debug.ok {
+      background: #d1e7dd;
+      color: #0f5132;
+      border-color: #badbcc;
+    }
+    #portal-debug.err {
+      background: #f8d7da;
+      color: #842029;
+      border-color: #f5c2c7;
+    }
   </style>
 </head>
 <body data-portal="student">
@@ -43,6 +64,8 @@
         <strong>Student Portal</strong>
         <span id="student-name">—</span>
       </div>
+
+      <div id="portal-debug">Loading student portal…</div>
 
       <div class="portal-content">
         <section id="dash" class="portal-section">
@@ -116,54 +139,198 @@
     </div>
   </div>
 
-  <!-- Load Supabase the same way login.html does -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="js/data.js"></script>
-  <script src="js/config.js?v=20260918-fix3"></script>
-  <script src="js/app.js?v=20260918-fix3"></script>
-  <script src="js/auth.js?v=20260918-fix3"></script>
-  <script src="js/components.js?v=20260918-fix3"></script>
+  <script src="js/config.js?v=20260918-fix4"></script>
+  <script src="js/app.js?v=20260918-fix4"></script>
+  <script src="js/auth.js?v=20260918-fix4"></script>
+  <script src="js/components.js?v=20260918-fix4"></script>
   <script src="js/seo.js"></script>
-  <script src="js/student.js?v=20260918-fix3"></script>
+  <script src="js/student.js?v=20260918-fix4"></script>
 
   <script>
   (() => {
+    const dbg = document.getElementById("portal-debug");
+    const setDbg = (msg, type) => {
+      if (!dbg) return;
+      dbg.textContent = msg;
+      dbg.className = type || "";
+    };
+
+    // Sidebar controls
     const sidebar = document.getElementById("sidebar");
     const backdrop = document.getElementById("sidebar-backdrop");
     const toggle = document.getElementById("portal-menu-toggle");
     const nav = sidebar?.querySelector(".portal-nav");
-    if (!sidebar || !backdrop || !toggle) return;
-
-    const setMenu = (open) => {
-      sidebar.classList.toggle("open", open);
-      backdrop.classList.toggle("open", open);
-      toggle.setAttribute("aria-expanded", String(open));
-      toggle.setAttribute("aria-label", open ? "Close navigation" : "Open navigation");
-      document.body.classList.toggle("portal-menu-open", open);
-    };
-
-    toggle.addEventListener("click", (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      setMenu(!sidebar.classList.contains("open"));
-    });
-    backdrop.addEventListener("click", () => setMenu(false));
-    nav?.addEventListener("click", (e) => {
-      const link = e.target.closest("a");
-      if (!link) return;
-      if (link.getAttribute("href") === "#") return;
-      nav.querySelectorAll("a").forEach(a => a.classList.remove("active"));
-      link.classList.add("active");
-      setMenu(false);
-    });
-    document.addEventListener("keydown", (e) => { if (e.key === "Escape") setMenu(false); });
-    window.addEventListener("hashchange", () => setMenu(false));
+    if (sidebar && backdrop && toggle) {
+      const setMenu = (open) => {
+        sidebar.classList.toggle("open", open);
+        backdrop.classList.toggle("open", open);
+        toggle.setAttribute("aria-expanded", String(open));
+        toggle.setAttribute("aria-label", open ? "Close navigation" : "Open navigation");
+        document.body.classList.toggle("portal-menu-open", open);
+      };
+      toggle.addEventListener("click", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        setMenu(!sidebar.classList.contains("open"));
+      });
+      backdrop.addEventListener("click", () => setMenu(false));
+      nav?.addEventListener("click", (e) => {
+        const link = e.target.closest("a");
+        if (!link || link.getAttribute("href") === "#") return;
+        nav.querySelectorAll("a").forEach(a => a.classList.remove("active"));
+        link.classList.add("active");
+        setMenu(false);
+      });
+    }
 
     if ("serviceWorker" in navigator) {
       navigator.serviceWorker.getRegistrations()
         .then(rs => rs.forEach(r => r.unregister()))
         .catch(() => {});
     }
+
+    // Visible diagnostics (no computer needed)
+    (async () => {
+      try {
+        setDbg("1) Scripts loaded. Connecting to Supabase…");
+
+        if (!window.CUN_CONFIG) {
+          setDbg("ERROR: js/config.js did not load.", "err");
+          return;
+        }
+        if (!window.CUNSupabaseReady) {
+          setDbg("ERROR: js/app.js did not create CUNSupabaseReady.", "err");
+          return;
+        }
+
+        await window.CUNSupabaseReady;
+        setDbg("2) Supabase connected. Checking login session…");
+
+        // Restore session from localStorage if needed
+        const raw = localStorage.getItem("cun_session") || localStorage.getItem("cun_supabase_session");
+        if (raw) {
+          try {
+            const saved = JSON.parse(raw);
+            if (saved?.access_token && saved?.refresh_token) {
+              await window.SupabaseClient.auth.setSession({
+                access_token: saved.access_token,
+                refresh_token: saved.refresh_token
+              });
+            }
+          } catch (e) {
+            setDbg("3) Session restore failed: " + (e.message || e), "err");
+          }
+        }
+
+        const { data: userData, error: userError } = await window.SupabaseClient.auth.getUser();
+        if (userError || !userData?.user) {
+          setDbg(
+            "NOT LOGGED IN\n" +
+            "No active session was found on this phone browser.\n" +
+            "Go to login.html, sign in again, then return here.\n" +
+            "Detail: " + (userError?.message || "Auth session missing"),
+            "err"
+          );
+          return;
+        }
+
+        const user = userData.user;
+        setDbg("3) Logged in as " + user.email + "\nLoading profile…");
+
+        const profileRes = await window.SupabaseClient
+          .from("profiles")
+          .select("id,email,full_name,role,student_id")
+          .eq("id", user.id)
+          .maybeSingle();
+
+        if (profileRes.error) {
+          setDbg("PROFILE ERROR: " + profileRes.error.message, "err");
+          return;
+        }
+
+        const profile = profileRes.data;
+        if (!profile) {
+          setDbg("Logged in, but no profile row found for this user.", "err");
+          return;
+        }
+
+        // Fill header immediately
+        const nameEl = document.getElementById("student-name");
+        const idEl = document.getElementById("student-id");
+        if (nameEl) nameEl.textContent = profile.full_name || user.email || "Student";
+        if (idEl) idEl.textContent = profile.student_id || "Not yet assigned";
+
+        // Load fees
+        const feesRes = await window.SupabaseClient
+          .from("fee_records")
+          .select("id,amount,status,description,due_date,session")
+          .eq("student_id", user.id);
+
+        if (feesRes.error) {
+          setDbg(
+            "Profile OK, but fees failed:\n" + feesRes.error.message +
+            "\nStudent ID should still show above.",
+            "err"
+          );
+          return;
+        }
+
+        const fees = feesRes.data || [];
+        const outstanding = fees.filter(f => String(f.status).toLowerCase() !== "paid");
+
+        // If StudentPortal did not render fees, show a simple fallback list
+        const invoices = document.getElementById("invoices-list");
+        if (invoices && (!invoices.innerHTML || invoices.innerHTML.indexOf("No invoices") >= 0 || invoices.innerHTML.trim() === "")) {
+          if (!fees.length) {
+            invoices.innerHTML = '<tr><td colspan="5" class="text-muted">No invoices are available yet.</td></tr>';
+          } else {
+            invoices.innerHTML = fees.map(f => {
+              const paid = String(f.status).toLowerCase() === "paid";
+              const payBtn = paid
+                ? '<span class="text-muted">Paid</span>'
+                : '<button type="button" class="btn btn-accent btn-sm" data-pay-invoice="' + f.id + '" data-pay-amount="' + f.amount + '" data-fee-record-id="' + f.id + '">Pay now</button>';
+              return (
+                "<tr>" +
+                  "<td>" + (f.description || f.id) + "</td>" +
+                  "<td>NGN " + Number(f.amount).toLocaleString("en-NG", { minimumFractionDigits: 2 }) + "</td>" +
+                  "<td>" + (f.status || "") + "</td>" +
+                  "<td>" + (f.due_date || "—") + "</td>" +
+                  "<td>" + payBtn + "</td>" +
+                "</tr>"
+              );
+            }).join("");
+          }
+        }
+
+        const invCount = document.getElementById("stat-invoices");
+        if (invCount) invCount.textContent = String(fees.length);
+
+        setDbg(
+          "OK\n" +
+          "Email: " + user.email + "\n" +
+          "Student ID: " + (profile.student_id || "none") + "\n" +
+          "Role: " + (profile.role || "none") + "\n" +
+          "Fees found: " + fees.length + " (outstanding: " + outstanding.length + ")",
+          "ok"
+        );
+
+        // Wire pay buttons if StudentPortal is available
+        if (window.StudentPortal?.payInvoice) {
+          document.addEventListener("click", function (e) {
+            const btn = e.target.closest("[data-fee-record-id]");
+            if (!btn) return;
+            if (btn.textContent.indexOf("Pay") === -1) return;
+            window.StudentPortal.context = window.StudentPortal.context || { user: user, profile: profile };
+            window.StudentPortal.db = window.SupabaseClient;
+            window.StudentPortal.payInvoice(btn);
+          });
+        }
+      } catch (e) {
+        setDbg("FATAL: " + (e.message || e), "err");
+      }
+    })();
   })();
   </script>
 </body>
