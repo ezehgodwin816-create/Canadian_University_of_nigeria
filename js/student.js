@@ -138,7 +138,7 @@ const StudentPortal = {
               </div>
               <p>${sanitize(n.message || "")}</p>
               <div class="text-muted" style="font-size:.85rem">${formatDate(n.created_at)}</div>
-              ${n.is_read ? "" : `<button class="btn btn-ghost btn-sm mt-2" data-read-notification="${sanitize(n.id)}">Mark as read</button>`}
+              \( {n.is_read ? "" : `<button class="btn btn-ghost btn-sm mt-2" data-read-notification=" \){sanitize(n.id)}">Mark as read</button>`}
             </article>`
           ).join("")
         : '<div class="empty-state"><p>No notifications yet.</p></div>';
@@ -167,6 +167,8 @@ const StudentPortal = {
             const status = String(i.status || "outstanding").toLowerCase();
             const paid = ["paid", "success", "successful", "completed"].includes(status);
             const canPay = amount > 0 && !paid;
+            // Always use the fee_records primary key (id)
+            const feeId = i.id || "";
 
             return `<tr>
               <td>${sanitize(i.invoice_number || i.id || "—")}</td>
@@ -176,8 +178,9 @@ const StudentPortal = {
               <td>
                 ${canPay
                   ? `<button type="button" class="btn btn-accent btn-sm"
-                      data-pay-invoice="${sanitize(i.id || "")}"
-                      data-pay-amount="${amount}" data-fee-record-id="${sanitize(i.fee_record_id || i.id || "")}">Pay now</button>`
+                      data-pay-invoice="${sanitize(feeId)}"
+                      data-pay-amount="${amount}"
+                      data-fee-record-id="${sanitize(feeId)}">Pay now</button>`
                   : paid
                     ? '<span class="text-muted">Paid</span>'
                     : '—'}
@@ -260,6 +263,12 @@ const StudentPortal = {
 
   async payInvoice(button) {
     const amount = Number(button.dataset.payAmount);
+    const feeRecordId = button.dataset.feeRecordId || button.dataset.payInvoice || null;
+
+    if (!feeRecordId) {
+      Toast.error("This fee has no ID. Refresh the page or contact support.");
+      return;
+    }
 
     if (!Number.isFinite(amount) || amount <= 0) {
       Toast.error("This invoice does not have a valid amount.");
@@ -270,10 +279,6 @@ const StudentPortal = {
     button.textContent = "Starting…";
 
     try {
-      // Do not send the invoice UUID as fee_record_id. An invoices.id value
-      // is not necessarily a fee_records.id and can cause a foreign-key error.
-      const feeRecordId = button.dataset.feeRecordId || null;
-
       const { data, error } = await this.db.functions.invoke("create-payment", {
         body: {
           amount,
