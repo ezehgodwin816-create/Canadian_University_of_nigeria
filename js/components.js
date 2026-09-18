@@ -120,12 +120,12 @@ function enhanceGlobalNavigation() {
       <div class="nav-item has-menu"><a href="news.html" class="nav-link">News & Events <span aria-hidden="true">⌄</span></a><div class="nav-mega" role="menu">
         <a href="news.html">News</a><a href="events.html">Events</a><a href="gallery.html">Gallery</a><a href="downloads.html">Document Centre</a><a href="faq.html">FAQs</a>
       </div></div>
-      <div class="nav-item"><a href="contact.html" class="nav-link">Contact</a></div>`;
+      <div class="nav-item"><a href="contact.html" class="nav-link">Contact</a></div><div class="nav-item"><a href="ai-assistant.html" class="nav-link">AI Concierge</a></div>`;
   }
   const mobile = document.querySelector('.mobile-nav');
   if (mobile && !mobile.dataset.enhanced) {
     mobile.dataset.enhanced='true';
-    mobile.innerHTML=`<a href="about.html">About</a><a href="academics.html">Academics</a><a href="admissions.html">Admissions</a><a href="programmes.html">Programmes</a><a href="faculties.html">Faculties</a><a href="research.html">Research</a><a href="student-life.html">Campus Life</a><a href="news.html">News</a><a href="events.html">Events</a><a href="library.html">Library</a><a href="contact.html">Contact</a><a href="login.html">Portals</a><a href="apply.html" class="btn btn-accent" style="margin-top:1rem;text-align:center">Apply Now</a>`;
+    mobile.innerHTML=`<a href="about.html">About</a><a href="academics.html">Academics</a><a href="admissions.html">Admissions</a><a href="programmes.html">Programmes</a><a href="faculties.html">Faculties</a><a href="research.html">Research</a><a href="student-life.html">Campus Life</a><a href="news.html">News</a><a href="events.html">Events</a><a href="library.html">Library</a><a href="contact.html">Contact</a><a href="ai-assistant.html">AI Concierge</a><a href="login.html">Portals</a><a href="apply.html" class="btn btn-accent" style="margin-top:1rem;text-align:center">Apply Now</a>`;
   }
   document.querySelectorAll('.has-menu > .nav-link').forEach(link=>{
     link.setAttribute('aria-haspopup','true');
@@ -135,3 +135,149 @@ function enhanceGlobalNavigation() {
 
 document.addEventListener('DOMContentLoaded', enhanceGlobalNavigation);
 window.enhanceGlobalNavigation=enhanceGlobalNavigation;
+
+
+/* ============================================================
+   CUN WEB EXPERIENCE LAYER
+   - persistent visual modes
+   - accessibility preferences
+   - AI concierge entry point
+   This layer is intentionally client-only and does not alter
+   authentication, payments, Supabase data access or RLS.
+   ============================================================ */
+const CUNTheme = {
+  KEY: "cun_visual_preferences",
+  defaults: { mode: "system", contrast: "normal", motion: "system", textScale: "100%" },
+
+  get() {
+    try { return { ...this.defaults, ...(JSON.parse(localStorage.getItem(this.KEY) || "{}")) }; }
+    catch { return { ...this.defaults }; }
+  },
+
+  save(next) {
+    const prefs = { ...this.get(), ...next };
+    try { localStorage.setItem(this.KEY, JSON.stringify(prefs)); } catch {}
+    this.apply(prefs);
+    this.syncControls(prefs);
+  },
+
+  apply(prefs = this.get()) {
+    const root = document.documentElement;
+    const mode = prefs.mode === "system"
+      ? (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light")
+      : prefs.mode;
+    root.dataset.theme = mode;
+    root.dataset.contrast = prefs.contrast;
+    root.dataset.motion = prefs.motion === "system"
+      ? (window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "reduced" : "normal")
+      : prefs.motion;
+    root.style.setProperty("--cun-text-scale", prefs.textScale || "100%");
+  },
+
+  syncControls(prefs = this.get()) {
+    document.querySelectorAll("[data-cun-theme-mode]").forEach(el => {
+      el.value = prefs.mode;
+    });
+    document.querySelectorAll("[data-cun-contrast]").forEach(el => {
+      el.value = prefs.contrast;
+    });
+    document.querySelectorAll("[data-cun-motion]").forEach(el => {
+      el.value = prefs.motion;
+    });
+    document.querySelectorAll("[data-cun-text-scale]").forEach(el => {
+      el.value = prefs.textScale;
+    });
+  },
+
+  panel() {
+    if (document.getElementById("cun-preferences-panel")) return;
+    const overlay = document.createElement("div");
+    overlay.id = "cun-preferences-panel";
+    overlay.className = "cun-preferences-overlay";
+    overlay.innerHTML = `
+      <div class="cun-preferences" role="dialog" aria-modal="true" aria-labelledby="cun-preferences-title">
+        <div class="cun-preferences-head">
+          <div><span class="section-label">CUN Experience</span><h2 id="cun-preferences-title">Display & accessibility</h2></div>
+          <button type="button" class="btn btn-ghost" data-cun-pref-close aria-label="Close preferences">&times;</button>
+        </div>
+        <div class="cun-preferences-grid">
+          <label>Page mode
+            <select class="form-control" data-cun-theme-mode>
+              <option value="system">System / Auto</option><option value="light">Light</option><option value="dark">Dark</option>
+            </select>
+          </label>
+          <label>Contrast
+            <select class="form-control" data-cun-contrast>
+              <option value="normal">Standard</option><option value="high">High contrast</option>
+            </select>
+          </label>
+          <label>Motion
+            <select class="form-control" data-cun-motion>
+              <option value="system">System preference</option><option value="normal">Full motion</option><option value="reduced">Reduced motion</option>
+            </select>
+          </label>
+          <label>Text size
+            <select class="form-control" data-cun-text-scale>
+              <option value="90%">90%</option><option value="100%">100%</option><option value="110%">110%</option><option value="120%">120%</option>
+            </select>
+          </label>
+        </div>
+        <div class="cun-preferences-preview">
+          <strong>Preferences are saved on this device.</strong>
+          <span>They apply across CUN pages without changing your account, payments or academic records.</span>
+        </div>
+      </div>`;
+    document.body.appendChild(overlay);
+
+    overlay.addEventListener("click", e => {
+      if (e.target === overlay || e.target.closest("[data-cun-pref-close]")) overlay.remove();
+    });
+    overlay.querySelector("[data-cun-theme-mode]").addEventListener("change", e => this.save({mode:e.target.value}));
+    overlay.querySelector("[data-cun-contrast]").addEventListener("change", e => this.save({contrast:e.target.value}));
+    overlay.querySelector("[data-cun-motion]").addEventListener("change", e => this.save({motion:e.target.value}));
+    overlay.querySelector("[data-cun-text-scale]").addEventListener("change", e => this.save({textScale:e.target.value}));
+    this.syncControls(this.get());
+  },
+
+  init() {
+    this.apply();
+    const media = window.matchMedia("(prefers-color-scheme: dark)");
+    media.addEventListener?.("change", () => {
+      if (this.get().mode === "system") this.apply();
+    });
+    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)");
+    reduced.addEventListener?.("change", () => {
+      if (this.get().motion === "system") this.apply();
+    });
+  }
+};
+
+function initCUNExperienceControls() {
+  CUNTheme.init();
+
+  if (!document.querySelector("[data-cun-preferences-trigger]")) {
+    const wrap = document.createElement("div");
+    wrap.className = "cun-experience-tools";
+    wrap.innerHTML = `
+      <button type="button" class="cun-experience-trigger" data-cun-preferences-trigger
+        aria-label="Display and accessibility preferences" title="Display & accessibility preferences">
+        <span aria-hidden="true">◐</span><span>Display</span>
+      </button>
+      <a class="cun-ai-float" href="ai-assistant.html" aria-label="Open CUN AI Concierge" title="CUN AI Concierge">
+        <span aria-hidden="true">✦</span><span>AI Concierge</span>
+      </a>`;
+    document.body.appendChild(wrap);
+    wrap.querySelector("[data-cun-preferences-trigger]").addEventListener("click", () => CUNTheme.panel());
+  }
+
+  if (!document.querySelector('link[data-cun-theme-style]')) {
+    const link = document.createElement("link");
+    link.rel = "stylesheet";
+    link.href = "css/style.css";
+    link.dataset.cunThemeStyle = "true";
+    /* style.css already exists on the web pages; this marker prevents duplicate injection. */
+  }
+}
+
+document.addEventListener("DOMContentLoaded", initCUNExperienceControls);
+window.CUNTheme = CUNTheme;
