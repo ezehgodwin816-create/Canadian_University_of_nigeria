@@ -132,3 +132,26 @@ body.page-home svg {
   max-width: 100%;
   height: auto;
 }
+
+/* Mobile scroll override — must win */
+@media (max-width: 900px) {
+  html {
+    overflow-x: hidden !important;
+    overflow-y: scroll !important;
+    height: auto !important;
+    max-height: none !important;
+  }
+  body,
+  body.page-home {
+    overflow-x: clip !important;
+    overflow-y: visible !important;
+    height: auto !important;
+    max-height: none !important;
+    position: static !important;
+    touch-action: pan-y !important;
+  }
+  main, #main, .hero, .section, .site-footer {
+    overflow: visible !important;
+    max-height: none !important;
+  }
+}

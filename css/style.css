@@ -1111,3 +1111,61 @@ html.cun-text-sm body { line-height: 1.55; }
     transition-duration: 0.01ms !important;
   }
 }
+
+/* ============================================================
+   MOBILE SCROLL FIX (iOS / Android)
+   overflow-x:hidden on BOTH html+body breaks vertical scroll
+   on many mobile browsers. Use clip on body only.
+   ============================================================ */
+html {
+  overflow-x: hidden !important;
+  overflow-y: scroll !important;
+  height: auto !important;
+  position: static !important;
+}
+body {
+  overflow-x: clip !important;
+  overflow-y: visible !important;
+  height: auto !important;
+  min-height: 100% !important;
+  position: static !important;
+  touch-action: pan-y !important;
+  -webkit-overflow-scrolling: touch !important;
+}
+body.page-home {
+  overflow-x: clip !important;
+  overflow-y: visible !important;
+  touch-action: pan-y !important;
+}
+/* Never lock body from CSS while menu is closed */
+body:not(.menu-open) {
+  overflow-y: visible !important;
+}
+/* Hero must not trap scroll */
+.hero {
+  overflow-x: hidden;
+  overflow-y: visible !important;
+  min-height: 0 !important;
+}
+@media (max-width: 768px) {
+  .hero {
+    min-height: 0 !important;
+    overflow: visible !important;
+  }
+  html, body {
+    overflow-y: scroll !important;
+    height: auto !important;
+    max-height: none !important;
+  }
+  main, #main {
+    overflow: visible !important;
+    height: auto !important;
+    max-height: none !important;
+  }
+}
+
+/* Only lock scroll when mobile menu is open */
+body.menu-open {
+  overflow: hidden !important;
+  touch-action: none !important;
+}
