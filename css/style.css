@@ -809,109 +809,148 @@ img, video, iframe, embed, object {
 }
 
 
-/* ========== FLOATING AI + THEME CONTROLS (right side) ========== */
+/* ========== SMOOTH SCROLL + PERFORMANCE ========== */
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overscroll-behavior-y: none;
+  overscroll-behavior-x: none;
+}
+body.page-home {
+  overflow-x: hidden !important;
+  overscroll-behavior-x: none;
+}
+/* Momentum scrolling on iOS */
+.mobile-menu-panel,
+.ai-messages,
+.portal-main {
+  -webkit-overflow-scrolling: touch;
+}
+/* Reveal without jank */
+.will-reveal {
+  opacity: 0.01;
+  transform: translate3d(0, 16px, 0);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+.will-reveal.is-visible {
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+}
+/* Prefer GPU for common hover lifts */
+.feature-card,
+.quick-action,
+.programme-card,
+.news-card,
+.info-card,
+.btn {
+  will-change: transform;
+  backface-visibility: hidden;
+}
+
+/* ========== FLOATING CONTROLS ========== */
 .cun-fab-stack {
   position: fixed;
-  right: 1.15rem;
-  bottom: 1.5rem;
+  right: 1.1rem;
+  bottom: 1.4rem;
   z-index: 1500;
   display: flex;
   flex-direction: column;
-  gap: 0.85rem;
+  gap: 0.8rem;
   align-items: flex-end;
   pointer-events: none;
 }
-.cun-fab-stack > * { pointer-events: auto; }
+.cun-fab-stack > * {
+  pointer-events: auto;
+}
 
 .cun-fab {
-  width: 54px;
-  height: 54px;
+  width: 52px;
+  height: 52px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.4rem;
+  font-size: 1.35rem;
   color: #fff;
   border: 1px solid rgba(255,255,255,0.2);
   cursor: pointer;
-  box-shadow: 0 8px 28px rgba(0,0,0,0.4), 0 0 18px rgba(14,165,233,0.22);
+  box-shadow: 0 6px 22px rgba(0,0,0,0.38);
   position: relative;
   user-select: none;
   -webkit-user-select: none;
   -webkit-tap-highlight-color: transparent;
-  /* smooth everything */
-  transition:
-    transform 0.45s cubic-bezier(0.34, 1.4, 0.64, 1),
-    box-shadow 0.4s ease,
-    opacity 0.4s ease,
-    background 0.4s ease,
-    filter 0.35s ease;
-  animation: fabPopIn 0.65s cubic-bezier(0.34, 1.45, 0.64, 1) both;
-  will-change: transform, opacity;
+  touch-action: manipulation;
+  transform: translate3d(0, 0, 0);
+  transition: transform 0.35s cubic-bezier(0.34, 1.3, 0.64, 1),
+              box-shadow 0.35s ease,
+              opacity 0.35s ease,
+              filter 0.3s ease;
+  animation: fabPopIn 0.55s cubic-bezier(0.34, 1.4, 0.64, 1) both;
 }
-.cun-fab:nth-child(1) { animation-delay: 0.08s; }
-.cun-fab:nth-child(2) { animation-delay: 0.2s; }
-
+.cun-fab:nth-of-type(1) { animation-delay: 0.05s; }
+.cun-fab:nth-of-type(2) { animation-delay: 0.15s; }
 .cun-fab:hover {
-  transform: translateY(-5px) scale(1.08);
-  box-shadow: 0 14px 36px rgba(0,0,0,0.48), 0 0 32px rgba(168,85,247,0.4);
-  filter: brightness(1.08);
+  transform: translate3d(0, -4px, 0) scale(1.07);
+  box-shadow: 0 12px 32px rgba(0,0,0,0.45);
 }
 .cun-fab:active {
-  transform: scale(0.9);
-  transition-duration: 0.12s;
+  transform: scale(0.92);
+  transition-duration: 0.1s;
+}
+.cun-fab-icon {
+  pointer-events: none;
+  line-height: 1;
 }
 
 .cun-fab-theme {
-  background: linear-gradient(145deg, #1e293b 0%, #334155 55%, #475569 100%);
-  border-color: rgba(148,163,184,0.28);
+  background: linear-gradient(145deg, #1e293b, #475569);
 }
 [data-theme="light"] .cun-fab-theme {
-  background: linear-gradient(145deg, #e2e8f0 0%, #cbd5e1 100%);
+  background: linear-gradient(145deg, #e2e8f0, #cbd5e1);
   color: #0f172a;
 }
 [data-theme="gray"] .cun-fab-theme {
-  background: linear-gradient(145deg, #3f4654 0%, #555e70 100%);
+  background: linear-gradient(145deg, #3f4654, #555e70);
 }
 
 .cun-fab-ai {
-  background: linear-gradient(145deg, #0ea5e9 0%, #6366f1 50%, #a855f7 100%);
+  background: linear-gradient(145deg, #0ea5e9, #6366f1 50%, #a855f7);
 }
 .cun-fab-ai::after {
   content: '';
   position: absolute;
-  inset: -5px;
+  inset: -4px;
   border-radius: 50%;
-  border: 2px solid rgba(56,189,248,0.4);
-  animation: fabSoftPulse 2.6s ease-out infinite;
+  border: 2px solid rgba(56,189,248,0.35);
+  animation: fabSoftPulse 2.8s ease-out infinite;
   pointer-events: none;
 }
 
 .cun-fab.hidden-fab {
   opacity: 0;
-  transform: scale(0.35) translateY(28px);
+  transform: scale(0.4) translate3d(0, 24px, 0);
   pointer-events: none;
-  filter: blur(4px);
 }
 
-/* Settings panel — opens FROM the Theme button (to the left) */
+/* Panel sits left of the stack, aligned toward Theme (top) button */
 .cun-settings-panel {
   position: absolute;
-  right: calc(100% + 12px);
-  top: 50%;
-  transform: translateY(-50%) translateX(12px) scale(0.92);
-  width: 228px;
+  right: calc(100% + 10px);
+  bottom: 60px; /* aligns with Theme button above AI */
+  width: 220px;
   background: var(--bg-elevated, #141c30);
   border: 1px solid var(--border, rgba(148,163,184,0.18));
-  border-radius: 16px;
-  padding: 0.9rem;
-  box-shadow: 0 20px 50px rgba(0,0,0,0.55), 0 0 0 1px rgba(255,255,255,0.04);
+  border-radius: 14px;
+  padding: 0.85rem;
+  box-shadow: 0 16px 44px rgba(0,0,0,0.5);
   opacity: 0;
   visibility: hidden;
-  transition:
-    opacity 0.32s cubic-bezier(0.4, 0, 0.2, 1),
-    transform 0.38s cubic-bezier(0.34, 1.3, 0.64, 1),
-    visibility 0.32s;
+  transform: translate3d(10px, 0, 0) scale(0.94);
+  transition: opacity 0.28s ease, transform 0.32s cubic-bezier(0.34, 1.25, 0.64, 1), visibility 0.28s;
   z-index: 20;
   pointer-events: none;
   transform-origin: right center;
@@ -919,75 +958,64 @@ img, video, iframe, embed, object {
 .cun-settings-panel.open {
   opacity: 1;
   visibility: visible;
-  transform: translateY(-50%) translateX(0) scale(1);
+  transform: translate3d(0, 0, 0) scale(1);
   pointer-events: auto;
 }
-
 .cun-settings-panel h4 {
-  font-size: 0.72rem;
+  font-size: 0.7rem;
   text-transform: uppercase;
-  letter-spacing: 0.09em;
+  letter-spacing: 0.08em;
   color: var(--text-muted, #64748b);
-  margin: 0 0 0.45rem;
+  margin: 0 0 0.4rem;
   font-weight: 600;
 }
-.cun-settings-panel .opt-group {
-  margin-bottom: 0.8rem;
-}
-.cun-settings-panel .opt-group:last-of-type {
-  margin-bottom: 0.4rem;
-}
-.cun-settings-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.4rem;
-}
+.cun-settings-panel .opt-group { margin-bottom: 0.75rem; }
+.cun-settings-row { display: flex; flex-wrap: wrap; gap: 0.35rem; }
 .cun-settings-btn {
   flex: 1 1 auto;
-  min-width: 56px;
-  padding: 0.52rem 0.5rem;
-  border-radius: 9px;
-  font-size: 0.8rem;
+  min-width: 54px;
+  padding: 0.5rem 0.4rem;
+  border-radius: 8px;
+  font-size: 0.78rem;
   font-weight: 600;
   text-align: center;
   background: rgba(148,163,184,0.1);
   border: 1px solid transparent;
   color: var(--text-secondary, #94a3b8);
   cursor: pointer;
-  transition: all 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+  touch-action: manipulation;
+  transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
 }
 .cun-settings-btn:hover {
-  background: rgba(14,165,233,0.16);
+  background: rgba(14,165,233,0.15);
   color: var(--primary-bright, #38bdf8);
-  transform: translateY(-1px);
 }
+.cun-settings-btn:active { transform: scale(0.96); }
 .cun-settings-btn.active {
-  background: linear-gradient(135deg, rgba(14,165,233,0.32), rgba(168,85,247,0.28));
-  border-color: rgba(14,165,233,0.45);
+  background: linear-gradient(135deg, rgba(14,165,233,0.3), rgba(168,85,247,0.25));
+  border-color: rgba(14,165,233,0.4);
   color: #fff;
-  box-shadow: 0 2px 10px rgba(14,165,233,0.2);
 }
-[data-theme="light"] .cun-settings-btn.active {
-  color: #0f172a;
-}
+[data-theme="light"] .cun-settings-btn.active { color: #0f172a; }
 .cun-settings-divider {
   height: 1px;
   background: var(--border, rgba(148,163,184,0.12));
-  margin: 0.5rem 0;
+  margin: 0.45rem 0;
 }
 .cun-settings-action {
   display: block;
   width: 100%;
   text-align: left;
-  padding: 0.55rem 0.65rem;
-  border-radius: 9px;
-  font-size: 0.82rem;
+  padding: 0.5rem 0.6rem;
+  border-radius: 8px;
+  font-size: 0.8rem;
   font-weight: 500;
   color: var(--text-secondary, #94a3b8);
   background: transparent;
   border: none;
   cursor: pointer;
-  transition: all 0.25s ease;
+  touch-action: manipulation;
+  transition: background 0.2s ease, color 0.2s ease;
 }
 .cun-settings-action:hover {
   background: rgba(14,165,233,0.12);
@@ -998,49 +1026,48 @@ img, video, iframe, embed, object {
   color: #f87171;
 }
 
-/* AI long-press mini menu */
 .cun-fab-menu {
   position: absolute;
-  right: calc(100% + 12px);
-  top: 50%;
-  transform: translateY(-50%) translateX(12px) scale(0.92);
+  right: calc(100% + 10px);
+  bottom: 0;
   background: var(--bg-elevated, #141c30);
   border: 1px solid var(--border, rgba(148,163,184,0.15));
   border-radius: 12px;
-  padding: 0.4rem;
-  min-width: 138px;
-  box-shadow: 0 14px 40px rgba(0,0,0,0.48);
+  padding: 0.35rem;
+  min-width: 130px;
+  box-shadow: 0 12px 36px rgba(0,0,0,0.45);
   opacity: 0;
   visibility: hidden;
-  transition: all 0.3s cubic-bezier(0.34, 1.3, 0.64, 1);
+  transform: translate3d(10px, 0, 0) scale(0.94);
+  transition: opacity 0.25s ease, transform 0.3s cubic-bezier(0.34, 1.25, 0.64, 1), visibility 0.25s;
   z-index: 15;
-  transform-origin: right center;
+  pointer-events: none;
 }
 .cun-fab-menu.open {
   opacity: 1;
   visibility: visible;
-  transform: translateY(-50%) translateX(0) scale(1);
+  transform: translate3d(0, 0, 0) scale(1);
+  pointer-events: auto;
 }
 .cun-fab-menu button {
   display: block;
   width: 100%;
   text-align: left;
-  padding: 0.6rem 0.85rem;
+  padding: 0.55rem 0.8rem;
   border-radius: 8px;
-  font-size: 0.85rem;
+  font-size: 0.84rem;
   font-weight: 500;
   color: var(--text-primary, #f1f5f9);
   background: transparent;
   border: none;
   cursor: pointer;
-  transition: background 0.22s ease;
+  touch-action: manipulation;
 }
 .cun-fab-menu button:hover {
   background: rgba(14,165,233,0.14);
   color: var(--primary-bright, #38bdf8);
 }
 
-/* Gray theme */
 [data-theme="gray"] {
   --bg-deep: #1a1d23;
   --bg-primary: #22262e;
@@ -1055,58 +1082,28 @@ img, video, iframe, embed, object {
   --glass: rgba(36, 40, 50, 0.8);
   --glass-border: rgba(148, 163, 184, 0.2);
 }
-
-/* Text size reduction */
 html.cun-text-sm { font-size: 14.5px; }
 html.cun-text-sm body { line-height: 1.55; }
 
 @keyframes fabPopIn {
-  0% {
-    opacity: 0;
-    transform: scale(0.4) translateY(30px);
-    filter: blur(6px);
-  }
-  60% {
-    opacity: 1;
-    filter: blur(0);
-  }
-  100% {
-    opacity: 1;
-    transform: scale(1) translateY(0);
-    filter: blur(0);
-  }
+  from { opacity: 0; transform: scale(0.45) translate3d(0, 22px, 0); }
+  to { opacity: 1; transform: scale(1) translate3d(0, 0, 0); }
 }
 @keyframes fabSoftPulse {
-  0% { transform: scale(0.95); opacity: 0.55; }
-  70% { transform: scale(1.3); opacity: 0; }
-  100% { transform: scale(1.3); opacity: 0; }
+  0% { transform: scale(0.95); opacity: 0.5; }
+  70% { transform: scale(1.28); opacity: 0; }
+  100% { transform: scale(1.28); opacity: 0; }
 }
 
 @media (max-width: 768px) {
-  .cun-fab-stack {
-    right: 0.9rem;
-    bottom: 1.15rem;
-    gap: 0.75rem;
-  }
-  .cun-fab {
-    width: 50px;
-    height: 50px;
-    font-size: 1.28rem;
-  }
-  .cun-settings-panel {
-    width: 210px;
-    right: calc(100% + 10px);
-  }
-  .cun-fab-menu {
-    right: calc(100% + 10px);
-  }
+  .cun-fab-stack { right: 0.85rem; bottom: 1.1rem; gap: 0.7rem; }
+  .cun-fab { width: 48px; height: 48px; font-size: 1.25rem; }
+  .cun-settings-panel { width: 200px; bottom: 56px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .cun-fab,
-  .cun-settings-panel,
-  .cun-fab-menu,
-  .cun-fab-ai::after {
+  html { scroll-behavior: auto; }
+  .cun-fab, .cun-settings-panel, .cun-fab-menu, .will-reveal, .cun-fab-ai::after {
     animation: none !important;
     transition-duration: 0.01ms !important;
   }
