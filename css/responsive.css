@@ -52,10 +52,20 @@ body {
   .auth-card { padding: 1.75rem 1.35rem; }
   .portal-sidebar {
     position: fixed; left: 0; top: 0; bottom: 0; z-index: 100;
-    transform: translateX(-100%);
+    transform: translateX(-105%);
   }
   .portal-sidebar.open { transform: translateX(0); }
-  .portal-main { padding: 1.25rem 1rem; width: 100%; }
+  .portal-main {
+    padding: 1.15rem 1rem 2rem;
+    width: 100%;
+    min-width: 0;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .table-wrap {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
   .ai-headline-row { flex-direction: column; }
   .ai-msg { max-width: 92%; }
   .section { padding: 2.75rem 0; }
