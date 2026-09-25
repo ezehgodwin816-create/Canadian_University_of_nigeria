@@ -28,20 +28,14 @@
   <main id="main" class="auth-wrap">
     <div class="auth-card">
       <h1>Portal Login</h1>
-      <p class="auth-sub">Sign in to the Student or Staff portal</p>
-
-      <div class="auth-tabs" role="tablist">
-        <button type="button" class="auth-tab active" data-portal="student" id="tab-student">Student</button>
-        <button type="button" class="auth-tab" data-portal="staff" id="tab-staff">Staff</button>
-      </div>
+      <p class="auth-sub">Sign in with your CUN account</p>
 
       <div class="auth-msg" id="auth-msg" role="status"></div>
 
       <form id="login-form" autocomplete="on">
-        <input type="hidden" name="portal" id="portal-type" value="student">
         <div class="form-group">
-          <label for="email">Email or Matric / Staff ID</label>
-          <input type="text" id="email" name="email" class="form-control" required placeholder="you@example.com or ID" autocomplete="username">
+          <label for="email">Email</label>
+          <input type="email" id="email" name="email" class="form-control" required placeholder="you@example.com" autocomplete="username">
         </div>
         <div class="form-group">
           <label for="password">Password</label>
@@ -57,67 +51,82 @@
       </form>
 
       <p style="text-align:center;margin-top:1.5rem;font-size:0.9rem;color:var(--text-muted)">
-        Need help? <a href="contact.html">Contact support</a> ·
-        <a href="staff-portal.html">Staff portal direct</a>
+        Need help? <a href="contact.html">Contact support</a><br>
+        <span style="display:inline-block;margin-top:0.5rem">
+          <a href="student-portal.html">Student portal</a> ·
+          <a href="staff-portal.html">Staff portal</a>
+        </span>
       </p>
     </div>
   </main>
 
-  <script src="js/config.js" defer></script>
-  <script src="js/auth.js" defer></script>
+  <!-- CRITICAL: same load order as production — do not remove app.js -->
+  <script src="js/config.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/auth.js"></script>
   <script>
-    (function(){
-      const tabs = document.querySelectorAll('.auth-tab');
-      const portalInput = document.getElementById('portal-type');
-      const form = document.getElementById('login-form');
-      const msg = document.getElementById('auth-msg');
-      const btn = document.getElementById('login-btn');
+    (function () {
+      var form = document.getElementById('login-form');
+      var msg = document.getElementById('auth-msg');
+      var btn = document.getElementById('login-btn');
 
-      tabs.forEach(t => t.addEventListener('click', function(){
-        tabs.forEach(x => x.classList.remove('active'));
-        this.classList.add('active');
-        portalInput.value = this.dataset.portal;
-      }));
-
-      function showMsg(text, isError){
+      function showMsg(text, isError) {
         msg.textContent = text;
         msg.classList.add('show');
         msg.classList.toggle('error', !!isError);
       }
 
-      form.addEventListener('submit', async function(e){
+      form.addEventListener('submit', async function (e) {
         e.preventDefault();
         if (!form.checkValidity()) return;
         btn.disabled = true;
         btn.textContent = 'Signing in…';
         showMsg('Connecting securely…');
+
         try {
-          const fd = new FormData(form);
-          const portal = fd.get('portal') || 'student';
-          if (typeof Auth !== 'undefined' && Auth.login) {
-            const res = await Promise.race([
-              Auth.login(fd.get('email'), fd.get('password'), portal),
-              new Promise(r => setTimeout(() => r({success:false, message:'The login request is taking too long. Please refresh and try again.'}), 15000))
-            ]);
-            if (!res.success) {
-              showMsg(res.message || 'Login failed.', true);
-              btn.disabled = false;
-              btn.textContent = 'Sign in';
-              return;
-            }
-            showMsg('Login successful. Opening your portal…');
-            setTimeout(() => {
-              window.location.href = portal === 'staff' ? 'staff-portal.html' : 'student-portal.html';
-            }, 600);
-          } else {
-            // Fallback demo behaviour when Auth is not loaded
-            showMsg('Demo mode: redirecting to ' + portal + ' portal…');
-            setTimeout(() => {
-              window.location.href = portal === 'staff' ? 'staff-portal.html' : 'student-portal.html';
-            }, 800);
+          if (typeof Auth === 'undefined' || !Auth.login) {
+            showMsg('Authentication module failed to load. Please refresh the page.', true);
+            btn.disabled = false;
+            btn.textContent = 'Sign in';
+            return;
           }
+
+          var email = form.email.value;
+          var password = form.password.value;
+
+          var res = await Promise.race([
+            Auth.login(email, password),
+            new Promise(function (resolve) {
+              setTimeout(function () {
+                resolve({ success: false, message: 'The login request is taking too long. Please refresh and try again.' });
+              }, 20000);
+            })
+          ]);
+
+          if (!res || !res.success) {
+            showMsg((res && res.message) || 'Login failed.', true);
+            btn.disabled = false;
+            btn.textContent = 'Sign in';
+            return;
+          }
+
+          showMsg('Login successful. Opening your portal…');
+
+          // Use role returned by Auth (same as original workflow)
+          var role = res.role || 'student';
+          var redirects = (window.CUN_CONFIG && window.CUN_CONFIG.loginRedirect) || {
+            student: 'student-portal.html',
+            staff: 'staff-portal.html',
+            admin: 'admin.html'
+          };
+          var target = redirects[role] || redirects.student || 'student-portal.html';
+
+          setTimeout(function () {
+            window.location.href = target;
+          }, 500);
         } catch (err) {
-          showMsg('Something went wrong. Please try again.', true);
+          console.error(err);
+          showMsg((err && err.message) || 'Something went wrong. Please try again.', true);
           btn.disabled = false;
           btn.textContent = 'Sign in';
         }
