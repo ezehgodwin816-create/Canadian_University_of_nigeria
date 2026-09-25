@@ -415,7 +415,7 @@
   <script src="js/config.js" defer></script>
   <script src="js/app.js" defer></script>
   <script src="js/components.js" defer></script>
-  <script src="js/theme-anim.js" defer></script>
+  <script src="js/theme-anim.js"></script>
   <script>
     // Theme toggle
     (function(){
@@ -445,5 +445,16 @@
       if (h) h.classList.toggle('scrolled', window.scrollY > 20);
     }, { passive: true });
   </script>
+
+  <!-- Floating AI + Theme (right side) – JS enhances them -->
+  <div id="cun-fab-stack" class="cun-fab-stack" aria-label="Quick controls">
+    <button id="cun-fab-theme" class="cun-fab cun-fab-theme" type="button" aria-label="Toggle theme" title="Theme (long-press to hide)">☀</button>
+    <button id="cun-fab-ai" class="cun-fab cun-fab-ai" type="button" aria-label="AI Concierge" title="AI Concierge (long-press to hide)">✦</button>
+    <div class="cun-fab-menu" id="cun-fab-menu">
+      <button type="button" data-action="hide">Hide for now</button>
+      <button type="button" data-action="close">Cancel</button>
+    </div>
+  </div>
+
 </body>
 </html>
