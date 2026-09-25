@@ -1,5 +1,5 @@
-THEME TAP + SMOOTH HOMEPAGE
-===========================
+SCROLL FIX (critical)
+=====================
 
 Replace these files:
 
@@ -8,12 +8,15 @@ Replace these files:
   css/responsive.css
   js/theme-anim.js
 
-Fixed:
-• Theme button now responds to tap/click (panel opens reliably on mobile & desktop)
-• Panel is beside the buttons (not blocking the button itself)
-• Smoother scrolling (GPU transforms, passive scroll listener, less jank)
-• Homepage still locked against left–right movement
-• Header still only shows the ☰ menu
-• Loading kept light (no extra heavy assets)
+What was wrong:
+  CSS rules blocked vertical scrolling and pull-to-refresh
+  (overscroll-behavior-y: none and overly aggressive overflow locks).
 
-After upload: hard-refresh (Ctrl+Shift+R).
+What this does:
+  • Vertical scroll works again (up and down)
+  • Pull-to-refresh works again on mobile
+  • Homepage still does not move left/right
+  • Theme button still works
+  • Header still only shows ☰ on the homepage
+
+After upload: hard-refresh once (Ctrl+Shift+R), then try scrolling.
