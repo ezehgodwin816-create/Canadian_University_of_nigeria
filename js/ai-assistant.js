@@ -1,162 +1,175 @@
 /**
- * CUN AI Concierge — conversational reasoning layer
- * - Greets and chats naturally
- * - Answers CUN questions from published data
- * - "It's not yet made public." ONLY for missing school/official info
- * - General questions: web search + reasoned fallbacks
- * - Developer identity: Mr Ezeh Godwin Chukwunonso
+ * CUN AI Concierge — final conversational layer
+ * Order of reasoning:
+ *  1) Social (hi/hello/thanks…) — never Wikipedia, never "not public"
+ *  2) Developer identity flow
+ *  3) CUN published knowledge
+ *  4) Web search only for real questions
+ *  5) "It's not yet made public." only for missing school facts
  */
 (function () {
   "use strict";
 
-  var messages = document.getElementById("ai-messages");
+  var messagesEl = document.getElementById("ai-messages");
   var form = document.getElementById("ai-form");
   var input = document.getElementById("ai-input");
-  if (!messages || !form || !input) return;
+  if (!messagesEl || !form || !input) return;
 
-  var pendingDev = null; /* null | "ask_contact" | "ask_more" */
-  var chatHistory = []; /* recent turns for light context */
+  var pendingDev = null;
+  var NOT_PUBLIC = "It's not yet made public.";
 
   var pages = [
     ["Admissions", "admissions.html", "admissions application entry apply requirements"],
-    ["How to Apply", "how-to-apply.html", "how to apply application process steps"],
+    ["How to Apply", "how-to-apply.html", "how to apply application process"],
     ["Programmes", "programmes.html", "programmes courses degree study"],
-    ["Faculties", "faculties.html", "faculties academic areas"],
-    ["Fees & Payments", "fees.html", "fees tuition payments"],
+    ["Faculties", "faculties.html", "faculties departments academic"],
+    ["Fees", "fees.html", "fees tuition payment"],
     ["Scholarships", "scholarships.html", "scholarships funding"],
-    ["Academic Calendar", "academic-calendar.html", "calendar semester academic dates"],
-    ["Student Support", "student-support.html", "support help welfare counselling"],
+    ["Calendar", "academic-calendar.html", "calendar semester dates"],
+    ["Support", "student-support.html", "support counselling help"],
     ["Accommodation", "accommodation.html", "hostel accommodation housing"],
-    ["Library", "library.html", "library books learning"],
-    ["Research", "research.html", "research projects publications"],
-    ["Careers", "careers.html", "careers jobs employment"],
-    ["Contact", "contact.html", "contact address office phone email"],
-    ["Application Status", "application-status.html", "application status track"],
-    ["Student / Staff Login", "login.html", "portal login student staff"]
+    ["Library", "library.html", "library books"],
+    ["Research", "research.html", "research"],
+    ["Contact", "contact.html", "contact phone email office"],
+    ["Login / Portals", "login.html", "portal login student staff"]
   ];
 
   function normal(s) {
     return String(s || "")
       .toLowerCase()
+      .replace(/[\u2018\u2019]/g, "'")
       .replace(/[^\w\s']/g, " ")
       .replace(/\s+/g, " ")
       .trim();
   }
 
-  function add(role, text) {
+  function escapeHtml(s) {
+    return String(s)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;");
+  }
+
+  /** Render message; optional sourceLabel shows a small chip, not a raw URL dump */
+  function addMessage(role, text, sourceLabel) {
     var el = document.createElement("div");
     el.className = "ai-msg " + (role === "user" ? "user" : "bot") + " ai-message " + role;
-    el.style.whiteSpace = "pre-wrap";
-    el.textContent = text;
-    messages.appendChild(el);
-    messages.scrollTop = messages.scrollHeight;
-    chatHistory.push({ role: role, text: text });
-    if (chatHistory.length > 12) chatHistory.shift();
+
+    var body = document.createElement("div");
+    body.className = "ai-msg-body";
+    body.style.whiteSpace = "pre-wrap";
+    body.textContent = text;
+    el.appendChild(body);
+
+    if (sourceLabel && role !== "user") {
+      var src = document.createElement("div");
+      src.className = "ai-msg-source";
+      src.innerHTML = '<span class="ai-src-icon" aria-hidden="true">🔗</span> <span>' + escapeHtml(sourceLabel) + "</span>";
+      el.appendChild(src);
+    }
+
+    messagesEl.appendChild(el);
+    messagesEl.scrollTop = messagesEl.scrollHeight;
+    return el;
+  }
+
+  function showTyping() {
+    hideTyping();
+    var el = document.createElement("div");
+    el.id = "ai-typing";
+    el.className = "ai-msg bot ai-message assistant ai-typing";
+    el.innerHTML = '<span class="ai-dots" aria-label="Assistant is typing"><span></span><span></span><span></span></span>';
+    messagesEl.appendChild(el);
+    messagesEl.scrollTop = messagesEl.scrollHeight;
+  }
+  function hideTyping() {
+    var t = document.getElementById("ai-typing");
+    if (t) t.remove();
   }
 
   function isYes(n) {
-    return /^(yes|yeah|yep|yup|sure|ok|okay|please|of course|yea|ya|alright|fine)\b/.test(n) ||
-      /\b(yes please|sure thing|go ahead)\b/.test(n);
+    return /^(yes|yeah|yep|yup|sure|ok|okay|please|of course|yea|ya|alright|fine)\b/.test(n);
   }
   function isNo(n) {
     return /^(no|nope|nah|not now|no thanks)\b/.test(n);
   }
 
-  /* ---------- Intent detection (reasoning about what the user wants) ---------- */
+  /* ---- Social detection (must run BEFORE any web search) ---- */
   function isGreeting(n) {
-    return /^(hi|hii|hiii|hello|hey|hey there|hi there|good morning|good afternoon|good evening|howdy|yo|sup|what's up|whats up|hiya)\b/.test(n) ||
-      n === "hi" || n === "hello" || n === "hey";
+    if (!n) return false;
+    /* exact short greetings */
+    if (/^(hi|hii|hiii|hello|helo|hey|yo|sup|howdy|hiya)$/.test(n)) return true;
+    if (/^(hi|hello|hey|yo)\s+(there|all|friend|team)?$/.test(n)) return true;
+    if (/^(good\s+morning|good\s+afternoon|good\s+evening|good\s+day)$/.test(n)) return true;
+    if (/^(what'?s\s+up|whats\s+up|wassup)$/.test(n)) return true;
+    return false;
   }
   function isThanks(n) {
-    return /^(thanks|thank you|thx|ty|appreciate|grateful)\b/.test(n) ||
+    return /^(thanks|thank\s*you|thx|ty|thank\s*u)(\s+.*)?$/.test(n) ||
       /\b(thank you|thanks a lot|thanks so much)\b/.test(n);
   }
   function isBye(n) {
-    return /^(bye|goodbye|see you|later|take care|good night|goodnight)\b/.test(n);
+    return /^(bye|goodbye|good\s*bye|see\s*you|later|take\s*care|good\s*night|goodnight)(\s+.*)?$/.test(n);
   }
   function isHowAreYou(n) {
-    return /\b(how are you|how're you|how r you|how's it going|how are things|you good|are you ok|are you okay)\b/.test(n);
+    return /\b(how are you|how're you|how r you|how's it going|how are things|you good)\b/.test(n);
   }
   function isWhoAreYou(n) {
     return /\b(who are you|what are you|your name|what is your name|what do you do)\b/.test(n);
   }
   function isHelp(n) {
-    return /^(help|menu|options|what can you do|what can u do)\b/.test(n) ||
-      /\b(help me|can you help|what do you know)\b/.test(n);
+    return /^(help|menu|options)$/.test(n) ||
+      /\b(what can you do|what can u do|help me|can you help)\b/.test(n);
   }
   function isJoke(n) {
     return /\b(joke|funny|make me laugh|tell me a joke)\b/.test(n);
   }
   function isDeveloperQuestion(n) {
     return (
-      /\b(who (built|made|created|developed|designed|coded)|developer|who (is|are) (the )?(developer|creator|author)|who developed|who made (this|the) (site|website|web|platform|ai|assistant|concierge))\b/.test(n) ||
+      /\b(who (built|made|created|developed|designed|coded)|developer|who developed|who made (this|the) (site|website|web|platform|ai|assistant))\b/.test(n) ||
       /\b(your (creator|developer|maker|builder)|built by|made by|created by)\b/.test(n) ||
       /\bezeh\b|\bgodwin\b|\bchukwunonso\b/.test(n)
     );
   }
-  /** School-related: user is asking about CUN / university facts */
   function isSchoolQuestion(n) {
-    return (
-      /\b(cun|canadian university|university of nigeria|admissions?|programme|programmes|program|programs|faculty|faculties|fees?|tuition|scholarship|hostel|accommodation|utme|jamb|matriculation|nuc|campus|semester|course registration|student portal|staff portal|apply|application|bursary|matriculation|cgpa|transcript)\b/.test(n) ||
-      /\b(when (does|do|is|are)|where (is|are)|how (do|can|much)|what (are|is) the)\b/.test(n) &&
-        /\b(school|university|admission|fee|course|class|lecture)\b/.test(n)
-    );
+    return /\b(cun|canadian university|university of nigeria|admissions?|programme|programmes|program|programs|faculty|faculties|fees?|tuition|scholarship|hostel|accommodation|utme|jamb|matriculation|nuc|campus|semester|course registration|student portal|staff portal|bursary|cgpa|transcript)\b/.test(n);
   }
 
   function greetReply(n) {
-    var hour = new Date().getHours();
-    var timeHi = hour < 12 ? "Good morning" : hour < 17 ? "Good afternoon" : "Good evening";
-    if (/good morning/.test(n)) return "Good morning! Welcome to the CUN AI Concierge. How can I help you today — admissions, programmes, or anything else?";
-    if (/good afternoon/.test(n)) return "Good afternoon! I'm here to help with CUN information or general questions. What would you like to know?";
-    if (/good evening/.test(n)) return "Good evening! How can I assist you with Canadian University of Nigeria or a general question?";
-    return timeHi + "! I'm the CUN AI Concierge. Ask me about the university, or anything else on your mind.";
+    var h = new Date().getHours();
+    var part = h < 12 ? "Good morning" : h < 17 ? "Good afternoon" : "Good evening";
+    if (/good morning/.test(n)) return "Good morning! Welcome to the CUN AI Concierge. How can I help you today?";
+    if (/good afternoon/.test(n)) return "Good afternoon! How can I help — CUN info or another question?";
+    if (/good evening/.test(n)) return "Good evening! What would you like to know?";
+    return part + "! I'm the CUN AI Concierge. Ask me about the university, or anything else on your mind.";
   }
 
-  function smallTalk(n) {
-    if (isHowAreYou(n)) {
-      return "I'm doing well, thank you for asking — ready to help. How can I assist you today?";
-    }
+  function socialReply(n) {
+    if (isGreeting(n)) return greetReply(n);
+    if (isHowAreYou(n)) return "I'm doing well, thanks for asking — ready to help. What do you need?";
     if (isWhoAreYou(n)) {
-      return "I'm the CUN AI Concierge — a helper on the Canadian University of Nigeria website. I answer questions about the school from published information, can look up general knowledge online, and I'm happy to chat. What do you need?";
+      return "I'm the CUN AI Concierge on the Canadian University of Nigeria website. I answer questions about the school from published information, can look up general knowledge, and I'm happy to chat. How can I help?";
     }
-    if (isThanks(n)) {
-      return "You're welcome! If you have another question about CUN or anything else, just ask.";
-    }
-    if (isBye(n)) {
-      return "Goodbye! Best wishes — come back anytime if you need help with CUN or other questions.";
-    }
+    if (isThanks(n)) return "You're welcome! Ask anytime if you need more help.";
+    if (isBye(n)) return "Goodbye! Wishing you all the best — come back anytime.";
     if (isHelp(n)) {
-      return (
-        "Here's what I can do:\n" +
-        "• Answer questions about Canadian University of Nigeria (admissions, programmes, location, portals…)\n" +
-        "• Look up general knowledge on the web when I can\n" +
-        "• Tell you who built this platform if you ask\n" +
-        "• Chat politely for simple messages like hi or thanks\n\n" +
-        "What would you like to start with?"
-      );
+      return "I can help with:\n• CUN admissions, programmes, location, portals\n• General knowledge questions\n• Who built this website\n• Simple chat (hi, thanks, etc.)\n\nWhat would you like?";
     }
     if (isJoke(n)) {
-      return "Why did the student bring a ladder to campus?\nBecause they heard the courses were on another level!\n\nWant a serious answer about CUN next, or another joke?";
+      return "Why did the laptop go to school?\nBecause it wanted a higher degree of learning!\n\nWant something about CUN next?";
     }
     return null;
   }
 
-  /* ---------- Developer flow ---------- */
+  /* Developer */
   function developerIntro() {
     pendingDev = "ask_contact";
-    return (
-      "This website and the CUN AI Concierge were developed by Mr Ezeh Godwin Chukwunonso.\n\n" +
-      "Would you like his contact information?"
-    );
+    return "This website and the CUN AI Concierge were developed by Mr Ezeh Godwin Chukwunonso.\n\nWould you like his contact information?";
   }
   function developerContact() {
     pendingDev = "ask_more";
-    return (
-      "Here is how you can reach Mr Ezeh Godwin Chukwunonso:\n\n" +
-      "Phone / WhatsApp: 07060570520\n" +
-      "Email: ezehgodwin816@gmail.com\n\n" +
-      "Would you like more information about him?"
-    );
+    return "Here is how you can reach Mr Ezeh Godwin Chukwunonso:\n\nPhone / WhatsApp: 07060570520\nEmail: ezehgodwin816@gmail.com\n\nWould you like more information about him?";
   }
   function developerFullProfile() {
     pendingDev = null;
@@ -164,41 +177,28 @@
       "More about Mr Ezeh Godwin Chukwunonso:\n\n" +
       "Address: Abuja, Nigeria\n\n" +
       "Role: Software Developer & White Hat Hacker (ethical security specialist)\n\n" +
-      "He designs and builds modern, reliable software — websites, web apps, portals and digital platforms — with a strong focus on clarity, performance and user experience. " +
-      "As a white hat / ethical security practitioner, he also helps organisations test systems for weaknesses so they can be fixed before attackers find them.\n\n" +
-      "Strengths include:\n" +
-      "• Full-stack web development and clean UI/UX\n" +
-      "• Secure authentication, portals and data-aware applications\n" +
-      "• Ethical security testing and practical hardening advice\n" +
-      "• Turning real business or school needs into working digital products\n\n" +
-      "If you need help developing software, improving an existing product, or testing software for security (hack-proof hardening), you can contact him directly:\n\n" +
-      "Phone / WhatsApp: 07060570520\n" +
-      "Email: ezehgodwin816@gmail.com\n" +
-      "Location: Abuja, Nigeria"
+      "He builds modern websites, web apps and portals with a focus on clarity, performance and security. " +
+      "As a white hat practitioner, he also helps test systems so weaknesses can be fixed before attackers find them.\n\n" +
+      "Strengths:\n• Full-stack web development & UI/UX\n• Secure portals and authentication\n• Ethical security testing\n• Turning real needs into working products\n\n" +
+      "For software development or security testing, contact him:\nPhone / WhatsApp: 07060570520\nEmail: ezehgodwin816@gmail.com\nLocation: Abuja, Nigeria"
     );
   }
-  function handleDeveloperFlow(n) {
+  function handleDevFlow(n) {
     if (pendingDev === "ask_contact") {
       if (isYes(n)) return developerContact();
-      if (isNo(n)) {
-        pendingDev = null;
-        return "No problem. If you need his details later, just ask who developed this website.";
-      }
-      return "Please reply with yes or no: would you like Mr Ezeh Godwin Chukwunonso's contact information?";
+      if (isNo(n)) { pendingDev = null; return "No problem. Ask anytime who developed this site if you need his details later."; }
+      return "Please reply yes or no: would you like Mr Ezeh Godwin Chukwunonso's contact information?";
     }
     if (pendingDev === "ask_more") {
       if (isYes(n)) return developerFullProfile();
-      if (isNo(n)) {
-        pendingDev = null;
-        return "Alright. You already have his phone and email if you need them later.";
-      }
-      return "Please reply with yes or no: would you like more information about Mr Ezeh Godwin Chukwunonso?";
+      if (isNo(n)) { pendingDev = null; return "Alright. You already have his phone and email if you need them."; }
+      return "Please reply yes or no: would you like more information about him?";
     }
     return null;
   }
 
-  /* ---------- CUN knowledge ---------- */
-  function localCunAnswer(q) {
+  /* CUN knowledge */
+  function localCun(q) {
     var n = normal(q);
     var d = window.CUN_DATA || {};
     var u = d.university || {};
@@ -208,77 +208,58 @@
       var fq = normal(faqs[i].q);
       var tokens = fq.split(" ").filter(function (t) { return t.length > 3; });
       var hits = tokens.filter(function (t) { return n.indexOf(t) !== -1; }).length;
-      if (hits >= 2 || (tokens.length && hits / tokens.length >= 0.5)) {
-        return faqs[i].a;
-      }
+      if (hits >= 2 || (tokens.length && hits / tokens.length >= 0.5)) return { text: faqs[i].a };
     }
 
-    if (/\b(where|location|located|address|campus|utako)\b/.test(n) && /\b(cun|university|campus|school)\b/.test(n) || /\bwhere is cun\b/.test(n)) {
-      return (u.name || "Canadian University of Nigeria") +
-        " is located in Abuja, Federal Capital Territory, Nigeria. Public listings identify Utako, Abuja as the campus area. For directions, see the Contact page.";
+    if ((/\b(where|location|located|campus|utako)\b/.test(n) && /\b(cun|university|campus|school)\b/.test(n)) || /\bwhere is cun\b/.test(n)) {
+      return { text: (u.name || "Canadian University of Nigeria") + " is in Abuja, FCT, Nigeria (Utako area in public listings). See the Contact page for more." };
     }
-    if (/\b(nuc|licence|license|accreditation|recognised|recognized)\b/.test(n)) {
-      return "The National Universities Commission (NUC) lists Canadian University of Nigeria, Abuja among Nigeria's private universities and recorded its establishment in 2023. Programme-level accreditation should be confirmed on the current NUC record for each programme.";
+    if (/\b(nuc|licence|license|accreditation)\b/.test(n)) {
+      return { text: "NUC lists Canadian University of Nigeria, Abuja among private universities (establishment recorded 2023). Confirm programme-level accreditation on the current NUC record." };
     }
-    if (/\b(apply|application|how to apply|admission process)\b/.test(n)) {
-      return "You can start or continue an application on the Apply page: select a programme, enter your details, upload documents and submit. Track progress on Application Status. Open: apply.html";
+    if (/\b(apply|application|how to apply)\b/.test(n)) {
+      return { text: "Start or continue on the Apply page: choose a programme, enter details, upload documents, submit. Track status on Application Status. → apply.html" };
     }
-    if (/\b(requirement|requirements|utme|direct entry|o.?level|jamb)\b/.test(n)) {
-      return "Public reports identify UTME and Direct Entry pathways. Exact subjects and cut-offs depend on programme and session — check Admission Requirements and the official CUN notice. Open: admission-requirements.html";
+    if (/\b(requirement|requirements|utme|direct entry|jamb)\b/.test(n)) {
+      return { text: "Public pathways include UTME and Direct Entry. Exact subjects/cut-offs vary — see Admission Requirements and official CUN notices. → admission-requirements.html" };
     }
-    if (/\b(programme|programmes|program|programs|course|courses|degree|what can i study)\b/.test(n)) {
+    if (/\b(programme|programmes|program|programs|course|courses|degree|study)\b/.test(n)) {
       var programmes = d.programmes || [];
       if (programmes.length) {
-        return "Publicly reported areas include Health Sciences, Computing, and Management & Social Sciences.\n\n" +
-          programmes.slice(0, 12).map(function (x) { return "• " + (x.name || x.title); }).join("\n") +
-          "\n\nSee programmes.html for the full catalogue.";
+        return { text: "Reported areas include Health Sciences, Computing, and Management & Social Sciences.\n\n" + programmes.slice(0, 12).map(function (x) { return "• " + (x.name || x.title); }).join("\n") + "\n\n→ programmes.html" };
       }
-      return "Initial public reports list Health Sciences, Computing, and Management & Social Sciences. See programmes.html for details.";
+      return { text: "Public reports list Health Sciences, Computing, and Management & Social Sciences. → programmes.html" };
     }
-    if (/\b(fee|fees|tuition|payment|how much)\b/.test(n)) {
-      return "A full public fee schedule is not listed on this site in complete detail. It's not yet made public here. Please use your official portal statement or contact Admissions/Bursary. See also fees.html";
+    if (/\b(fee|fees|tuition|how much)\b/.test(n)) {
+      return { text: "A complete fee schedule is not fully published on this site. " + NOT_PUBLIC + " Please use your portal statement or contact Admissions/Bursary." };
     }
-    if (/\b(scholarship|scholarships|funding)\b/.test(n)) {
-      return "See scholarships.html for published scholarship information. If a specific award is missing, it's not yet made public.";
+    if (/\b(scholarship|scholarships)\b/.test(n)) {
+      return { text: "See scholarships.html. If a specific award is missing, " + NOT_PUBLIC.toLowerCase() };
     }
-    if (/\b(hostel|accommodation|housing)\b/.test(n)) {
-      return "See accommodation.html for campus housing information.";
-    }
-    if (/\b(contact|phone|email|office)\b/.test(n) && !isDeveloperQuestion(n)) {
-      return "Official university contacts are on contact.html.";
-    }
-    if (/\b(portal|login|student portal|staff portal)\b/.test(n)) {
-      return "Sign in at login.html for the Student or Staff portal after authentication.";
-    }
-    if (/\b(about|mission|vision|history|what is cun)\b/.test(n)) {
-      return (u.name || "Canadian University of Nigeria") +
-        " (" + (u.tagline || "Where Knowledge Meets Global Excellence") +
-        ") is presented on this platform as a private university in " +
-        (u.location || "Abuja, Nigeria") + ". See the About pages for more institutional information.";
+    if (/\b(hostel|accommodation|housing)\b/.test(n)) return { text: "See accommodation.html for housing information." };
+    if (/\b(contact|phone|email)\b/.test(n) && !isDeveloperQuestion(n)) return { text: "Official contacts are on contact.html." };
+    if (/\b(portal|login)\b/.test(n)) return { text: "Sign in at login.html for Student or Staff portal." };
+    if (/\b(about|mission|vision|what is cun)\b/.test(n)) {
+      return { text: (u.name || "Canadian University of Nigeria") + " — " + (u.tagline || "Where Knowledge Meets Global Excellence") + ". Private university presentation for " + (u.location || "Abuja, Nigeria") + "." };
     }
 
     var matches = [];
     for (var p = 0; p < pages.length; p++) {
-      var keys = pages[p][2].split(/\s+/);
-      var score = 0;
-      for (var k = 0; k < keys.length; k++) {
-        if (keys[k].length > 2 && n.indexOf(keys[k]) !== -1) score++;
-      }
-      if (score > 0) matches.push({ score: score, title: pages[p][0], href: pages[p][1] });
+      var keys = pages[p][2].split(/\s+/), score = 0;
+      for (var k = 0; k < keys.length; k++) if (keys[k].length > 2 && n.indexOf(keys[k]) !== -1) score++;
+      if (score) matches.push({ score: score, title: pages[p][0], href: pages[p][1] });
     }
     matches.sort(function (a, b) { return b.score - a.score; });
     if (matches.length && matches[0].score >= 1) {
-      return "Relevant CUN pages:\n" +
-        matches.slice(0, 3).map(function (m) { return "• " + m.title + " — " + m.href; }).join("\n") +
-        "\n\nOpen the page for full details. If something specific is missing there, it's not yet made public.";
+      return { text: "Relevant pages:\n" + matches.slice(0, 3).map(function (m) { return "• " + m.title + " — " + m.href; }).join("\n") };
     }
     return null;
   }
 
-  /* ---------- Web search ---------- */
+  /** Web search — returns { text, sourceLabel } or null. Never call for pure greetings. */
   function webSearch(q) {
     var query = String(q || "").trim();
-    if (query.length < 2) return Promise.resolve(null);
+    if (query.length < 3) return Promise.resolve(null);
 
     var wikiUrl = "https://en.wikipedia.org/api/rest_v1/page/summary/" + encodeURIComponent(query.replace(/\s+/g, "_"));
     var ddgUrl = "https://api.duckduckgo.com/?q=" + encodeURIComponent(query) + "&format=json&no_redirect=1&no_html=1&skip_disambig=1";
@@ -286,12 +267,8 @@
     var wikiP = fetch(wikiUrl)
       .then(function (r) { return r.ok ? r.json() : null; })
       .then(function (data) {
-        if (!data) return null;
-        if (data.type === "standard" && data.extract) {
-          return data.extract + (data.content_urls && data.content_urls.desktop ? "\n\nSource: " + data.content_urls.desktop.page : "\n\nSource: Wikipedia");
-        }
-        if (data.type === "disambiguation") return "That topic has several meanings. Try asking with more detail (for example a full name or a specific place).";
-        return null;
+        if (!data || data.type !== "standard" || !data.extract) return null;
+        return { text: data.extract, sourceLabel: "Wikipedia" };
       })
       .catch(function () { return null; });
 
@@ -299,18 +276,9 @@
       .then(function (r) { return r.ok ? r.json() : null; })
       .then(function (data) {
         if (!data) return null;
-        if (data.AbstractText) return data.AbstractText + (data.AbstractURL ? "\n\nSource: " + data.AbstractURL : "");
-        if (data.Answer) return String(data.Answer);
-        if (data.Definition) return data.Definition + (data.DefinitionURL ? "\n\nSource: " + data.DefinitionURL : "");
-        if (data.RelatedTopics && data.RelatedTopics.length) {
-          var bits = [];
-          for (var i = 0; i < data.RelatedTopics.length && bits.length < 3; i++) {
-            var t = data.RelatedTopics[i];
-            if (t.Text) bits.push("• " + t.Text);
-            else if (t.Topics && t.Topics[0] && t.Topics[0].Text) bits.push("• " + t.Topics[0].Text);
-          }
-          if (bits.length) return "Here's related information I found:\n" + bits.join("\n");
-        }
+        if (data.AbstractText) return { text: data.AbstractText, sourceLabel: data.AbstractSource || "Web" };
+        if (data.Answer) return { text: String(data.Answer), sourceLabel: "Web" };
+        if (data.Definition) return { text: data.Definition, sourceLabel: "Web" };
         return null;
       })
       .catch(function () { return null; });
@@ -318,117 +286,71 @@
     return Promise.all([wikiP, ddgP]).then(function (r) { return r[0] || r[1] || null; });
   }
 
-  function remoteAnswer(q) {
-    var base = window.CUN_CONFIG && window.CUN_CONFIG.supabaseUrl;
-    if (!base) return Promise.resolve(null);
-    var endpoint = ((window.CUN_CONFIG && window.CUN_CONFIG.aiEndpoint) || base + "/functions/v1/cun-ai").trim();
-    var headers = { "Content-Type": "application/json" };
-    if (window.CUN_CONFIG && window.CUN_CONFIG.supabaseAnonKey) headers.apikey = window.CUN_CONFIG.supabaseAnonKey;
-    return fetch(endpoint, { method: "POST", headers: headers, body: JSON.stringify({ question: q }) })
-      .then(function (res) { return res.ok ? res.json() : null; })
-      .then(function (data) { return (data && (data.answer || data.output)) || null; })
-      .catch(function () { return null; });
+  function looksLikeRealQuestion(n) {
+    if (!n || n.length < 3) return false;
+    if (isGreeting(n) || isThanks(n) || isBye(n)) return false;
+    /* single dictionary-word greetings already excluded; block bare "hello" style */
+    if (n.split(" ").length === 1 && n.length <= 12) {
+      /* allow single-word topics like "photosynthesis" but not hi/hello */
+      if (/^(hi|hello|hey|yo|sup|thanks|bye|ok|okay|yes|no)$/.test(n)) return false;
+    }
+    return true;
   }
 
-  /** Reasoned general fallback — never use "not yet made public" here */
-  function generalReasonedFallback(q) {
-    var n = normal(q);
-    if (/\b(weather|temperature)\b/.test(n)) {
-      return "I don't have live weather sensors here. For current weather, check a weather app or search your city name plus \"weather\". If you tell me the city, I can still try a general web lookup.";
-    }
-    if (/\b(time|what time|date|today)\b/.test(n)) {
-      try {
-        return "On your device, the current date/time appears as: " + new Date().toLocaleString() + ". For official university deadlines, always check CUN notices.";
-      } catch (e) {
-        return "Please check the date and time on your device. For official CUN deadlines, use the university's published notices.";
-      }
-    }
-    if (/\b(math|calculate|plus|minus|\d+\s*[\+\-\*\/]\s*\d+)\b/.test(n)) {
-      var m = q.match(/(\d+(?:\.\d+)?)\s*([\+\-\*\/x×])\s*(\d+(?:\.\d+)?)/);
-      if (m) {
-        var a = parseFloat(m[1]), b = parseFloat(m[3]), op = m[2], r;
-        if (op === "+") r = a + b;
-        else if (op === "-") r = a - b;
-        else if (op === "*" || op === "x" || op === "×") r = a * b;
-        else if (op === "/") r = b === 0 ? "undefined (division by zero)" : a / b;
-        return "That works out to: " + r;
-      }
-    }
-    if (/\b(advice|suggest|recommend|should i)\b/.test(n)) {
-      return "I can share general thoughts, but for personal academic or financial decisions you should confirm with CUN staff or a qualified adviser. Tell me more about what you're deciding and I'll help you think it through.";
-    }
-    return (
-      "I understood your message, but I couldn't find a solid published answer for it just now.\n\n" +
-      "You can:\n" +
-      "• Rephrase with more detail\n" +
-      "• Ask about CUN (admissions, programmes, location, portals)\n" +
-      "• Ask a general knowledge question (I'll try the web)\n\n" +
-      "What would you like to try next?"
-    );
+  function generalFallback(q) {
+    return "I heard you. I don't have a solid answer for that yet.\n\nTry rephrasing, ask about CUN (admissions, programmes, location), or ask a clear general-knowledge question.";
   }
 
-  /**
-   * Main reasoning pipeline
-   */
   async function answerQuestion(q) {
     var n = normal(q);
-    if (!n) return "Please type a message and I'll respond.";
+    if (!n) return { text: "Please type a message and I'll reply." };
 
-    /* 1) Developer follow-up state */
-    var flow = handleDeveloperFlow(n);
-    if (flow) return flow;
+    /* 1) Developer follow-up */
+    var dev = handleDevFlow(n);
+    if (dev) return { text: dev };
 
-    /* 2) Social / conversational — NEVER "not yet made public" */
-    if (isGreeting(n)) return greetReply(n);
-    var talk = smallTalk(n);
-    if (talk) return talk;
+    /* 2) Social FIRST — critical: never Wikipedia on "hello" */
+    var social = socialReply(n);
+    if (social) return { text: social };
 
-    /* 3) Developer identity */
-    if (isDeveloperQuestion(n)) return developerIntro();
+    /* 3) Developer ask */
+    if (isDeveloperQuestion(n)) return { text: developerIntro() };
 
-    /* 4) School knowledge */
-    var local = localCunAnswer(q);
+    /* 4) CUN data */
+    var local = localCun(q);
     if (local) return local;
 
-    /* 5) Optional server AI */
-    try {
-      var remote = await remoteAnswer(q);
-      if (remote) return remote;
-    } catch (e) {}
-
-    /* 6) Web search for non-trivial questions */
-    if (n.split(" ").length >= 1 && n.length >= 3) {
+    /* 5) Web only for real questions */
+    if (looksLikeRealQuestion(n)) {
       try {
         var web = await webSearch(q);
-        if (web) return web;
-        /* Try shortened query (first 6 words) */
-        var short = q.trim().split(/\s+/).slice(0, 6).join(" ");
+        if (web && web.text) return web;
+        var short = q.trim().split(/\s+/).slice(0, 8).join(" ");
         if (short !== q.trim()) {
           web = await webSearch(short);
-          if (web) return web;
+          if (web && web.text) return web;
         }
       } catch (e) {}
     }
 
-    /* 7) School-shaped question with no data → official phrase */
-    if (isSchoolQuestion(n)) {
-      return "It's not yet made public.";
-    }
+    /* 6) Missing school fact only */
+    if (isSchoolQuestion(n)) return { text: NOT_PUBLIC };
 
-    /* 8) Everything else — reasoned conversational fallback */
-    return generalReasonedFallback(q);
+    /* 7) Friendly fallback */
+    return { text: generalFallback(q) };
   }
 
+  /* Prompt chips */
   document.querySelectorAll(".ai-prompt[data-question]").forEach(function (btn) {
     btn.addEventListener("click", function () {
       input.value = btn.getAttribute("data-question") || "";
-      form.dispatchEvent(new Event("submit", { cancelable: true, bubbles: true }));
+      form.requestSubmit ? form.requestSubmit() : form.dispatchEvent(new Event("submit", { cancelable: true, bubbles: true }));
     });
   });
 
-  add(
+  addMessage(
     "assistant",
-    "Hi! I'm the CUN AI Concierge. I can chat, answer questions about Canadian University of Nigeria, look up general knowledge online, and tell you who built this platform if you ask. How can I help?"
+    "Hi! I'm the CUN AI Concierge. I can chat, answer questions about Canadian University of Nigeria, look up general knowledge, and tell you who built this site if you ask. How can I help?"
   );
 
   form.addEventListener("submit", async function (e) {
@@ -436,31 +358,26 @@
     var q = (input.value || "").trim();
     if (!q) return;
     input.value = "";
-    add("user", q);
+    addMessage("user", q);
 
     var send = form.querySelector('button[type="submit"]');
     if (send) {
       send.disabled = true;
-      send.textContent = "Thinking…";
+      send.textContent = "…";
     }
 
-    var typing = document.createElement("div");
-    typing.className = "ai-msg bot ai-message assistant";
-    typing.id = "ai-typing";
-    typing.textContent = "Thinking…";
-    messages.appendChild(typing);
-    messages.scrollTop = messages.scrollHeight;
+    showTyping();
 
-    var answer;
+    var result;
     try {
-      answer = await answerQuestion(q);
+      result = await answerQuestion(q);
     } catch (err) {
-      answer = generalReasonedFallback(q);
+      result = { text: generalFallback(q) };
     }
 
-    var tip = document.getElementById("ai-typing");
-    if (tip) tip.remove();
-    add("assistant", answer || generalReasonedFallback(q));
+    hideTyping();
+    if (!result || !result.text) result = { text: generalFallback(q) };
+    addMessage("assistant", result.text, result.sourceLabel || null);
 
     if (send) {
       send.disabled = false;
