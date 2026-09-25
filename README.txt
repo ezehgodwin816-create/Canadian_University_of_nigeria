@@ -1,27 +1,19 @@
-MOBILE SCROLL FIX (iOS / Android)
-=================================
+OTHER PAGES + PORTALS DESIGN POLISH
+===================================
 
-Replace ALL of these:
+Replace these files:
 
-  index.html
   css/style.css
   css/responsive.css
-  js/theme-anim.js
+  student-portal.html
+  staff-portal.html
+  admin.html
+  apply.html
 
-Why it was stuck:
-  On many phones (especially iPhone Safari), setting overflow-x:hidden
-  on BOTH html and body blocks vertical scrolling.
+Design only — login, Auth, and data scripts are unchanged.
 
-This fix:
-  • Uses overflow-y: scroll on html
-  • Uses overflow-x: clip on body only (does not block vertical scroll)
-  • touch-action: pan-y so the finger can scroll the page
-  • Removes preventDefault on the theme button touch handler
-  • Scroll is only locked when the ☰ menu is open
+Student portal: clearer text, animated cards, tables swipe left/right on mobile.
+Staff portal: same visual system; section switching kept.
+Admin + Apply: forms and tables match the new design.
 
-After upload:
-  1. Hard refresh (or clear site data / close tab and reopen)
-  2. Try scrolling the homepage with one finger
-
-If it still fails, open the phone browser menu → "Request Desktop Site"
-once, then switch back — that clears stubborn CSS cache on some phones.
+After upload: hard-refresh the portal pages.

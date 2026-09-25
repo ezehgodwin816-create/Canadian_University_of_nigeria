@@ -2,38 +2,49 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Student Portal | CUN official</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Student Portal | Canadian University of Nigeria</title>
+  <meta name="robots" content="noindex,nofollow">
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/responsive.css">
   <link rel="manifest" href="app-config/platform-manifest.json">
   <style>
-    .portal-sidebar-backdrop{display:none;position:fixed;inset:0;background:rgba(4,10,18,.48);backdrop-filter:blur(2px);-webkit-backdrop-filter:blur(2px);z-index:90;touch-action:manipulation}
-    .portal-sidebar-backdrop.open{display:block}
-    @media(max-width:900px){
-      .portal-sidebar{z-index:100;box-shadow:0 18px 60px rgba(0,0,0,.28)}
-      .portal-sidebar.open{left:0}
-      .portal-sidebar-backdrop{display:none}
-      .portal-sidebar-backdrop.open{display:block}
+    .portal-sidebar-backdrop {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(4, 10, 18, 0.5);
+      backdrop-filter: blur(3px);
+      -webkit-backdrop-filter: blur(3px);
+      z-index: 90;
+    }
+    .portal-sidebar-backdrop.open { display: block; }
+    @media (max-width: 900px) {
+      .portal-sidebar { z-index: 100; }
+      .portal-sidebar.open { left: 0; }
     }
   </style>
 </head>
 <body data-portal="student">
   <div class="portal-layout">
     <div class="portal-sidebar-backdrop" id="sidebar-backdrop" aria-hidden="true"></div>
+
     <aside class="portal-sidebar" id="sidebar" aria-label="Student portal navigation">
       <div class="portal-sidebar-header">
-        <img src="assets/logo.svg" alt="CUN" style="height:36px">
+        <a href="index.html" aria-label="Home">
+          <img src="assets/logo.svg" alt="CUN" height="36">
+        </a>
       </div>
       <nav class="portal-nav">
-        <a href="#dash" class="active">Dashboard</a>
-        <a href="#courses">Courses</a>
-        <a href="#results">Results</a>
-        <a href="#fees">Fees</a>
-        <a href="#documents">Documents</a>
-        <a href="#support">Support</a>
-        <a href="#" onclick="Auth.logout();return false">Logout</a>
+        <a href="#dash" class="active" data-section="dash">Dashboard</a>
+        <a href="#courses" data-section="courses">Courses</a>
+        <a href="#results" data-section="results">Results</a>
+        <a href="#fees" data-section="fees">Fees</a>
+        <a href="#documents" data-section="documents">Documents</a>
+        <a href="#support" data-section="support">Support</a>
+        <a href="#" onclick="Auth.logout(); return false;">Logout</a>
       </nav>
     </aside>
 
@@ -46,10 +57,14 @@
 
       <div class="portal-content">
         <section id="dash" class="portal-section">
+          <p class="section-label" style="margin-bottom:0.5rem">Overview</p>
+          <h2 style="margin-top:0">Your dashboard</h2>
+          <p class="muted" style="margin-bottom:1.25rem">Welcome. Here is a clear view of your academic and fee information.</p>
+
           <div class="dash-cards">
             <div class="dash-card">
               <div class="dash-card-label">Student ID</div>
-              <div class="dash-card-value" style="font-size:1.2rem" id="student-id">—</div>
+              <div class="dash-card-value" style="font-size:1.15rem" id="student-id">—</div>
             </div>
             <div class="dash-card">
               <div class="dash-card-label">Programme</div>
@@ -68,19 +83,20 @@
           <div class="grid grid-2 mt-4">
             <div class="card">
               <div class="card-body">
-                <h4>Registered Courses</h4>
+                <div class="dash-card-label">Registered courses</div>
                 <div class="dash-card-value" id="stat-courses">0</div>
               </div>
             </div>
             <div class="card">
               <div class="card-body">
-                <h4>Recent Invoices</h4>
+                <div class="dash-card-label">Open invoices</div>
                 <div class="dash-card-value" id="stat-invoices">0</div>
               </div>
             </div>
           </div>
 
-          <h2 id="applications" class="mt-4">Applications</h2>
+          <h2 id="applications">Applications</h2>
+          <p class="muted">Track the status of applications linked to your account.</p>
           <div class="table-wrap mt-2">
             <table>
               <thead>
@@ -95,7 +111,8 @@
             </table>
           </div>
 
-          <h2 id="courses" class="mt-4">Courses</h2>
+          <h2 id="courses">Courses</h2>
+          <p class="muted">Courses registered to your student record.</p>
           <div class="table-wrap mt-2">
             <table>
               <thead>
@@ -110,7 +127,8 @@
             </table>
           </div>
 
-          <h2 id="fees" class="mt-4">Invoices</h2>
+          <h2 id="fees">Fees &amp; invoices</h2>
+          <p class="muted">Swipe sideways on small screens to see all columns.</p>
           <div class="table-wrap mt-2">
             <table>
               <thead>
@@ -126,7 +144,8 @@
             </table>
           </div>
 
-          <h2 id="documents" class="mt-4">Documents</h2>
+          <h2 id="documents">Documents</h2>
+          <p class="muted">Uploaded or issued documents for your account.</p>
           <div class="table-wrap mt-2">
             <table>
               <thead>
@@ -140,27 +159,27 @@
             </table>
           </div>
 
-          <h2 id="support" class="mt-4">Notifications</h2>
-          <div id="notif-list"></div>
+          <h2 id="support">Notifications</h2>
+          <div id="notif-list" class="mt-2"></div>
 
-          <h2 id="results" class="mt-4">Quick Links</h2>
+          <h2 id="results">Quick links</h2>
           <div class="grid grid-3 mt-2">
             <a class="card" href="#courses" style="text-decoration:none;color:inherit">
               <div class="card-body">
-                <h4>Course Registration</h4>
+                <h4>Course registration</h4>
                 <p class="text-muted">Open your registered courses</p>
-              </div>
-            </a>
-            <a class="card" href="#courses" style="text-decoration:none;color:inherit">
-              <div class="card-body">
-                <h4>Timetable</h4>
-                <p class="text-muted">View your course area</p>
               </div>
             </a>
             <a class="card" href="#fees" style="text-decoration:none;color:inherit">
               <div class="card-body">
-                <h4>Fee Statement</h4>
-                <p class="text-muted">Open your fee statement</p>
+                <h4>Pay fees</h4>
+                <p class="text-muted">View invoices and payment options</p>
+              </div>
+            </a>
+            <a class="card" href="contact.html" style="text-decoration:none;color:inherit">
+              <div class="card-body">
+                <h4>Get support</h4>
+                <p class="text-muted">Contact the university team</p>
               </div>
             </a>
           </div>
@@ -169,60 +188,38 @@
     </div>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="js/data.js"></script>
-  <script src="js/config.js?v=20260918-clean1"></script>
-  <script src="js/app.js?v=20260918-clean1"></script>
-  <script src="js/auth.js?v=20260918-clean1"></script>
-  <script src="js/components.js?v=20260918-clean1"></script>
-  <script src="js/seo.js"></script>
-  <script src="js/student.js?v=20260918-clean1"></script>
-
+  <script src="js/config.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/student.js"></script>
   <script>
-  (() => {
-    const sidebar = document.getElementById("sidebar");
-    const backdrop = document.getElementById("sidebar-backdrop");
-    const toggle = document.getElementById("portal-menu-toggle");
-    const nav = sidebar?.querySelector(".portal-nav");
-    if (!sidebar || !backdrop || !toggle) return;
-
-    const setMenu = (open) => {
-      sidebar.classList.toggle("open", open);
-      backdrop.classList.toggle("open", open);
-      toggle.setAttribute("aria-expanded", String(open));
-      toggle.setAttribute("aria-label", open ? "Close navigation" : "Open navigation");
-      document.body.classList.toggle("portal-menu-open", open);
-    };
-
-    toggle.addEventListener("click", (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      setMenu(!sidebar.classList.contains("open"));
-    });
-
-    backdrop.addEventListener("click", () => setMenu(false));
-
-    nav?.addEventListener("click", (e) => {
-      const link = e.target.closest("a");
-      if (!link) return;
-      if (link.getAttribute("href") === "#") return;
-      nav.querySelectorAll("a").forEach(a => a.classList.remove("active"));
-      link.classList.add("active");
-      setMenu(false);
-    });
-
-    document.addEventListener("keydown", (e) => {
-      if (e.key === "Escape") setMenu(false);
-    });
-
-    window.addEventListener("hashchange", () => setMenu(false));
-
-    if ("serviceWorker" in navigator) {
-      navigator.serviceWorker.getRegistrations()
-        .then(rs => rs.forEach(r => r.unregister()))
-        .catch(() => {});
-    }
-  })();
+    (function () {
+      var sidebar = document.getElementById('sidebar');
+      var backdrop = document.getElementById('sidebar-backdrop');
+      var toggle = document.getElementById('portal-menu-toggle');
+      function openNav() {
+        if (sidebar) sidebar.classList.add('open');
+        if (backdrop) backdrop.classList.add('open');
+        if (toggle) toggle.setAttribute('aria-expanded', 'true');
+      }
+      function closeNav() {
+        if (sidebar) sidebar.classList.remove('open');
+        if (backdrop) backdrop.classList.remove('open');
+        if (toggle) toggle.setAttribute('aria-expanded', 'false');
+      }
+      if (toggle) toggle.addEventListener('click', function () {
+        if (sidebar && sidebar.classList.contains('open')) closeNav();
+        else openNav();
+      });
+      if (backdrop) backdrop.addEventListener('click', closeNav);
+      document.querySelectorAll('.portal-nav a[href^="#"]').forEach(function (a) {
+        a.addEventListener('click', function () {
+          document.querySelectorAll('.portal-nav a').forEach(function (x) { x.classList.remove('active'); });
+          a.classList.add('active');
+          if (window.innerWidth <= 900) closeNav();
+        });
+      });
+    })();
   </script>
 </body>
 </html>

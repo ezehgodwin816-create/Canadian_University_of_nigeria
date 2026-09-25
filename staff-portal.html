@@ -2,25 +2,26 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Staff Portal | CUN official</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Staff Portal | Canadian University of Nigeria</title>
   <meta name="robots" content="noindex,nofollow">
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/responsive.css">
   <style>
-    .portal-sidebar-backdrop{display:none;position:fixed;inset:0;background:rgba(4,10,18,.48);backdrop-filter:blur(2px);z-index:90}
+    .portal-sidebar-backdrop{display:none;position:fixed;inset:0;background:rgba(4,10,18,.5);backdrop-filter:blur(3px);z-index:90}
     .portal-sidebar-backdrop.open{display:block}
     @media(max-width:900px){
-      .portal-sidebar{z-index:100;box-shadow:0 18px 60px rgba(0,0,0,.28)}
+      .portal-sidebar{z-index:100}
       .portal-sidebar.open{left:0}
     }
+    /* Staff uses section switching — keep this behaviour */
     .portal-section{display:none}
-    .portal-section.active{display:block}
-    .form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:0.75rem}
-    .panel-card{background:var(--surface,#fff);border:1px solid rgba(0,0,0,.08);border-radius:12px;padding:1rem;margin-bottom:1rem}
-    .muted{color:#6b7280;font-size:.9rem}
+    .portal-section.active{display:block;animation:portalFadeIn .4s ease both}
+    .form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:0.85rem;align-items:end}
+    .form-grid .btn{margin-top:0.35rem}
   </style>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body data-portal="staff">
   <div class="portal-layout">
@@ -69,7 +70,7 @@
           </div>
           <div class="panel-card mt-4">
             <h3>Welcome</h3>
-            <p class="muted">Use this portal to review applications, view students, manage course lists, and enter results where permitted by your role.</p>
+            <p class="muted">Review applications, view students, manage courses, and enter results according to your staff role.</p>
           </div>
         </section>
 
