@@ -2,78 +2,127 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Login | CUN official Portals</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Login | Canadian University of Nigeria</title>
+  <meta name="description" content="Student and staff portal login for Canadian University of Nigeria.">
+  <meta name="robots" content="noindex,nofollow">
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/responsive.css">
-<link rel="manifest" href="app-config/platform-manifest.json">
 </head>
 <body>
-<main class="section flex-center" style="min-height:80vh">
-    <div class="card" style="max-width:420px;width:100%;padding:2rem">
-      <div class="text-center mb-4">
-        <img src="assets/logo.svg" alt="CUN" style="height:48px;margin:0 auto 1rem">
-        <h1 style="font-size:1.5rem">Portal Login</h1>
-        <p class="text-muted">secure portal authentication</p>
+  <a href="#main" class="skip-link">Skip to content</a>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="index.html" class="logo-link" aria-label="CUN Home">
+        <img src="assets/logo.svg" alt="Canadian University of Nigeria" height="40">
+      </a>
+      <div class="header-actions">
+        <a href="index.html" class="btn btn-ghost btn-sm">Home</a>
+        <a href="apply.html" class="btn btn-accent btn-sm">Apply Now</a>
       </div>
-      <div id="auth-message" class="form-error mb-3" role="alert"></div><form id="login-form">
-        <div class="form-group"><label class="form-label">Email</label><input type="email" class="form-control" name="email" required placeholder="you@example.com"></div>
-        <div class="form-group"><label class="form-label">Password</label><input type="password" class="form-control" name="password" required></div>
-        <button type="submit" class="btn btn-primary btn-block">Sign In</button>
+    </div>
+  </header>
+
+  <main id="main" class="auth-wrap">
+    <div class="auth-card">
+      <h1>Portal Login</h1>
+      <p class="auth-sub">Sign in to the Student or Staff portal</p>
+
+      <div class="auth-tabs" role="tablist">
+        <button type="button" class="auth-tab active" data-portal="student" id="tab-student">Student</button>
+        <button type="button" class="auth-tab" data-portal="staff" id="tab-staff">Staff</button>
+      </div>
+
+      <div class="auth-msg" id="auth-msg" role="status"></div>
+
+      <form id="login-form" autocomplete="on">
+        <input type="hidden" name="portal" id="portal-type" value="student">
+        <div class="form-group">
+          <label for="email">Email or Matric / Staff ID</label>
+          <input type="text" id="email" name="email" class="form-control" required placeholder="you@example.com or ID" autocomplete="username">
+        </div>
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input type="password" id="password" name="password" class="form-control" required placeholder="••••••••" autocomplete="current-password">
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem;font-size:0.9rem">
+          <label style="display:flex;align-items:center;gap:0.4rem;color:var(--text-secondary);cursor:pointer">
+            <input type="checkbox" name="remember" style="width:auto"> Remember me
+          </label>
+          <a href="forgot-password.html">Forgot password?</a>
+        </div>
+        <button type="submit" class="btn btn-primary" style="width:100%" id="login-btn">Sign in</button>
       </form>
-      <div id="signup-panel" style="display:none" class="mt-4">
-        <form id="signup-form">
-          <div class="form-group"><label class="form-label">Full name</label><input class="form-control" name="fullName" required></div>
-          <div class="form-group"><label class="form-label">Email</label><input type="email" class="form-control" name="email" required></div>
-          <div class="form-group"><label class="form-label">Password</label><input type="password" class="form-control" name="password" minlength="8" required></div>
-          <button class="btn btn-accent btn-block" type="submit">Create applicant account</button>
-        </form>
-      </div>
-      <p class="text-center mt-3"><button type="button" id="toggle-signup" class="btn btn-ghost btn-sm">Create applicant account</button> · <a href="forgot-password.html">Forgot password?</a> · <a href="index.html">Home</a></p>
+
+      <p style="text-align:center;margin-top:1.5rem;font-size:0.9rem;color:var(--text-muted)">
+        Need help? <a href="contact.html">Contact support</a> ·
+        <a href="staff-portal.html">Staff portal direct</a>
+      </p>
     </div>
   </main>
-  <script>if("serviceWorker" in navigator){navigator.serviceWorker.getRegistrations().then(rs=>rs.forEach(r=>r.unregister())).catch(()=>{});}</script>
-  <script src="js/data.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="js/config.js?v=20260910"></script>
-  <script src="js/app.js?v=20260908-login"></script><script src="js/services/platform.js"></script><script src="js/services/runtime.js"></script>
-  <script src="js/auth.js?v=20260908-login"></script>
-  <script src="js/components.js?v=20260910"></script>
+
+  <script src="js/config.js" defer></script>
+  <script src="js/auth.js" defer></script>
   <script>
-    const msg=document.getElementById("auth-message");
-    const showMsg=t=>{msg.textContent=t||"";};
-    const redirectFor=role=>window.location.href=(window.CUN_CONFIG.loginRedirect[role]||"student-portal.html");
-    document.getElementById("login-form").onsubmit=async e=>{
-      e.preventDefault();
-      const form=e.target, button=form.querySelector('button[type="submit"]');
-      if(button?.disabled) return;
-      if(!form.reportValidity()) return;
-      button.disabled=true; button.textContent="Signing in…"; showMsg("Connecting securely…");
-      try {
-        const fd=new FormData(form);
-        const res=await Promise.race([
-          Auth.login(fd.get("email"),fd.get("password")),
-          new Promise(resolve=>setTimeout(()=>resolve({success:false,message:"The login request is taking too long. Please refresh the page and try again."}),15000))
-        ]);
-        if(!res.success){showMsg(res.message); return;}
-        showMsg("Login successful. Opening your portal…");
-        redirectFor(res.role);
-      } catch(err) {
-        console.error(err);
-        showMsg(err?.message || "Unable to sign in. Please try again.");
-      } finally {
-        button.disabled=false; button.textContent="Sign In";
+    (function(){
+      const tabs = document.querySelectorAll('.auth-tab');
+      const portalInput = document.getElementById('portal-type');
+      const form = document.getElementById('login-form');
+      const msg = document.getElementById('auth-msg');
+      const btn = document.getElementById('login-btn');
+
+      tabs.forEach(t => t.addEventListener('click', function(){
+        tabs.forEach(x => x.classList.remove('active'));
+        this.classList.add('active');
+        portalInput.value = this.dataset.portal;
+      }));
+
+      function showMsg(text, isError){
+        msg.textContent = text;
+        msg.classList.add('show');
+        msg.classList.toggle('error', !!isError);
       }
-    };
-    document.getElementById("toggle-signup").onclick=()=>{const p=document.getElementById("signup-panel");p.style.display=p.style.display==="none"?"block":"none";};
-    document.getElementById("signup-form").onsubmit=async e=>{
-      e.preventDefault(); showMsg("Creating account…");
-      const fd=new FormData(e.target); const res=await Auth.signup(fd.get("email"),fd.get("password"),fd.get("fullName"));
-      showMsg(res.success ? "Account created. Check your email if confirmation is required, then sign in." : res.message);
-      if(res.success) e.target.reset();
-    };
+
+      form.addEventListener('submit', async function(e){
+        e.preventDefault();
+        if (!form.checkValidity()) return;
+        btn.disabled = true;
+        btn.textContent = 'Signing in…';
+        showMsg('Connecting securely…');
+        try {
+          const fd = new FormData(form);
+          const portal = fd.get('portal') || 'student';
+          if (typeof Auth !== 'undefined' && Auth.login) {
+            const res = await Promise.race([
+              Auth.login(fd.get('email'), fd.get('password'), portal),
+              new Promise(r => setTimeout(() => r({success:false, message:'The login request is taking too long. Please refresh and try again.'}), 15000))
+            ]);
+            if (!res.success) {
+              showMsg(res.message || 'Login failed.', true);
+              btn.disabled = false;
+              btn.textContent = 'Sign in';
+              return;
+            }
+            showMsg('Login successful. Opening your portal…');
+            setTimeout(() => {
+              window.location.href = portal === 'staff' ? 'staff-portal.html' : 'student-portal.html';
+            }, 600);
+          } else {
+            // Fallback demo behaviour when Auth is not loaded
+            showMsg('Demo mode: redirecting to ' + portal + ' portal…');
+            setTimeout(() => {
+              window.location.href = portal === 'staff' ? 'staff-portal.html' : 'student-portal.html';
+            }, 800);
+          }
+        } catch (err) {
+          showMsg('Something went wrong. Please try again.', true);
+          btn.disabled = false;
+          btn.textContent = 'Sign in';
+        }
+      });
+    })();
   </script>
-<script>if("serviceWorker" in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));}</script>
 </body>
 </html>
