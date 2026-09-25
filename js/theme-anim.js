@@ -174,11 +174,7 @@
       else openPanel();
     }
     themeFab.addEventListener('click', onThemeActivate);
-    themeFab.addEventListener('touchend', function (e) {
-      // prevent ghost click
-      e.preventDefault();
-      onThemeActivate(e);
-    }, { passive: false });
+    // no touchend preventDefault — that blocks scrolling gestures on mobile
 
     // Panel options
     panel.addEventListener('click', function (e) {
