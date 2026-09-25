@@ -21,7 +21,7 @@
   <link rel="manifest" href="app-config/platform-manifest.json">
   <script type="application/ld+json">{"@context":"https://schema.org","@type":"CollegeOrUniversity","name":"Canadian University of Nigeria","alternateName":"CUN","url":"https://www.cun.edu.ng/","address":{"@type":"PostalAddress","addressLocality":"Abuja","addressRegion":"FCT","addressCountry":"NG"},"foundingDate":"2023"}</script>
 </head>
-<body>
+<body class="page-home">
   <a href="#main" class="skip-link">Skip to content</a>
 
   <header class="site-header" id="site-header">
@@ -81,12 +81,8 @@
           <a href="contact.html" class="nav-link">Contact</a>
         </div>
       </nav>
-      <div class="header-actions">
-        <button class="theme-toggle" id="theme-toggle" aria-label="Toggle theme" title="Toggle light/dark (also available as floating button)">◐</button>
-        <button class="search-toggle" aria-label="Search" id="search-toggle">⌕</button>
-        <a href="login.html" class="btn btn-ghost btn-sm">Portals</a>
-        <a href="apply.html" class="btn btn-accent btn-sm">Apply Now</a>
-        <button class="menu-toggle" aria-label="Open menu" id="menu-toggle">☰</button>
+      <div class="header-actions header-actions--home">
+        <button class="menu-toggle" aria-label="Open menu" id="menu-toggle" title="Menu">☰</button>
       </div>
     </div>
   </header>
@@ -445,16 +441,7 @@
       if (h) h.classList.toggle('scrolled', window.scrollY > 20);
     }, { passive: true });
   </script>
-
-  <!-- Floating AI + Theme (right side) – JS enhances them -->
-  <div id="cun-fab-stack" class="cun-fab-stack" aria-label="Quick controls">
-    <button id="cun-fab-theme" class="cun-fab cun-fab-theme" type="button" aria-label="Toggle theme" title="Theme (long-press to hide)">☀</button>
-    <button id="cun-fab-ai" class="cun-fab cun-fab-ai" type="button" aria-label="AI Concierge" title="AI Concierge (long-press to hide)">✦</button>
-    <div class="cun-fab-menu" id="cun-fab-menu">
-      <button type="button" data-action="hide">Hide for now</button>
-      <button type="button" data-action="close">Cancel</button>
-    </div>
-  </div>
+</div>
 
 </body>
 </html>

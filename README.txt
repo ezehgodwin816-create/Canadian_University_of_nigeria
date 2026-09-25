@@ -1,23 +1,18 @@
-LOGIN AUTH FIX
-==============
+HOMEPAGE STABILITY FIX
+======================
 
-Replace ONLY this file:
+Replace these 2 files:
 
-  login.html
+  index.html
+  css/responsive.css
 
-What was wrong:
-  The redesigned login page was missing js/app.js.
-  app.js is what creates window.SupabaseClient from js/config.js.
-  Without it, Auth.login returns:
-  "Authentication is not configured. Check js/config.js."
+What changed (homepage only):
+• Top bar now shows ONLY the three-line menu (☰)
+• "Apply Now" removed from the top bar (still inside the menu)
+• Portals / search / theme removed from top bar
+• Homepage locked: no left–right swipe movement
+• Open ☰ for Apply Now, Student Portal, Staff Portal, etc.
 
-What this fix does:
-  • Loads scripts in the correct production order:
-      js/config.js  →  js/app.js  →  js/auth.js
-  • Uses the original Auth.login(email, password) call
-  • Redirects by the role Auth returns (student / staff / admin)
-  • Keeps the new visual design
+Other pages are unchanged — they can still move left/right if content is wider than the screen.
 
-Your auth workflow is unchanged. No other files are modified.
-
-After upload: hard-refresh the login page.
+After upload: hard-refresh the homepage.
