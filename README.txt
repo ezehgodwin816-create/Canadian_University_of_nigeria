@@ -1,22 +1,27 @@
-SCROLL FIX (critical)
-=====================
+MOBILE SCROLL FIX (iOS / Android)
+=================================
 
-Replace these files:
+Replace ALL of these:
 
   index.html
   css/style.css
   css/responsive.css
   js/theme-anim.js
 
-What was wrong:
-  CSS rules blocked vertical scrolling and pull-to-refresh
-  (overscroll-behavior-y: none and overly aggressive overflow locks).
+Why it was stuck:
+  On many phones (especially iPhone Safari), setting overflow-x:hidden
+  on BOTH html and body blocks vertical scrolling.
 
-What this does:
-  • Vertical scroll works again (up and down)
-  • Pull-to-refresh works again on mobile
-  • Homepage still does not move left/right
-  • Theme button still works
-  • Header still only shows ☰ on the homepage
+This fix:
+  • Uses overflow-y: scroll on html
+  • Uses overflow-x: clip on body only (does not block vertical scroll)
+  • touch-action: pan-y so the finger can scroll the page
+  • Removes preventDefault on the theme button touch handler
+  • Scroll is only locked when the ☰ menu is open
 
-After upload: hard-refresh once (Ctrl+Shift+R), then try scrolling.
+After upload:
+  1. Hard refresh (or clear site data / close tab and reopen)
+  2. Try scrolling the homepage with one finger
+
+If it still fails, open the phone browser menu → "Request Desktop Site"
+once, then switch back — that clears stubborn CSS cache on some phones.

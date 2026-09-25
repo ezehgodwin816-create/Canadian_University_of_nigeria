@@ -417,15 +417,22 @@
       var menu = document.getElementById('mobile-menu');
       var openBtn = document.getElementById('menu-toggle');
       var closeBtn = document.getElementById('mobile-menu-close');
-      if (openBtn && menu) {
-        openBtn.addEventListener('click', function () { menu.classList.add('open'); });
+      function openMenu() {
+        if (!menu) return;
+        menu.classList.add('open');
+        document.body.classList.add('menu-open');
       }
-      if (closeBtn && menu) {
-        closeBtn.addEventListener('click', function () { menu.classList.remove('open'); });
+      function closeMenu() {
+        if (!menu) return;
+        menu.classList.remove('open');
+        document.body.classList.remove('menu-open');
+        document.body.style.overflow = '';
       }
+      if (openBtn && menu) openBtn.addEventListener('click', openMenu);
+      if (closeBtn && menu) closeBtn.addEventListener('click', closeMenu);
       if (menu) {
         menu.addEventListener('click', function (e) {
-          if (e.target === menu) menu.classList.remove('open');
+          if (e.target === menu) closeMenu();
         });
       }
       // Header shadow on scroll (passive = smoother)
