@@ -407,41 +407,36 @@
       </span>
     </div>
   </footer>
-
   <script src="js/config.js" defer></script>
   <script src="js/app.js" defer></script>
   <script src="js/components.js" defer></script>
   <script src="js/theme-anim.js"></script>
   <script>
-    // Theme toggle
-    (function(){
-      const root = document.documentElement;
-      const btn = document.getElementById('theme-toggle');
-      const saved = localStorage.getItem('cun-theme');
-      if (saved) root.setAttribute('data-theme', saved);
-      if (btn) btn.addEventListener('click', function(){
-        const next = root.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
-        if (next === 'dark') root.removeAttribute('data-theme');
-        else root.setAttribute('data-theme', 'light');
-        localStorage.setItem('cun-theme', next === 'dark' ? '' : 'light');
-      });
+    (function () {
+      // Mobile menu only
+      var menu = document.getElementById('mobile-menu');
+      var openBtn = document.getElementById('menu-toggle');
+      var closeBtn = document.getElementById('mobile-menu-close');
+      if (openBtn && menu) {
+        openBtn.addEventListener('click', function () { menu.classList.add('open'); });
+      }
+      if (closeBtn && menu) {
+        closeBtn.addEventListener('click', function () { menu.classList.remove('open'); });
+      }
+      if (menu) {
+        menu.addEventListener('click', function (e) {
+          if (e.target === menu) menu.classList.remove('open');
+        });
+      }
+      // Header shadow on scroll (passive = smoother)
+      var h = document.getElementById('site-header');
+      if (h) {
+        window.addEventListener('scroll', function () {
+          h.classList.toggle('scrolled', window.scrollY > 16);
+        }, { passive: true });
+      }
     })();
-    // Mobile menu
-    (function(){
-      const menu = document.getElementById('mobile-menu');
-      const openBtn = document.getElementById('menu-toggle');
-      const closeBtn = document.getElementById('mobile-menu-close');
-      if (openBtn) openBtn.addEventListener('click', () => menu.classList.add('open'));
-      if (closeBtn) closeBtn.addEventListener('click', () => menu.classList.remove('open'));
-      if (menu) menu.addEventListener('click', (e) => { if (e.target === menu) menu.classList.remove('open'); });
-    })();
-    // Header scroll
-    window.addEventListener('scroll', function(){
-      const h = document.getElementById('site-header');
-      if (h) h.classList.toggle('scrolled', window.scrollY > 20);
-    }, { passive: true });
   </script>
-</div>
-
 </body>
+
 </html>
